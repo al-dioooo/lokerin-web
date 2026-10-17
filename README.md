@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lokerin
 
-## Getting Started
+Lokerin is a voice-first job board for informal work in Banyumas, Central Java. Workers find nearby jobs by talking instead of filling in forms, and small employers (warung, bengkel, UMKM, households) post jobs after a visible verification check. Deals happen outside the platform over WhatsApp.
 
-First, run the development server:
+Built for ITASE 7.0 Web Development (ITASEFEST 2026), SDG 8. Product spec: [lokerin-docs/docs/prd.md](https://github.com/al-dioooo/lokerin-docs/blob/main/docs/prd.md).
+
+Live URL: not deployed yet.
+
+## Tech stack
+
+- Next.js (App Router) and Tailwind CSS v4, hosted on Vercel
+- Convex for the database, realtime queries, vector search and file storage (planned)
+- OpenAI Realtime API over WebRTC for voice calls, with short-lived tokens issued by a Convex HTTP action (planned)
+- Fonts: Bungee, Atkinson Hyperlegible Next and Doto via `next/font`
+
+## Setup and run
+
+Requires Node.js 20 or newer.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run lint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The design system lives at `/desain`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+None are needed yet. When Convex and voice land, copy `.env.example` to `.env.local` and fill it in. Never commit `.env*` files other than `.env.example`.
 
-## Learn More
+## Project structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/app/            routes: / (landing) and /desain (design system)
+src/components/
+  brand/            logo mark and wordmark
+  icons/            14 job category icons and UI icons
+  ui/               primitives: buttons, LED countdown board, job card, badges
+docs/               design brief and decision notes
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Not set up yet. The plan is Vercel preview builds from `main`, with production following a `release` branch.
 
-## Deploy on Vercel
+## Team
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To be filled in.

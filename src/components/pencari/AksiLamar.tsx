@@ -7,7 +7,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { IconCheck, IconCircleCheck, IconFileCv, IconFlag, IconInfoCircle } from "../icons/tabler";
+import { IconCheck, IconCircleCheck, IconFileCv, IconInfoCircle } from "../icons/tabler";
+import { LaporkanLowongan } from "../app/LaporkanLowongan";
 import { Laci } from "../lapis/Laci";
 import { Bacakan } from "../ui/Bacakan";
 import { api, GalatApi, urlBertoken } from "@/lib/api/klien";
@@ -95,7 +96,7 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
           <button type="button" className="tombol tombol-utama flex-1 min-h-14 text-lg" onClick={mulai} aria-haspopup="dialog">Lamar</button>
         )}
       </div>
-      <button type="button" className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-abu underline underline-offset-4"><IconFlag size={14} />Laporkan lowongan ini</button>
+      <LaporkanLowongan lowonganId={lowonganId} judul={judul} />
 
       <Laci
         buka={buka}

@@ -79,7 +79,7 @@ export function LaporkanLowongan({ lowonganId, judul, contoh = false }: { lowong
         buka={buka}
         onTutup={() => setBuka(false)}
         label="Laporkan"
-        judul={selesai ? "Laporan diterima" : "Ada yang salah dengan lowongan ini?"}
+        judul={selesai ? (kirimSungguhan ? "Laporan diterima" : "Lowongan contoh") : "Ada yang salah dengan lowongan ini?"}
         keterangan={selesai ? undefined : `${judul}. Tim Lokerin meninjau setiap laporan, dan namamu tidak ditunjukkan ke pemberi kerja.`}
         aksi={aksi}
       >

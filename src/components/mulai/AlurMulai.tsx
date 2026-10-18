@@ -41,6 +41,9 @@ const KERJA_SELAMA: Record<KategoriSlug, string> = {
   acara: "bantu acara",
   asuh: "jaga anak atau lansia",
   magang: "belajar di bidang ini",
+  desain: "mendesain",
+  teknologi: "membuat situs atau aplikasi",
+  kantor: "mengurus administrasi",
 };
 
 const PENGALAMAN = [

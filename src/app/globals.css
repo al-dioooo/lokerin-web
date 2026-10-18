@@ -149,11 +149,11 @@
   .isi-baru { animation: muncul 600ms ease-out; }
   .lembar-cv { padding: 20px; border-radius: 20px; background: white; border: 1px solid var(--color-garis); box-shadow: 0 16px 40px -12px rgb(21 18 16 / .12); }
   .avatar { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; font-size: 13px; font-weight: 800; color: var(--color-jingga-tua); background: var(--color-jingga-muda); border: 1px solid #F7C9A0; }
-  .pil-nav { position: fixed; z-index: 40; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); translate: -50% 0; display: flex; align-items: center; gap: 2px; padding: 6px; border-radius: 999px; background: rgb(255 255 255 / .82); backdrop-filter: blur(16px) saturate(1.4); border: 1px solid #E4DED4; box-shadow: 0 16px 40px -12px rgb(21 18 16 / .22), 0 4px 12px -4px rgb(21 18 16 / .08), inset 0 1px 0 white; animation: pil-masuk .6s cubic-bezier(.2, .9, .3, 1.2) both; }
-  .pil-item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 58px; height: 50px; border-radius: 18px; color: var(--color-abu); transition: color .2s; }
+  .pil-nav { position: fixed; z-index: 40; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); translate: -50% 0; display: flex; align-items: center; gap: 2px; padding: 6px; border-radius: 999px; background: rgb(255 255 255 / .84); backdrop-filter: blur(18px) saturate(1.5); border: 1px solid rgb(228 222 212 / .9); box-shadow: 0 18px 40px -14px rgb(21 18 16 / .25), 0 4px 12px -4px rgb(21 18 16 / .08), inset 0 1px 0 white; animation: pil-masuk .6s cubic-bezier(.2, .9, .3, 1.2) both; }
+  .pil-item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; width: 64px; height: 50px; border-radius: 999px; color: var(--color-abu); transition: color .2s; -webkit-tap-highlight-color: transparent; }
   .pil-item:hover { color: var(--color-tinta); }
   .pil-item[aria-current="page"] { color: var(--color-jingga-tua); }
-  .pil-sorot { position: absolute; inset: 0; border-radius: 18px; background: var(--color-jingga-muda); box-shadow: inset 0 0 0 1px #F7C9A0; }
+  .pil-sorot { position: absolute; inset: 0; border-radius: 999px; background: linear-gradient(180deg, #FFF3E8 0%, #FFE6D1 100%); box-shadow: inset 0 1px 0 rgb(255 255 255 / .9), inset 0 -1px 0 rgb(242 119 25 / .12), 0 2px 6px -2px rgb(242 119 25 / .35); }
   .pil-label { font-size: 10.5px; font-weight: 700; line-height: 1; }
   .pil-ngobrol { position: relative; display: flex; flex-direction: column; align-items: center; margin: -30px 8px 0; }
   .pil-ngobrol::before { content: ""; position: absolute; top: -6px; width: 72px; height: 72px; border-radius: 50%; background: conic-gradient(from 0deg, #F26A1B, #FFD2A8, #F26A1B, #FFB37A, #F26A1B); filter: blur(6px); opacity: .75; animation: putar 3.2s linear infinite; }
@@ -181,6 +181,53 @@
   .tab-pil > button { position: relative; min-height: 36px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--color-abu); white-space: nowrap; transition: color .25s; }
   .tab-pil > button[aria-selected="true"] { color: var(--color-tinta); }
   .tab-pil-geser { position: absolute; inset: 0; border-radius: 999px; background: white; box-shadow: 0 1px 3px rgb(21 18 16 / .12); }
+  .tirai-ngobrol { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: radial-gradient(circle at var(--x) var(--y), #5A3018 0, #1A1210 30%, #0E1015 70%); clip-path: circle(0 at var(--x) var(--y)); animation: tirai-buka .6s cubic-bezier(.7, 0, .25, 1) forwards; transition: opacity .4s ease; }
+  .tirai-hilang { opacity: 0; }
+  .ngobrol-layar { position: fixed; inset: 0; z-index: 50; overflow: hidden; color: white; background: radial-gradient(120% 70% at 50% 18%, #3A2214 0%, #15110F 45%, #0C0E12 100%); }
+  .ngobrol-layar::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(1.5px 1.5px at 12% 18%, #fff8 50%, transparent), radial-gradient(1px 1px at 28% 8%, #fff6 50%, transparent), radial-gradient(1.5px 1.5px at 66% 14%, #fff7 50%, transparent), radial-gradient(1px 1px at 84% 26%, #fff5 50%, transparent), radial-gradient(1px 1px at 46% 30%, #fff4 50%, transparent), radial-gradient(1.5px 1.5px at 92% 9%, #fff6 50%, transparent); animation: kelip 4s ease-in-out infinite alternate; }
+  .ngobrol-kota { position: absolute; inset: auto 0 0 0; height: 58%; display: flex; align-items: flex-end; justify-content: center; mask-image: linear-gradient(to bottom, transparent 0%, black 30%); animation: kota-naik .9s cubic-bezier(.2, .9, .3, 1) .15s backwards; }
+  .ngobrol-kota-isi { position: relative; width: max(100%, 980px); flex-shrink: 0; }
+  .pin-malam { position: absolute; translate: -50% -100%; display: grid; gap: 1px; padding: 6px 10px; border-radius: 12px; font-size: 11.5px; line-height: 1.3; color: var(--color-tinta); background: white; box-shadow: 0 8px 24px rgb(255 138 61 / .45); white-space: nowrap; animation: pin-jatuh .7s cubic-bezier(.3, 1.6, .5, 1) backwards; animation-delay: calc(var(--i) * 180ms + 200ms); }
+  .pin-malam::after { content: ""; position: absolute; top: 100%; left: 50%; translate: -50% 0; border: 6px solid transparent; border-top-color: white; }
+  .ngobrol-atas { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: max(14px, env(safe-area-inset-top)) 16px 0; }
+  .ngobrol-tombol-bulat { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: white; background: rgb(255 255 255 / .08); border: 1px solid rgb(255 255 255 / .14); backdrop-filter: blur(10px); transition: background-color .2s, transform .2s; }
+  .ngobrol-tombol-bulat:hover { background: rgb(255 255 255 / .16); }
+  .ngobrol-tombol-bulat[aria-pressed="true"] { background: #F26A1B; border-color: #F26A1B; }
+  .ngobrol-tombol-akhiri { background: rgb(229 72 63 / .85); border-color: transparent; }
+  .ngobrol-tombol-akhiri:hover { background: #E5483F; }
+  .ngobrol-panggung { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 4vh 20px 0; text-align: center; }
+  .lentera { position: relative; display: grid; place-items: center; width: 132px; height: 132px; border-radius: 50%; animation: lentera-masuk .8s cubic-bezier(.3, 1.4, .5, 1) backwards; }
+  .lentera-inti { position: relative; z-index: 1; display: grid; place-items: center; width: 104px; height: 104px; border-radius: 50%; color: white; background: radial-gradient(circle at 35% 30%, #FFC08A 0%, #F27719 45%, #B84A08 100%); box-shadow: 0 0 0 1px rgb(255 255 255 / .25) inset, 0 0 40px rgb(255 138 61 / .55), 0 0 120px rgb(255 120 40 / .35); transition: transform .3s cubic-bezier(.3, 1.5, .5, 1); }
+  .lentera:hover .lentera-inti { transform: scale(1.05); }
+  .lentera:active .lentera-inti { transform: scale(.95); }
+  .lentera:disabled .lentera-inti { filter: saturate(.4) brightness(.8); }
+  .lentera-cincin { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgb(255 160 90 / .5); animation: cincin 2.6s ease-out infinite; }
+  .lentera-cincin-2 { animation-delay: 1.3s; }
+  .ngobrol-layar:not([data-status="jalan"]) .lentera-cincin { animation-duration: 4s; opacity: .5; }
+  .gelombang-malam { display: flex; align-items: center; gap: 4px; height: 28px; }
+  .gelombang-malam i { width: 4px; height: 20%; border-radius: 4px; background: linear-gradient(#FFC08A, #F26A1B); opacity: .35; transition: opacity .3s; }
+  .ngobrol-layar[data-status="jalan"] .gelombang-malam i { opacity: 1; animation: gelombang 1s ease-in-out infinite; animation-delay: calc(var(--i) * -90ms); }
+  .teks-berjalan { display: grid; gap: 10px; min-height: 140px; max-width: 640px; align-content: start; }
+  .teks-lama { font-size: 14px; color: rgb(255 255 255 / .42); animation: teks-naik .5s ease-out backwards; }
+  .teks-baru { display: grid; gap: 6px; font-size: clamp(1.25rem, 1rem + 1.2vw, 1.75rem); font-weight: 700; line-height: 1.3; letter-spacing: -.015em; text-wrap: balance; animation: teks-naik .55s cubic-bezier(.2, .9, .3, 1) backwards; }
+  .teks-baru > span { font-size: 10px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; color: #F9C08F; }
+  .teks-baru[data-siapa="kamu"] { color: #FFE2C8; }
+  .ngobrol-kendali { display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 48px; }
+  .ngobrol-ketik { display: flex; gap: 8px; width: min(100%, 460px); padding: 6px; border-radius: 999px; background: rgb(255 255 255 / .1); border: 1px solid rgb(255 255 255 / .16); backdrop-filter: blur(12px); animation: teks-naik .3s ease-out backwards; }
+  .ngobrol-ketik input { flex: 1; min-width: 0; min-height: 40px; padding: 0 14px; background: transparent; color: white; font-size: 15px; outline: none; }
+  .ngobrol-ketik input::placeholder { color: rgb(255 255 255 / .5); }
+  .ngobrol-ketik button { display: grid; place-items: center; width: 40px; border-radius: 50%; background: #F26A1B; }
+  .kartu-tumbuh { position: absolute; z-index: 3; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); max-height: 46vh; overflow: auto; border-radius: 22px; color: var(--color-tinta); background: rgb(255 252 248 / .96); box-shadow: 0 24px 60px rgb(0 0 0 / .45); animation: kartu-masuk .7s cubic-bezier(.2, .9, .3, 1) .3s backwards; }
+  .kartu-tumbuh-kepala { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; text-align: left; }
+  .kartu-tumbuh-isi { display: none; gap: 10px; padding: 0 14px 14px; }
+  .kartu-tumbuh[data-terbuka] .kartu-tumbuh-isi { display: grid; }
+  .meter { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; font-size: 11px; font-weight: 800; background: conic-gradient(#F26A1B calc(var(--isi) * 360deg), #EFE7DE 0); transition: --isi .6s; }
+  .meter::before { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: #FFFCF8; }
+  .meter > span { position: relative; }
+  .persona-malam { padding: 10px 12px; border-radius: 14px; background: white; border: 1px solid var(--color-garis); }
+  .persona-malam[data-kosong] { border-style: dashed; background: transparent; }
+  .stempel { display: inline-block; animation: stempel .55s cubic-bezier(.3, 1.6, .5, 1) backwards; }
+  .titik-tunggu { display: inline-block; width: 28px; height: 8px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--color-garis) 0 6px, transparent 6px 10px); }
   .demo-dialog { margin: auto; width: min(460px, calc(100% - 40px)); max-height: calc(100dvh - 40px); overflow-y: auto; border: 1px solid var(--color-garis); border-radius: 24px; padding: 28px; color: var(--color-tinta); background: white; }
   .demo-dialog::backdrop { background: rgb(22 24 29 / .4); }
   .pegangan { display: none; }
@@ -200,6 +247,15 @@
 @keyframes naik { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
 @keyframes pil-masuk { from { opacity: 0; translate: -50% 40px; scale: .9; } to { opacity: 1; translate: -50% 0; scale: 1; } }
 @keyframes ajak { 0% { opacity: 0; transform: translateY(8px) scale(.9); } 8%, 85% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(4px); } }
+@keyframes tirai-buka { to { clip-path: circle(150vmax at var(--x) var(--y)); } }
+@keyframes kelip { to { opacity: .55; } }
+@keyframes kota-naik { from { opacity: 0; translate: 0 60px; } }
+@keyframes pin-jatuh { from { opacity: 0; translate: -50% -160%; } }
+@keyframes lentera-masuk { from { opacity: 0; scale: .5; } }
+@keyframes cincin { 0% { scale: .8; opacity: .8; } 100% { scale: 1.9; opacity: 0; } }
+@keyframes teks-naik { from { opacity: 0; translate: 0 14px; } }
+@keyframes kartu-masuk { from { opacity: 0; translate: 0 40px; } }
+@keyframes stempel { 0% { opacity: 0; scale: 1.6; rotate: -6deg; } 60% { opacity: 1; scale: .96; rotate: 1deg; } }
 @keyframes putar { to { rotate: 360deg; } }
 @keyframes lembar-naik { from { opacity: 0; translate: 0 40px; } to { opacity: 1; translate: 0 0; } }
 @keyframes pudar { from { opacity: 0; } }
@@ -226,6 +282,14 @@
 @media (min-width: 1024px) {
   .app-isi { margin-top: 28px; }
 }
+@media (min-width: 1024px) {
+  .ngobrol-panggung { padding-top: 6vh; padding-right: 380px; }
+  .ngobrol-kota { right: 360px; height: 62%; }
+  .kartu-tumbuh { left: auto; right: 24px; top: 84px; bottom: auto; width: 340px; max-height: calc(100dvh - 120px); }
+  .kartu-tumbuh-isi { display: grid; }
+  .kartu-tumbuh-kepala { pointer-events: none; }
+  .ngobrol-atas { padding: 20px 28px 0; }
+}
 @media (min-width: 1200px) {
   .shell { width: min(100% - 96px, 1280px); }
 }
@@ -244,3 +308,95 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* Night palette for the town on the Ngobrol screen. Places named in data-nyala light up in their day colours. */
+.kota-malam > rect:first-of-type { fill: transparent; }
+.kota-malam polygon, .kota-malam circle, .kota-malam ellipse, .kota-malam path, .kota-malam line { transition: fill .9s ease, stroke .9s ease; }
+.kota-malam [stroke="#4A4743"] { stroke: #3A4150; }
+.kota-malam [stroke="#FFFFFF"] { stroke: #262B36; }
+.kota-malam [stroke="#F7C9A0"] { stroke: #3A2A1F; }
+.kota-malam [stroke="#C9CDCD"] { stroke: #1E3340; }
+.kota-malam [fill="#000"] { opacity: 0; }
+.kota-malam [fill="#FFFFFF"] { fill: #1B1E26; }
+.kota-malam [fill="#F2F1EE"] { fill: #171A21; }
+.kota-malam [fill="#DEDCD7"] { fill: #12141A; }
+.kota-malam [fill="#EEEDEA"] { fill: #262B36; }
+.kota-malam [fill="#E4E2DE"] { fill: #20242D; }
+.kota-malam [fill="#D2CFC9"] { fill: #1A1D25; }
+.kota-malam [fill="#E7E5E1"] { fill: #13151B; }
+.kota-malam [fill="#EEF1F1"] { fill: #0E1C24; }
+.kota-malam [fill="#F7F6F3"] { fill: #E8B45C; }
+.kota-malam [fill="#FFF6EE"] { fill: #2A2420; }
+.kota-malam [fill="#FDE6D2"] { fill: #241F1B; }
+.kota-malam [fill="#F7CDA8"] { fill: #1E1A17; }
+.kota-malam [fill="#F9A15A"] { fill: #3A2C22; }
+.kota-malam [fill="#F59A4D"] { fill: #33271E; }
+.kota-malam [fill="#E7742A"] { fill: #2B211A; }
+.kota-malam [fill="#FFE2C8"] { fill: #3A3026; }
+.kota-malam [fill="#FFF3E8"] { fill: #2E2721; }
+.kota-malam [fill="#F9C08F"] { fill: #2A221C; }
+.kota-malam [fill="#F26A1B"] { fill: #4A2E1D; }
+.kota-malam [fill="#FFD9B5"] { fill: #3A2C22; }
+.kota-malam [fill="#FDE9D6"] { fill: #1C1916; }
+.kota-malam [fill="#6A625A"] { fill: #120F0D; }
+.kota-malam [data-tempat] { transition: filter .9s ease; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] { filter: drop-shadow(0 0 14px rgb(255 138 61 / .65)); }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#FFF6EE"] { fill: #FFF6EE; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#FDE6D2"] { fill: #FDE6D2; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#F7CDA8"] { fill: #F7CDA8; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#F9A15A"] { fill: #F9A15A; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#F59A4D"] { fill: #F59A4D; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#E7742A"] { fill: #E7742A; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#FFE2C8"] { fill: #FFE2C8; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#FFF3E8"] { fill: #FFF3E8; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#F9C08F"] { fill: #F9C08F; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#F26A1B"] { fill: #F26A1B; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#FFD9B5"] { fill: #FFD9B5; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#6A625A"] { fill: #6A625A; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#F7F6F3"], .kota-malam[data-nyala~="warung"] [data-tempat="warung"] [fill="#FFFFFF"] { fill: #FFF6EE; }
+.kota-malam[data-nyala~="warung"] [data-tempat="warung"] [stroke="#4A4743"] { stroke: #7A3A12; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] { filter: drop-shadow(0 0 14px rgb(255 138 61 / .65)); }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#FFF6EE"] { fill: #FFF6EE; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#FDE6D2"] { fill: #FDE6D2; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#F7CDA8"] { fill: #F7CDA8; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#F9A15A"] { fill: #F9A15A; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#F59A4D"] { fill: #F59A4D; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#E7742A"] { fill: #E7742A; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#FFE2C8"] { fill: #FFE2C8; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#FFF3E8"] { fill: #FFF3E8; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#F9C08F"] { fill: #F9C08F; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#F26A1B"] { fill: #F26A1B; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#FFD9B5"] { fill: #FFD9B5; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#6A625A"] { fill: #6A625A; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#F7F6F3"], .kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [fill="#FFFFFF"] { fill: #FFF6EE; }
+.kota-malam[data-nyala~="bengkel"] [data-tempat="bengkel"] [stroke="#4A4743"] { stroke: #7A3A12; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] { filter: drop-shadow(0 0 14px rgb(255 138 61 / .65)); }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#FFF6EE"] { fill: #FFF6EE; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#FDE6D2"] { fill: #FDE6D2; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#F7CDA8"] { fill: #F7CDA8; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#F9A15A"] { fill: #F9A15A; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#F59A4D"] { fill: #F59A4D; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#E7742A"] { fill: #E7742A; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#FFE2C8"] { fill: #FFE2C8; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#FFF3E8"] { fill: #FFF3E8; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#F9C08F"] { fill: #F9C08F; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#F26A1B"] { fill: #F26A1B; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#FFD9B5"] { fill: #FFD9B5; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#6A625A"] { fill: #6A625A; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#F7F6F3"], .kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [fill="#FFFFFF"] { fill: #FFF6EE; }
+.kota-malam[data-nyala~="laundry"] [data-tempat="laundry"] [stroke="#4A4743"] { stroke: #7A3A12; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] { filter: drop-shadow(0 0 14px rgb(255 138 61 / .65)); }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#FFF6EE"] { fill: #FFF6EE; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#FDE6D2"] { fill: #FDE6D2; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#F7CDA8"] { fill: #F7CDA8; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#F9A15A"] { fill: #F9A15A; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#F59A4D"] { fill: #F59A4D; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#E7742A"] { fill: #E7742A; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#FFE2C8"] { fill: #FFE2C8; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#FFF3E8"] { fill: #FFF3E8; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#F9C08F"] { fill: #F9C08F; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#F26A1B"] { fill: #F26A1B; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#FFD9B5"] { fill: #FFD9B5; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#6A625A"] { fill: #6A625A; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#F7F6F3"], .kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#FFFFFF"] { fill: #FFF6EE; }
+.kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [stroke="#4A4743"] { stroke: #7A3A12; }

@@ -3,7 +3,8 @@
 /*
  * Applicants for the employer. Opening an applicant is a Laci (reading and choosing);
  * "Loloskan" continues in the same Laci with the Tahap Berikutnya form; "Tidak lolos"
- * is a Dialog because it is final and the applicant is told right away.
+ * is a Dialog because it is final and the applicant is told right away. After Lolos the
+ * same form adds another Tahap Berikutnya, for example an interview after the first chat.
  */
 
 import { useState } from "react";
@@ -63,7 +64,8 @@ export function DaftarPelamar() {
     setProses(true);
     setGalat("");
     try {
-      const hasil = await api<LamaranApi>(`/lamaran/${dipilih.id}/lolos`, { method: "POST", body: { jenis, detail: detail.trim() } });
+      const jalur = dipilih.status === "lolos" ? "tahap" : "lolos";
+      const hasil = await api<LamaranApi>(`/lamaran/${dipilih.id}/${jalur}`, { method: "POST", body: { jenis, detail: detail.trim() } });
       setDipilih(hasil);
       setTahapan("selesai");
       daftar.muatUlang();
@@ -86,6 +88,13 @@ export function DaftarPelamar() {
   const lamaran = daftar.data?.lamaran ?? [];
   const l = dipilih;
   const bisaPutuskan = l && (l.status === "terkirim" || l.status === "dilihat");
+  const tahapTambahan = l?.status === "lolos" && l.tahap_berikutnya.length > 0;
+  const mulaiTahap = () => {
+    setJenis(null);
+    setDetail("");
+    setGalat("");
+    setTahapan("jenis");
+  };
 
   const aksi =
     l && tahapan === "lihat" && bisaPutuskan ? (
@@ -93,6 +102,8 @@ export function DaftarPelamar() {
         <button type="button" className="tombol tombol-utama" onClick={() => setTahapan("jenis")}><IconCheck size={20} />Loloskan</button>
         <button type="button" className="tombol tombol-garis" onClick={() => setTolak(true)}>Tidak lolos</button>
       </>
+    ) : l && (tahapan === "lihat" || tahapan === "selesai") && l.status === "lolos" ? (
+      <button type="button" className="tombol tombol-garis min-h-14" onClick={mulaiTahap}>Tambah tahap berikutnya</button>
     ) : tahapan === "detail" ? (
       <button type="button" className="tombol tombol-utama" disabled={detail.trim().length < 3 || proses} onClick={() => void loloskan()}>{proses ? "Mengirim..." : "Kirim ke pelamar"}</button>
     ) : undefined;
@@ -122,7 +133,7 @@ export function DaftarPelamar() {
         buka={l !== null}
         onTutup={() => setDipilih(null)}
         label={tahapan === "lihat" ? `Pelamar · ${l?.lowongan.judul ?? ""}` : "Tahap berikutnya"}
-        judul={tahapan === "lihat" ? (l?.pencari.nama ?? "") : tahapan === "jenis" ? "Bagaimana pelamar menghubungimu?" : tahapan === "detail" ? JENIS_TAHAP.find((j) => j.id === jenis)?.label ?? "" : "Pelamar sudah diberi tahu"}
+        judul={tahapan === "lihat" ? (l?.pencari.nama ?? "") : tahapan === "jenis" ? (tahapTambahan ? "Tahap apa lagi berikutnya?" : "Bagaimana pelamar menghubungimu?") : tahapan === "detail" ? JENIS_TAHAP.find((j) => j.id === jenis)?.label ?? "" : "Pelamar sudah diberi tahu"}
         aksi={aksi}
       >
         {l && tahapan === "lihat" && (
@@ -168,14 +179,14 @@ export function DaftarPelamar() {
           <div className="grid gap-3">
             <label htmlFor="detail-tahap" className="text-[17px] text-abu">{JENIS_TAHAP.find((j) => j.id === jenis)?.contoh}</label>
             <textarea id="detail-tahap" autoFocus rows={3} value={detail} onChange={(e) => setDetail(e.target.value)} className="input-mulai min-h-28 py-3 text-lg" />
-            <p className="text-[15px] text-abu">Setelah dikirim, {l.pencari.nama.split(" ")[0]} langsung diberi tahu dan kontaknya terbuka untukmu.</p>
+            <p className="text-[15px] text-abu">Setelah dikirim, {l.pencari.nama.split(" ")[0]} langsung diberi tahu{l.status === "lolos" ? "." : " dan kontaknya terbuka untukmu."}</p>
             {galat && <p role="alert" className="rounded-2xl bg-merah-muda p-3 text-sm text-merah">{galat}</p>}
           </div>
         )}
 
         {l && tahapan === "selesai" && (
           <div className="grid gap-3">
-            <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-4 text-[17px] font-bold text-daun"><IconCheck size={22} />{l.pencari.nama} lolos ke tahap berikutnya.</p>
+            <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-4 text-[17px] font-bold text-daun"><IconCheck size={22} />{l.tahap_berikutnya.length > 1 ? `Tahap baru terkirim ke ${l.pencari.nama}.` : `${l.pencari.nama} lolos ke tahap berikutnya.`}</p>
             {l.pencari.telepon && <p className="text-[17px]">Kontak pelamar: <strong>{l.pencari.telepon}</strong></p>}
           </div>
         )}

@@ -1,0 +1,125 @@
+// Response shapes from lokerin-backend (src/domain/serialize.ts there). Names follow GLOSSARY.md.
+
+export type Peran = "pencari" | "pemberi";
+
+export type PemberiKerjaApi = {
+  id: string;
+  nama_usaha: string;
+  jenis: "umkm" | "perusahaan" | "rumah_tangga";
+  kota: string;
+  kecamatan: string | null;
+  terverifikasi: boolean;
+  status_verifikasi: "belum" | "menunggu" | "terverifikasi";
+  yang_dicek: string[];
+  diverifikasi_pada: string | null;
+};
+
+export type MasalahPemeriksaan = { kode: string; tingkat: "tahan" | "peringatan"; pesan: string; field?: string };
+export type HasilPemeriksaan = { boleh_terbit: boolean; masalah: MasalahPemeriksaan[]; diperiksa_pada: string };
+
+export type LowonganApi = {
+  id: string;
+  judul: string;
+  kategori: string;
+  segmen: "informal" | "magang";
+  deskripsi: string;
+  syarat: string[];
+  upah: { label: string; jenis: "harian" | "mingguan" | "bulanan" | "borongan" | "per_jam" | null; min: number | null; max: number | null; perkiraan_bulanan: number | null };
+  jam_kerja: string | null;
+  jam_per_hari: number | null;
+  hari_per_minggu: number | null;
+  jenis_kerja: string | null;
+  mulai: string | null;
+  lokasi: { kota: string | null; kecamatan: string | null; alamat: string | null; lat: number | null; lng: number | null };
+  butuh_hari_ini: string | null;
+  bahasa: "id" | "en";
+  status: "draf" | "terbit" | "terisi" | "disembunyikan";
+  pemeriksaan: HasilPemeriksaan | null;
+  diterbitkan_pada: string | null;
+  pemberi_kerja: PemberiKerjaApi;
+  kemiripan?: number | null;
+  kenapa_cocok?: string[];
+  jarak_km?: number;
+  jumlah_lamaran?: number;
+  alasan_di_luar?: string;
+};
+
+export type FaktaApi = {
+  id: string;
+  jenis: "pengalaman" | "keahlian" | "pendidikan" | "prestasi" | "lainnya";
+  judul: string;
+  detail: string | null;
+  tempat: string | null;
+  periode: string | null;
+  status: "usulan" | "terkonfirmasi" | "ditolak";
+  sumber: string;
+};
+
+export type Preferensi = {
+  kota: string[];
+  upah_min?: number;
+  upah_satuan?: "harian" | "bulanan";
+  mulai?: string;
+  jenis_kerja?: string[];
+  mau_pindah?: boolean;
+};
+
+export type PersonaApi = {
+  id: string;
+  judul: string;
+  ringkasan: string;
+  keahlian: string[];
+  fakta_ids: string[];
+  preferensi: Preferensi;
+};
+
+export type ProfilApi = {
+  pencari: { id: string; nama: string; kota: string; kecamatan: string | null; pendidikan: string | null; tahun_lahir: number | null };
+  fakta: FaktaApi[];
+  persona: PersonaApi[];
+};
+
+export type TahapApi = { id: string; jenis: "whatsapp" | "meet" | "alamat" | "lainnya"; detail: string; jadwal: string | null; catatan: string | null };
+
+export type StatusLamaran = "terkirim" | "dilihat" | "lolos" | "tidak_lolos";
+
+export type LamaranApi = {
+  id: string;
+  status: StatusLamaran;
+  pesan: string | null;
+  dikirim_pada: string;
+  dilihat_pada: string | null;
+  diputuskan_pada: string | null;
+  cv_khusus_id: string | null;
+  pencari: { id: string; nama: string; kota: string; telepon: string | null; email: string | null; kontak_disembunyikan: boolean };
+  persona: PersonaApi;
+  lowongan: { id: string; judul: string; kota: string | null };
+  pemberi_kerja: PemberiKerjaApi;
+  tahap_berikutnya: TahapApi[];
+};
+
+export type ItemCv = { id: string; text: string; fakta_ids: string[]; diedit_pengguna?: boolean };
+export type IsiCv = {
+  nama: string;
+  judul: string;
+  kontak: { telepon?: string; email?: string; kota?: string };
+  ringkasan: string;
+  keahlian: string[];
+  bagian: { id: string; judul: string; items: ItemCv[] }[];
+};
+
+export type CvApi = {
+  id: string;
+  template: "satu_kolom" | "dua_kolom";
+  bahasa: "id" | "en";
+  isi: IsiCv;
+  isi_awal?: IsiCv;
+  kontak_disembunyikan: boolean;
+  peringatan: string | null;
+};
+
+export type Pengguna = { id: string; peran: Peran; nama: string; kota: string };
+
+export type MeApi = Pengguna & { kecamatan: string | null; pemberi_kerja: PemberiKerjaApi | null };
+
+export type AkunDemo = { key: string; peran: Peran; nama: string; kota: string; pemberi_kerja: PemberiKerjaApi | null };

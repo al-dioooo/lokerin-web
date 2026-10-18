@@ -49,6 +49,9 @@ export function AsuhIcon(props: IconProps) {
   return <Gambar {...props}><path d="M6 42V28c0-6 17-6 17 0v14m3 0V31c0-5 15-5 15 0v11" /><circle cx="14" cy="13" r="7" /><circle cx="34" cy="18" r="5" /><path d="M13 32v10m21-9v9m-11-6h3" /><path d="M32 4c-4-5-8 2 0 6 8-4 4-11 0-6Z" fill={accent} stroke="none" /></Gambar>;
 }
 
+export function MagangIcon(props: IconProps) {
+  return <Gambar {...props}><path d="M9 11h30v20H9ZM4 37h40l-3 5H7ZM20 37l1 2h6l1-2M15 17h10m-10 5h14m-14 5h7" /><path d="M31 15h4v4h-4Z" fill={accent} stroke="none" /></Gambar>;
+}
 export const KATEGORI = [
   { slug: "las", label: "Tukang Las", Icon: LasIcon, warna: "jingga-terang", ucapan: "Tukang las. Kerja mengelas besi dan pagar." },
   { slug: "ojek", label: "Ojek & Driver", Icon: OjekIcon, warna: "jingga-terang", ucapan: "Ojek dan driver. Kerja mengantar penumpang atau menyetir kendaraan." },
@@ -64,6 +67,7 @@ export const KATEGORI = [
   { slug: "kurir", label: "Kurir & Antar", Icon: KurirIcon, warna: "jingga-terang", ucapan: "Kurir dan antar. Kerja mengantar paket, makanan, atau belanjaan." },
   { slug: "acara", label: "Bantu Acara", Icon: AcaraIcon, warna: "jingga-terang", ucapan: "Bantu acara. Kerja menyiapkan tempat dan membantu jalannya acara." },
   { slug: "asuh", label: "Jaga Anak & Lansia", Icon: AsuhIcon, warna: "jingga-terang", ucapan: "Jaga anak dan lansia. Kerja mendampingi anak atau orang lanjut usia." },
+  { slug: "magang", label: "Magang", Icon: MagangIcon, warna: "jingga-terang", ucapan: "Magang. Belajar kerja di kantor, studio, atau usaha digital sambil dibayar." },
 ] as const;
 
 export type KategoriSlug = (typeof KATEGORI)[number]["slug"];

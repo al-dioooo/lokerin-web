@@ -1,20 +1,23 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { AksiLowongan } from "@/components/app/AksiLowongan";
+import { AksiLamar } from "@/components/pencari/AksiLamar";
+import { apiAktif } from "@/lib/api/klien";
+import { satuLowongan } from "@/lib/api/sumber";
 import { Halaman } from "@/components/app/Halaman";
 import { TautanArah } from "@/components/app/TautanArah";
 import { SisaWaktu } from "@/components/app/SisaWaktu";
 import { getKategori } from "@/components/icons/categories";
 import { IconArrowLeft, IconCalendar, IconCash, IconCheck, IconClock, IconMapPin, IconShieldCheck, IconX } from "@/components/icons/tabler";
 import { CekUpah } from "@/components/ui/CekUpah";
-import { LOWONGAN, cariLowongan, upahTeks } from "@/lib/data";
+import { LOWONGAN, upahTeks } from "@/lib/data";
 
 export function generateStaticParams() {
   return LOWONGAN.map((l) => ({ id: l.id }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/app/lowongan/[id]">) {
-  const l = cariLowongan((await params).id);
+  const l = (await satuLowongan((await params).id)).data?.lowongan;
   return { title: l ? `${l.judul} · ${l.usaha}` : "Lowongan" };
 }
 
@@ -29,8 +32,9 @@ export default function DetailLowongan({ params }: PageProps<"/app/lowongan/[id]
 }
 
 async function IsiLowongan({ params }: Pick<PageProps<"/app/lowongan/[id]">, "params">) {
-  const l = cariLowongan((await params).id);
-  if (!l) notFound();
+  const hasil = (await satuLowongan((await params).id)).data;
+  if (!hasil) notFound();
+  const l = hasil.lowongan;
   const { Icon, label } = getKategori(l.kategori);
   const jarak = String(l.jarakKm).replace(".", ",");
   const bacaan = `${l.mendesakMenit ? "Butuh hari ini. " : ""}${l.judul} di ${l.usaha}, ${l.area}, ${jarak} kilometer dari kamu. Upah ${upahTeks(l).replace("/", " per ")}. Jadwal ${l.jadwal}. ${l.deskripsi}`;
@@ -63,7 +67,7 @@ async function IsiLowongan({ params }: Pick<PageProps<"/app/lowongan/[id]">, "pa
         </ul>
         {l.verifikasi.ktpSamaran && <p className="mt-3 flex items-center gap-2 border-t border-dashed border-garis pt-3 text-xs text-abu"><IconCalendar size={14} />Dicek {l.verifikasi.tanggal} · KTP {l.verifikasi.ktpSamaran}</p>}
       </section>
-      {l.cekUpah === "curiga" ? <p className="rounded-2xl bg-merah-muda p-4 text-sm text-merah">Lowongan ini tidak bisa dilamar. Jangan pernah membayar biaya apa pun untuk mendapat pekerjaan.</p> : <AksiLowongan judul={l.judul} usaha={l.usaha} wa={l.wa} bacaan={bacaan} />}
+      {l.cekUpah === "curiga" ? <p className="rounded-2xl bg-merah-muda p-4 text-sm text-merah">Lowongan ini tidak bisa dilamar. Jangan pernah membayar biaya apa pun untuk mendapat pekerjaan.</p> : hasil.api && apiAktif ? <AksiLamar lowonganId={l.id} judul={l.judul} usaha={l.usaha} magang={hasil.api.segmen === "magang"} bacaan={bacaan} /> : <AksiLowongan judul={l.judul} usaha={l.usaha} wa={l.wa} bacaan={bacaan} />}
     </article>
     </Halaman>
   );

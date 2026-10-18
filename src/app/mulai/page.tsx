@@ -1,7 +1,7 @@
-import { Onboarding } from "@/components/mulai/Onboarding";
+import { AlurMulai } from "@/components/mulai/AlurMulai";
 
 export const metadata = { title: "Mulai · Lokerin" };
 
 export default function Mulai() {
-  return <Onboarding />;
+  return <AlurMulai />;
 }

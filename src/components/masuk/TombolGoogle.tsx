@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { masukDenganGoogle, simpanAkun } from "@/lib/auth";
+import { useEffect, useState } from "react";
+import { masukDenganGoogle, siapkanGoogle, simpanAkun } from "@/lib/auth";
+import { apiAktif, GalatApi } from "@/lib/api/klien";
+import { masukGoogle } from "@/lib/api/sesi";
 
 function LogoG() {
   return (
@@ -18,16 +20,40 @@ function LogoG() {
 export function TombolGoogle({ tujuan = "/mulai" }: { tujuan?: string }) {
   const router = useRouter();
   const [proses, setProses] = useState(false);
+  const [galat, setGalat] = useState("");
+
+  // Load Google's script before the tap, so the tap itself can open Google's window.
+  useEffect(() => {
+    void siapkanGoogle()?.catch(() => {});
+  }, []);
+
   async function masuk() {
     setProses(true);
-    const akun = await masukDenganGoogle();
-    simpanAkun(akun);
-    router.push(tujuan);
+    setGalat("");
+    try {
+      const akun = await masukDenganGoogle();
+      if (akun.aksesGoogle && apiAktif) {
+        const hasil = await masukGoogle(akun.aksesGoogle);
+        // Already has an account: straight into the app.
+        if (hasil.pengguna) return router.push("/app");
+        simpanAkun({ ...akun, nama: hasil.google?.nama ?? "", email: hasil.google?.email ?? "" });
+      } else {
+        simpanAkun(akun);
+      }
+      router.push(tujuan);
+    } catch (e) {
+      setProses(false);
+      const pesan = e instanceof Error ? e.message : "";
+      if (pesan !== "dibatalkan") setGalat(e instanceof GalatApi ? e.message : pesan || "Belum bisa masuk. Coba lagi.");
+    }
   }
   return (
-    <button type="button" onClick={masuk} disabled={proses} className="tombol-google" aria-busy={proses}>
-      {proses ? <span className="putar-kecil" aria-hidden="true" /> : <LogoG />}
-      <span>{proses ? "Menghubungkan ke Google…" : "Masuk dengan Google"}</span>
-    </button>
+    <>
+      <button type="button" onClick={masuk} disabled={proses} className="tombol-google" aria-busy={proses}>
+        {proses ? <span className="putar-kecil" aria-hidden="true" /> : <LogoG />}
+        <span>{proses ? "Menghubungkan ke Google…" : "Masuk dengan Google"}</span>
+      </button>
+      {galat && <p role="alert" className="mt-3 rounded-2xl bg-merah-muda p-3 text-sm text-merah">{galat}</p>}
+    </>
   );
 }

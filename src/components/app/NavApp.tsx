@@ -4,11 +4,20 @@ import { LayoutGroup, m } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { IconHome, IconIdBadge2, IconMap, IconMicrophone, IconUser } from "../icons/tabler";
+import { IconBriefcase, IconHome, IconIdBadge2, IconMap, IconMicrophone, IconPlus, IconUser, IconUserCheck } from "../icons/tabler";
+import { useSesi } from "@/lib/api/sesi";
 import { aturArah } from "./Halaman";
 import { TautanNgobrol } from "./TautanNgobrol";
 
-const MENU = [
+const MENU_PENCARI = [
+  { href: "/app", label: "Beranda", Icon: IconHome },
+  { href: "/app/peta", label: "Peta", Icon: IconMap },
+  { href: "/app/ngobrol", label: "Ngobrol", Icon: IconMicrophone },
+  { href: "/app/lamaran", label: "Lamaran", Icon: IconBriefcase },
+  { href: "/app/profil", label: "Profil", Icon: IconUser },
+];
+
+const MENU_CONTOH = [
   { href: "/app", label: "Beranda", Icon: IconHome },
   { href: "/app/peta", label: "Peta", Icon: IconMap },
   { href: "/app/ngobrol", label: "Ngobrol", Icon: IconMicrophone },
@@ -16,14 +25,25 @@ const MENU = [
   { href: "/app/kartu", label: "Kartu", Icon: IconIdBadge2 },
 ];
 
-function indeks(path: string) {
+const MENU_PEMBERI = [
+  { href: "/app", label: "Beranda", Icon: IconHome },
+  { href: "/app/pelamar", label: "Pelamar", Icon: IconUserCheck },
+  { href: "/app/ngobrol", label: "Ngobrol", Icon: IconMicrophone },
+  { href: "/app/pasang", label: "Pasang", Icon: IconPlus },
+  { href: "/app/profil", label: "Usaha", Icon: IconUser },
+];
+
+function indeks(menu: typeof MENU_PENCARI, path: string) {
   if (path.startsWith("/app/lowongan")) return 0;
-  const i = MENU.findLastIndex(({ href }) => (href === "/app" ? path === "/app" : path.startsWith(href)));
+  const i = menu.findLastIndex(({ href }) => (href === "/app" ? path === "/app" : path.startsWith(href)));
   return i < 0 ? 0 : i;
 }
 
 export function PilNav() {
   const path = usePathname();
+  const { pengguna } = useSesi();
+  const pemberi = pengguna?.peran === "pemberi";
+  const MENU = pemberi ? MENU_PEMBERI : pengguna ? MENU_PENCARI : MENU_CONTOH;
   // Highlight the tapped item right away instead of waiting for the next page to load.
   const [ketuk, setKetuk] = useState<number | null>(null);
   const [jalur, setJalur] = useState(path);
@@ -32,7 +52,7 @@ export function PilNav() {
     setJalur(path);
     setKetuk(null);
   }
-  const aktif = ketuk ?? indeks(path);
+  const aktif = ketuk ?? indeks(MENU, path);
 
   function pergi(ke: number) {
     if (ke === aktif) return;
@@ -47,8 +67,8 @@ export function PilNav() {
           const ini = i === aktif;
           if (i === 2) {
             return (
-              <TautanNgobrol key={href} className="pil-ngobrol" aria-current={ini ? "page" : undefined} aria-label="Ngobrol: cari kerja dan susun CV dengan bicara">
-                {!ini && <span className="pil-ajak" aria-hidden="true">Ceritakan kerjamu, CV jadi sendiri</span>}
+              <TautanNgobrol key={href} className="pil-ngobrol" aria-current={ini ? "page" : undefined} aria-label={pemberi ? "Ngobrol: pasang lowongan dan cek pelamar dengan bicara" : "Ngobrol: cari kerja dan susun CV dengan bicara"}>
+                {!ini && <span className="pil-ajak" aria-hidden="true">{pemberi ? "Bilang butuh siapa, lowongan jadi sendiri" : "Ceritakan kerjamu, CV jadi sendiri"}</span>}
                 <m.span className="pil-ngobrol-orb" whileHover={{ scale: 1.06, rotate: -6 }} whileTap={{ scale: 0.92 }} transition={{ type: "spring", stiffness: 500, damping: 20 }}>
                   <Icon size={26} stroke={2} />
                 </m.span>

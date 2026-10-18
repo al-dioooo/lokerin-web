@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { TautanArah } from "./TautanArah";
 import { useEffect, useRef, useState } from "react";
 import { getKategori } from "../icons/categories";
 import { IconMicrophone, IconPlayerStop, IconSend, IconSparkles } from "../icons/tabler";
@@ -119,7 +120,7 @@ export function PanggilanDemo() {
           <div className="isi-baru">
             <p className="mb-2 flex items-center gap-1.5 text-sm font-bold"><IconSparkles size={16} className="text-jingga" />Lowongan yang cocok</p>
             <ul className="grid gap-2">
-              {cv.lowongan.map((id) => { const l = cariLowongan(id); return l && <li key={id}><Link href={`/app/lowongan/${id}`} className="flex items-center justify-between gap-2 rounded-xl border border-garis bg-white p-3 text-sm"><span><span className="block font-bold">{l.judul}</span><span className="text-xs text-abu">{l.usaha}</span></span><span className="font-bold tabular-nums">{upahTeks(l)}</span></Link></li>; })}
+              {cv.lowongan.map((id) => { const l = cariLowongan(id); return l && <li key={id}><TautanArah arah="maju" href={`/app/lowongan/${id}`} className="flex items-center justify-between gap-2 rounded-xl border border-garis bg-white p-3 text-sm"><span><span className="block font-bold">{l.judul}</span><span className="text-xs text-abu">{l.usaha}</span></span><span className="font-bold tabular-nums">{upahTeks(l)}</span></TautanArah></li>; })}
             </ul>
           </div>
         )}

@@ -6,6 +6,13 @@ Replaces the earlier "Cat Warung" direction (chosen by the team on 18 Oct 2026).
 
 Banyumas drawn as a calm grey line-art town on white. Orange is the only accent, and it always means "there is work here": the highlighted buildings in the hero, the map pins, the urgent tag, the primary action. Everything else is near-black text, grey lines and soft grey cards. The illustration doubles as the Peta Kerja Sekitar map, and the urgent warung pulses for Butuh Hari Ini. Polished and friendly, lots of white space, big readable type.
 
+## Update, 18 Oct: isometric town and ngonlenin buttons
+
+- The hero art is no longer a generated image. The town is hand-built SVG in `src/components/kota/`: `iso.tsx` holds the projection and primitives (box, gable roof, windows, striped awnings, cloud trees, hedge dots, motorbikes), `KotaIsometrik.tsx` composes the Banyumas scene in i7's style (white tops, grey sides, thin #4A4743 outlines, orange only for the four workplaces) and exports `LOKASI_KERJA` so HTML pins sit on the right roofs.
+- `PetaKota` turns the town into the job map: pins and chips select a workplace, the card beside it shows the job. On phones the map pans sideways instead of shrinking.
+- Buttons copy ngonlenin's 3D pills: an orange gradient with an inner highlight for `utama`, an off-white gradient for `garis`. Eyebrows are pixel-font pills (Silkscreen).
+- UI scale is smaller: 16px body, 44px buttons, headline up to 60px.
+
 ## Tokens
 
 Expose as Tailwind v4 `@theme` tokens in `src/app/globals.css` (e.g. `bg-putih`, `text-tinta`, `bg-jingga`, `font-sans`, `font-mono`). Light theme only.

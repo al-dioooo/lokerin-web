@@ -13,6 +13,7 @@ import { KOTAK_PANDANG, KotaIsometrik, LOKASI_KERJA } from "../kota/KotaIsometri
 import { aturArah } from "../app/Halaman";
 import { keluarNgobrol, ngobrolSiap } from "../app/transisiNgobrol";
 import { Dialog } from "../lapis/Dialog";
+import { RakBenda } from "./RakBenda";
 import { JUDUL_WIDGET, WidgetAgen } from "./WidgetAgen";
 import { kategoriDari } from "@/lib/api/adaptor";
 import { api, API_URL, bacaToken, GalatApi } from "@/lib/api/klien";
@@ -248,6 +249,8 @@ export function RuangNgobrolLangsung() {
         <ol className="sr-only" aria-live="polite" aria-label="Isi obrolan">
           {kalimat.map((p) => <li key={p.kunci}>{p.siapa === "ai" ? "Lokerin" : "Kamu"}: {polos(p.teks)}</li>)}
         </ol>
+
+        <RakBenda teks={kalimat.map((k) => k.teks)} pemberi={pengguna?.peran === "pemberi"} onMulai={(k) => { setKetik(true); setPanelBuka(false); setTeks(k); }} />
 
         {galat && <p role="alert" className="mx-auto max-w-sm rounded-2xl bg-white/10 px-4 py-2 text-center text-sm text-white">{galat}</p>}
 

@@ -5,7 +5,7 @@ export type TombolProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: "kecil" | "sedang" | "besar";
 };
 const variants = { utama: "tombol-utama", halus: "tombol-halus", garis: "tombol-garis" };
-const sizes = { kecil: "px-4", sedang: "", besar: "min-h-16 px-7 text-xl" };
+const sizes = { kecil: "min-h-9 px-4 text-sm", sedang: "", besar: "min-h-12 px-6 text-base" };
 
 export function Tombol({ variant = "utama", size = "sedang", className = "", type = "button", ...props }: TombolProps) {
   return <button type={type} className={`tombol ${variants[variant]} ${sizes[size]} ${className}`} {...props} />;

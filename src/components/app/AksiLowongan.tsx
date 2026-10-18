@@ -1,5 +1,6 @@
 "use client";
 
+import { m } from "motion/react";
 import { useId, useRef, useState } from "react";
 import { IconBrandWhatsapp, IconCircleCheck, IconFlag } from "../icons/tabler";
 import { Bacakan } from "../ui/Bacakan";
@@ -23,7 +24,9 @@ export function AksiLowongan({ judul, usaha, wa, bacaan }: { judul: string; usah
       </div>
       {terkirim && <p role="status" className="mt-3 flex items-center gap-2 rounded-2xl bg-daun-muda p-3 text-sm text-daun"><IconCircleCheck size={18} />Minatmu dengan CV {PEKERJA.persona[terkirim].judul} terkirim ke {usaha}.</p>}
       <button type="button" className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-abu underline underline-offset-4"><IconFlag size={14} />Laporkan lowongan ini</button>
-      <dialog ref={dialog} className="demo-dialog" aria-labelledby={`${id}-judul`}>
+      <dialog ref={dialog} className="demo-dialog lembar-tarik" aria-labelledby={`${id}-judul`}>
+        <m.div drag="y" dragConstraints={{ top: 0, bottom: 0 }} dragElastic={{ top: 0.05, bottom: 0.7 }} dragSnapToOrigin onDragEnd={(_, info) => { if (info.offset.y > 90 || info.velocity.y > 600) dialog.current?.close(); }}>
+        <span className="pegangan" aria-hidden="true" />
         <p className="piksel text-[11px] uppercase text-jingga-tua">Saya bisa</p>
         <h2 id={`${id}-judul`} className="mt-1 text-xl">Kirim dengan CV yang mana?</h2>
         <p className="mt-1 text-sm text-abu">{usaha} akan melihat CV yang kamu pilih. Nomor HP-mu baru terlihat setelah kamu lanjut di WhatsApp.</p>
@@ -39,6 +42,7 @@ export function AksiLowongan({ judul, usaha, wa, bacaan }: { judul: string; usah
           <button type="button" className="tombol tombol-garis" onClick={() => dialog.current?.close()}>Batal</button>
           <button type="button" className="tombol tombol-utama" onClick={() => { setTerkirim(persona); dialog.current?.close(); }}>Kirim minat</button>
         </div>
+        </m.div>
       </dialog>
     </>
   );

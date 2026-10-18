@@ -1,6 +1,7 @@
 import { getKategori, type KategoriSlug } from "../icons/categories";
 
-export function PinPeta({ kategori, mendesak = false, className = "" }: { kategori: KategoriSlug; mendesak?: boolean; className?: string }) {
+export function PinPeta({ kategori, mendesak = false, className = "", left, top }: { kategori: KategoriSlug; mendesak?: boolean; className?: string; left?: number; top?: number }) {
   const { Icon, label } = getKategori(kategori);
-  return <span role="img" aria-label={`${label}${mendesak ? ", butuh hari ini" : ""}`} className={`relative inline-flex h-24 w-20 items-start justify-center ${className}`}><svg viewBox="0 0 80 96" width="80" height="96" aria-hidden="true"><path d="M40 91 13 56C-8 26 13 5 40 5s48 21 27 51Z" fill="#FBF6EC" stroke={mendesak ? "#C8261B" : "#1B1712"} strokeWidth={mendesak ? 6 : 3} strokeLinejoin="round" /></svg><span className="absolute top-4"><Icon size={44} /></span></span>;
+  const positioned = left !== undefined || top !== undefined;
+  return <span role="img" aria-label={`${label}${mendesak ? ", butuh hari ini" : ""}`} className={`inline-flex h-20 w-16 items-start justify-center ${className}`} style={{ position: positioned ? "absolute" : "relative", left: left !== undefined ? `${left}%` : undefined, top: top !== undefined ? `${top}%` : undefined, transform: positioned ? "translate(-50%, -100%)" : undefined }}>{mendesak && <><span aria-hidden="true" className="mic-ring top-0! bottom-4!" /><span className="urgent-tag absolute -top-11 left-1/2 -translate-x-1/2">BUTUH HARI INI</span></>}<svg viewBox="0 0 64 80" width="64" height="80" aria-hidden="true"><path d="M32 77 9 48A29 29 0 1 1 55 48Z" fill="var(--color-jingga)" /><circle cx="32" cy="30" r="23" fill="white" /></svg><span className="absolute top-3"><Icon size={36} /></span></span>;
 }

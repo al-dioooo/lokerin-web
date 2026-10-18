@@ -1,15 +1,18 @@
 "use client";
 
-import { startTransition, type CSSProperties } from "react";
+import { m } from "motion/react";
+import { useId } from "react";
 
-/** Segmented tabs with a sliding thumb. Changes run in a transition so keyed ViewTransitions crossfade. */
+/** Segmented tabs with a spring thumb that slides to the selected tab. */
 export function TabPil<T extends string>({ pilihan, nilai, onUbah, label, className = "" }: { pilihan: { id: T; label: string }[]; nilai: T; onUbah: (v: T) => void; label: string; className?: string }) {
-  const i = Math.max(0, pilihan.findIndex((p) => p.id === nilai));
+  const id = useId();
   return (
-    <div className={`tab-pil ${className}`} role="tablist" aria-label={label} style={{ "--n": pilihan.length, "--i": i } as CSSProperties}>
-      <span className="tab-pil-geser" aria-hidden="true" />
+    <div className={`tab-pil ${className}`} role="tablist" aria-label={label}>
       {pilihan.map((p) => (
-        <button key={p.id} type="button" role="tab" aria-selected={p.id === nilai} onClick={() => startTransition(() => onUbah(p.id))}>{p.label}</button>
+        <button key={p.id} type="button" role="tab" aria-selected={p.id === nilai} onClick={() => onUbah(p.id)}>
+          {p.id === nilai && <m.span layoutId={`tab-${id}`} className="tab-pil-geser" transition={{ type: "spring", stiffness: 480, damping: 34 }} />}
+          <span className="relative">{p.label}</span>
+        </button>
       ))}
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
-import { ViewTransition, startTransition, useState, type CSSProperties } from "react";
+import { m } from "motion/react";
+import { useState, type CSSProperties } from "react";
 import { LOWONGAN_TAYANG, PEKERJA, type JenisUpah, type PersonaId } from "@/lib/data";
 import { BarisLowongan } from "./KartuLowonganApp";
 import { TabPil } from "./TabPil";
@@ -29,9 +30,9 @@ export function DaftarCocok() {
         <TabPil label="Pilih CV" nilai={persona} onUbah={setPersona} pilihan={(Object.keys(PEKERJA.persona) as PersonaId[]).map((p) => ({ id: p, label: PEKERJA.persona[p].judul }))} />
       </div>
       <div className="mb-3 flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Jenis upah">
-        {JENIS.map((j) => <button key={j.id} type="button" className="chip-peta shrink-0" aria-pressed={jenis === j.id} onClick={() => startTransition(() => setJenis(j.id))}>{j.label}</button>)}
+        {JENIS.map((j) => <button key={j.id} type="button" className="chip-peta shrink-0" aria-pressed={jenis === j.id} onClick={() => setJenis(j.id)}>{j.label}</button>)}
       </div>
-      {daftar.length ? <ViewTransition key={`${persona}-${jenis}`} name="daftar-cocok" share="auto" enter="auto" default="none"><ul className="urut grid gap-2">{daftar.map((l, i) => <li key={l.id} style={{ "--i": i } as CSSProperties}><BarisLowongan lowongan={l} persona={persona} bersama={!l.mendesakMenit} /></li>)}</ul></ViewTransition> : <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-sm text-abu">Belum ada lowongan dengan upah {jenis} di sekitarmu.</p>}
+      {daftar.length ? <m.ul key={`${persona}-${jenis}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="urut grid gap-2">{daftar.map((l, i) => <li key={l.id} style={{ "--i": i } as CSSProperties}><BarisLowongan lowongan={l} persona={persona} bersama={!l.mendesakMenit} /></li>)}</m.ul> : <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-sm text-abu">Belum ada lowongan dengan upah {jenis} di sekitarmu.</p>}
     </section>
   );
 }

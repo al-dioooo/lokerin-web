@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PilNav } from "@/components/app/NavApp";
+import { Gerak } from "@/components/gerak/Gerak";
 import { Logo } from "@/components/brand/Logo";
 import { IconBell } from "@/components/icons/tabler";
 import { PEKERJA } from "@/lib/data";
@@ -9,6 +10,7 @@ export const metadata: Metadata = { title: { default: "Lokerin", template: "%s Â
 
 export default function AppLayout({ children }: LayoutProps<"/app">) {
   return (
+    <Gerak>
     <div className="app-kerangka">
       <header className="app-atas" style={{ viewTransitionName: "app-atas" }}>
         <Link href="/" aria-label="Lokerin, halaman utama" className="inline-flex min-h-11 items-center"><Logo size={22} /></Link>
@@ -21,5 +23,6 @@ export default function AppLayout({ children }: LayoutProps<"/app">) {
       <main id="utama" className="app-isi">{children}</main>
       <PilNav />
     </div>
+    </Gerak>
   );
 }

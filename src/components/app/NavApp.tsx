@@ -1,5 +1,6 @@
 "use client";
 
+import { m } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconHome, IconIdBadge2, IconMap, IconMicrophone, IconUser } from "../icons/tabler";
@@ -27,9 +28,12 @@ function arah(dari: number, ke: number) {
 
 function Item({ href, label, Icon, aktif, dari, ke }: { href: string; label: string; Icon: typeof IconHome; aktif: boolean; dari: number; ke: number }) {
   return (
-    <Link href={href} transitionTypes={arah(dari, ke)} className="pil-item" aria-current={aktif ? "page" : undefined}>
-      <Icon size={20} stroke={aktif ? 2.2 : 1.75} />
-      <span className="pil-label">{label}</span>
+    <Link href={href} transitionTypes={arah(dari, ke)} className="pil-item" aria-label={label} aria-current={aktif ? "page" : undefined}>
+      {aktif && <m.span layoutId="pil-sorot" className="pil-sorot" transition={{ type: "spring", stiffness: 520, damping: 40 }} />}
+      <m.span className="relative flex items-center" whileTap={{ scale: 0.88 }}>
+        <Icon size={20} stroke={aktif ? 2.2 : 1.75} />
+        <span className="pil-label">{label}</span>
+      </m.span>
     </Link>
   );
 }
@@ -45,7 +49,7 @@ export function PilNav() {
       </div>
       <Link href="/app/ngobrol" transitionTypes={arah(sekarang, 2)} className="pil-ngobrol" aria-current={diNgobrol ? "page" : undefined} aria-label="Ngobrol: cari kerja dan susun CV dengan bicara">
         {!diNgobrol && <span className="pil-ajak" aria-hidden="true">Ceritakan kerjamu, CV jadi sendiri</span>}
-        <span className="pil-ngobrol-orb"><IconMicrophone size={26} stroke={2} /></span>
+        <m.span className="pil-ngobrol-orb" whileHover={{ scale: 1.08, rotate: -8 }} whileTap={{ scale: 0.9 }} transition={{ type: "spring", stiffness: 500, damping: 18 }}><IconMicrophone size={26} stroke={2} /></m.span>
         <span className="pil-ngobrol-label piksel">Ngobrol</span>
       </Link>
       <div className="pil-sisi">

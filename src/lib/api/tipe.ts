@@ -79,6 +79,9 @@ export type ProfilApi = {
   persona: PersonaApi[];
 };
 
+/** Public summary of one Persona, without contact details (GET /kartu-kerja/:id). */
+export type KartuKerjaApi = { id: string; nama: string; kota: string; judul: string; ringkasan: string; keahlian: string[]; tautan: string };
+
 export type TahapApi = { id: string; jenis: "whatsapp" | "meet" | "alamat" | "lainnya"; detail: string; jadwal: string | null; catatan: string | null };
 
 export type StatusLamaran = "terkirim" | "dilihat" | "lolos" | "tidak_lolos";

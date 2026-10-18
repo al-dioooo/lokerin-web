@@ -2,11 +2,13 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { Logo } from "../brand/Logo";
-import { IconBrandWhatsapp, IconMapPin, IconPrinter } from "../icons/tabler";
+import { IconBrandWhatsapp, IconMapPin, IconMicrophone, IconPrinter } from "../icons/tabler";
 import { TabPil } from "./TabPil";
+import { TautanNgobrol } from "./TautanNgobrol";
 import { useApi } from "@/lib/api/hooks";
 import { apiAktif } from "@/lib/api/klien";
-import type { ProfilApi } from "@/lib/api/tipe";
+import { useSesi } from "@/lib/api/sesi";
+import type { KartuKerjaApi, ProfilApi } from "@/lib/api/tipe";
 import { PEKERJA } from "@/lib/data";
 
 type Kartu = { id: string; judul: string; ringkasan: string; keahlian: readonly string[] };
@@ -15,15 +17,32 @@ const CONTOH: Kartu[] = Object.entries(PEKERJA.persona).map(([k, p]) => ({ id: `
 
 /** One Kartu Kerja per Persona (PRD), sized for a WhatsApp status, with a link anyone can open. */
 export function KartuPersona() {
-  const profil = useApi<ProfilApi>(apiAktif ? "/profil" : null);
-  const kartu: Kartu[] = profil.data?.persona.length ? profil.data.persona.map((p) => ({ id: p.id, judul: p.judul, ringkasan: p.ringkasan, keahlian: p.keahlian })) : CONTOH;
-  const nama = profil.data?.pencari.nama ?? PEKERJA.nama;
-  const kota = profil.data ? [profil.data.pencari.kecamatan, profil.data.pencari.kota].filter(Boolean).join(", ") : PEKERJA.kota;
+  const { pengguna } = useSesi();
+  const pencari = apiAktif && pengguna?.peran === "pencari";
+  const profil = useApi<ProfilApi>(pencari ? "/profil" : null);
+  const milikSendiri = Boolean(profil.data?.persona.length);
+  const kartu: Kartu[] = milikSendiri ? profil.data!.persona.map((p) => ({ id: p.id, judul: p.judul, ringkasan: p.ringkasan, keahlian: p.keahlian })) : CONTOH;
   const [pilih, setPilih] = useState<string | null>(null);
   const k = kartu.find((x) => x.id === pilih) ?? kartu[0];
+  // The card as anyone with the link sees it, read from the same public endpoint as /kartu/[id].
+  const publik = useApi<KartuKerjaApi>(milikSendiri ? `/kartu-kerja/${k.id}` : null);
+  const terbit = publik.data?.id === k.id ? publik.data : null;
+  const nama = terbit?.nama ?? profil.data?.pencari.nama ?? PEKERJA.nama;
+  const kota = terbit?.kota ?? (profil.data ? [profil.data.pencari.kecamatan, profil.data.pencari.kota].filter(Boolean).join(", ") : PEKERJA.kota);
+  const isi: Kartu = terbit ? { id: terbit.id, judul: terbit.judul, ringkasan: terbit.ringkasan, keahlian: terbit.keahlian } : k;
   const asal = useSyncExternalStore(() => () => {}, () => window.location.origin, () => "");
-  const tautan = `${asal}/kartu/${k.id}`;
-  const pesan = encodeURIComponent(`Kartu Kerja saya di Lokerin: ${k.judul}. Lihat di ${tautan}`);
+  const tautan = terbit?.tautan ?? `${asal}/kartu/${k.id}`;
+  const pesan = encodeURIComponent(`Kartu Kerja saya di Lokerin: ${isi.judul}. Lihat di ${tautan}`);
+
+  if (pencari && profil.data && !milikSendiri) {
+    return (
+      <div className="grid max-w-md gap-4">
+        <h1 className="text-[1.75rem] leading-tight">Kartu Kerja <span className="text-jingga">untuk status WhatsApp.</span></h1>
+        <p className="text-[15px] text-abu">Kartu dibuat dari Persona-mu. Ceritakan dulu kerja yang pernah kamu lakukan, nanti kartunya jadi sendiri.</p>
+        <TautanNgobrol className="tombol tombol-utama min-h-14 text-lg"><IconMicrophone size={20} />Ceritakan di Ngobrol</TautanNgobrol>
+      </div>
+    );
+  }
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[1fr_340px]">
@@ -37,7 +56,7 @@ export function KartuPersona() {
         </div>
         <p className="mt-3 break-all text-xs text-abu">Tautan kartu: {tautan}</p>
       </div>
-      <KartuSatu nama={nama} kota={kota} kartu={k} />
+      <KartuSatu nama={nama} kota={kota} kartu={isi} />
     </div>
   );
 }

@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: PageProps<"/app/lowongan/[id]
 }
 
 const PENJELASAN_UPAH = {
-  wajar: "Upah ini sesuai dengan kisaran UMK Banyumas untuk pekerjaan sejenis.",
-  rendah: "Upah ini di bawah UMK Banyumas. Tanyakan dulu soal makan, transport, atau bonus sebelum sepakat.",
+  wajar: "Upah ini setara atau di atas UMK Banyumas 2026 (Rp2.474.599 per bulan) untuk jam kerjanya.",
+  rendah: "Peringatan upah: untuk jam kerjanya, upah ini di bawah UMK Banyumas 2026 (Rp2.474.599 per bulan). Tanyakan dulu soal makan, transport, atau bonus sebelum sepakat.",
   curiga: "Upah ini jauh di atas kisaran wajar dan lowongan meminta biaya di depan. Lokerin menahannya.",
 };
 

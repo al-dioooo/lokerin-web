@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { IconBrandWhatsapp, IconCheck, IconFileCv, IconMapPin, IconPhone, IconUser, IconX } from "../icons/tabler";
 import { Dialog } from "../lapis/Dialog";
+import { RatingKontak } from "../app/RatingKontak";
 import { Laci } from "../lapis/Laci";
 import { api, apiAktif, GalatApi, urlBertoken } from "@/lib/api/klien";
 import { useApi, useLangsung } from "@/lib/api/hooks";
@@ -148,6 +149,7 @@ export function DaftarPelamar() {
                 <ul className="mt-2 grid gap-2">{l.tahap_berikutnya.map((t) => <li key={t.id} className="rounded-2xl border border-garis p-3 text-[15px]">{t.detail}</li>)}</ul>
               </section>
             )}
+            {l.status === "lolos" && <RatingKontak lamaranId={l.id} sisi="pemberi" untuk={l.pencari.nama} />}
           </div>
         )}
 

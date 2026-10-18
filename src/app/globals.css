@@ -279,6 +279,21 @@
   .baris-persona { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 14px; background: var(--color-kertas); }
   .qr-semu { width: 64px; height: 64px; margin-top: 16px; border-radius: 8px; background: conic-gradient(from 90deg at 2px 2px, transparent 90deg, var(--color-tinta) 0) 0 0 / 8px 8px; opacity: .85; mask-image: radial-gradient(circle, black 60%, transparent 61%); mask-size: 8px 8px; }
   .cap-selesai { position: absolute; right: 18px; bottom: 22px; padding: 6px 12px; border: 2.5px solid var(--color-daun); border-radius: 8px; font-size: 13px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: var(--color-daun); rotate: -8deg; background: rgb(255 255 255 / .85); }
+  .bintang { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: #D9D2C7; transition: color .15s, transform .15s; }
+  .bintang[data-nyala] { color: #F2A30F; }
+  .bintang:hover { transform: scale(1.12); }
+  .tangga-verifikasi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .tangga-verifikasi li { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 14px; font-size: 13px; font-weight: 700; color: var(--color-abu); background: white; border: 1px solid var(--color-garis); transition: background-color .4s, border-color .4s; }
+  .tangga-verifikasi li > span { display: grid; place-items: center; flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; background: var(--color-kabut); }
+  .tangga-verifikasi li[data-selesai] { color: var(--color-tinta); }
+  .tangga-verifikasi li[data-selesai] > span { color: white; background: var(--color-daun); }
+  .tangga-verifikasi li[data-aktif] { border-color: #F7C9A0; background: var(--color-jingga-muda); }
+  .tangga-verifikasi li[data-aktif] > span { background: var(--color-jingga); color: white; }
+  .kartu-menunggu { display: flex; align-items: center; gap: 14px; padding: 18px; border-radius: 20px; background: white; border: 1px solid var(--color-garis); }
+  .kartu-terverifikasi { position: relative; overflow: hidden; padding: 22px; border-radius: 22px; background: linear-gradient(180deg, #F3FBF6, white 70%); border: 1px solid #BFE3CF; animation: stempel .6s cubic-bezier(.3, 1.4, .5, 1) backwards; }
+  .cap-terverifikasi { position: absolute; right: 16px; top: 16px; padding: 5px 10px; border: 2.5px solid var(--color-daun); border-radius: 8px; font-size: 12px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: var(--color-daun); rotate: -8deg; animation: stempel .55s cubic-bezier(.3, 1.6, .5, 1) .25s backwards; }
+  .kartu-persona { display: flex; flex-direction: column; width: min(100%, 340px); aspect-ratio: 9 / 16; margin-inline: auto; padding: 22px; border-radius: 28px; background: white; border: 1px solid #E4DED4; box-shadow: 0 24px 56px -18px rgb(21 18 16 / .22); }
+  .angka-berdetak { display: inline-block; animation: stempel .5s cubic-bezier(.3, 1.6, .5, 1) backwards; }
   .demo-dialog { margin: auto; width: min(460px, calc(100% - 40px)); max-height: calc(100dvh - 40px); overflow-y: auto; border: 1px solid var(--color-garis); border-radius: 24px; padding: 28px; color: var(--color-tinta); background: white; }
   .demo-dialog::backdrop { background: rgb(22 24 29 / .4); }
   .pegangan { display: none; }

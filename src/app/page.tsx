@@ -7,6 +7,7 @@ import { MicIcon } from "@/components/icons/interface";
 import { KotaIsometrik } from "@/components/kota/KotaIsometrik";
 import { PetaKota } from "@/components/kota/PetaKota";
 import { ObrolanJadiCV } from "@/components/landing/ObrolanJadiCV";
+import { PenghitungLangsung } from "@/components/landing/PenghitungLangsung";
 import { RakKategori } from "@/components/landing/RakKategori";
 import { CekUpah } from "@/components/ui/CekUpah";
 
@@ -35,7 +36,7 @@ export default function Home() {
         <section className="hero-tengah" aria-labelledby="judul-utama">
           <div className="hero-latar" aria-hidden="true"><Paralaks className="h-full w-full" jarak={160}><KotaIsometrik className="h-full w-full" judul="" /></Paralaks></div>
           <div className="relative mx-auto flex max-w-3xl flex-col items-center px-5 text-center">
-            <p className="pil-piksel"><span className="titik-hidup" aria-hidden="true" />Lowongan terverifikasi<span className="hidden sm:inline"> di Banyumas</span></p>
+            <PenghitungLangsung />
             <h1 id="judul-utama" className="judul-utama">Cari kerja<span>cukup ngobrol.</span></h1>
             <p className="mt-4 max-w-xl text-base text-abu sm:text-lg">Lowongan warung, bengkel, dan UMKM terverifikasi di dekatmu. Ceritakan pengalamanmu, CV-mu tersusun dari obrolan.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">

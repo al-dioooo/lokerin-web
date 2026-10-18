@@ -52,3 +52,7 @@ Not set up yet. The plan is Vercel preview builds from `main`, with production f
 ## Team
 
 To be filled in.
+
+## Credits
+
+UI icons are from [Tabler Icons](https://tabler.io/icons) (MIT), vendored as local components in `src/components/icons/tabler.tsx`. The isometric town and the 14 job category icons are drawn for Lokerin.

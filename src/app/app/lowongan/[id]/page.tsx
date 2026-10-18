@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { AksiLowongan } from "@/components/app/AksiLowongan";
+import { Bersama, Halaman } from "@/components/app/Halaman";
 import { SisaWaktu } from "@/components/app/SisaWaktu";
 import { getKategori } from "@/components/icons/categories";
 import { IconArrowLeft, IconCalendar, IconCash, IconCheck, IconClock, IconMapPin, IconShieldCheck, IconX } from "@/components/icons/tabler";
@@ -35,10 +36,11 @@ async function IsiLowongan({ params }: Pick<PageProps<"/app/lowongan/[id]">, "pa
   const bacaan = `${l.mendesakMenit ? "Butuh hari ini. " : ""}${l.judul} di ${l.usaha}, ${l.area}, ${jarak} kilometer dari kamu. Upah ${upahTeks(l).replace("/", " per ")}. Jadwal ${l.jadwal}. ${l.deskripsi}`;
   const cek = [["KTP pemilik", l.verifikasi.ktp], ["NPWP", l.verifikasi.npwp], ["Foto tempat usaha", l.verifikasi.fotoUsaha]] as const;
   return (
+    <Halaman>
     <article className="mx-auto grid max-w-2xl gap-5">
-      <Link href="/app" className="inline-flex min-h-11 w-fit items-center gap-1.5 text-sm font-semibold text-abu"><IconArrowLeft size={18} />Kembali</Link>
+      <Link href="/app" transitionTypes={["nav-mundur"]} className="inline-flex min-h-11 w-fit items-center gap-1.5 text-sm font-semibold text-abu"><IconArrowLeft size={18} />Kembali</Link>
       <header className="flex items-start gap-3">
-        <span className="ubin-ikon size-14"><Icon size={40} /></span>
+        <Bersama nama={`ikon-${l.id}`}><span className="ubin-ikon size-14"><Icon size={40} /></span></Bersama>
         <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold text-abu">{label} · dipasang {l.dipasang.toLowerCase()}</p>
           <h1 className="text-2xl leading-tight">{l.judul}</h1>
@@ -63,5 +65,6 @@ async function IsiLowongan({ params }: Pick<PageProps<"/app/lowongan/[id]">, "pa
       </section>
       {l.cekUpah === "curiga" ? <p className="rounded-2xl bg-merah-muda p-4 text-sm text-merah">Lowongan ini tidak bisa dilamar. Jangan pernah membayar biaya apa pun untuk mendapat pekerjaan.</p> : <AksiLowongan judul={l.judul} usaha={l.usaha} wa={l.wa} bacaan={bacaan} />}
     </article>
+    </Halaman>
   );
 }

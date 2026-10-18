@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { m } from "motion/react";
 import { useState } from "react";
 import { getKategori } from "../icons/categories";
 import { IconIdBadge2, IconMicrophone, IconPencil, IconPrinter } from "../icons/tabler";
 import { PEKERJA, type PersonaId } from "@/lib/data";
+import { TabPil } from "./TabPil";
 
 export function ProfilCv() {
   const [persona, setPersona] = useState<PersonaId>("las");
@@ -14,10 +16,8 @@ export function ProfilCv() {
   return (
     <div className="grid items-start gap-5 lg:grid-cols-[1fr_300px]">
       <div className="grid gap-4">
-        <div className="inline-flex w-fit rounded-full bg-kabut p-1 print:hidden" role="tablist" aria-label="Pilih CV">
-          {(Object.keys(PEKERJA.persona) as PersonaId[]).map((k) => <button key={k} type="button" role="tab" aria-selected={persona === k} className="tab-persona" onClick={() => setPersona(k)}>CV {PEKERJA.persona[k].judul}</button>)}
-        </div>
-        <article className="lembar-cv" role="tabpanel" aria-label={`CV ${p.judul}`}>
+        <TabPil className="w-fit print:hidden" label="Pilih CV" nilai={persona} onUbah={setPersona} pilihan={(Object.keys(PEKERJA.persona) as PersonaId[]).map((k) => ({ id: k, label: `CV ${PEKERJA.persona[k].judul}` }))} />
+        <m.article key={persona} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} className="lembar-cv" role="tabpanel" aria-label={`CV ${p.judul}`}>
           <header className="flex items-start justify-between gap-4 border-b border-garis pb-4">
             <div>
               <p className="piksel text-[11px] uppercase text-jingga-tua">CV {p.judul}</p>
@@ -41,7 +41,7 @@ export function ProfilCv() {
           <ul className="mt-2 flex flex-wrap gap-1.5">{p.keahlian.map((k) => <li key={k} className="chip-kategori py-1 pl-3 text-[13px]">{k}</li>)}</ul>
           <h3 className="mt-5 text-sm uppercase tracking-wide text-abu">Bisa kerja</h3>
           <p className="mt-1 text-[15px]">{p.waktu}</p>
-        </article>
+        </m.article>
       </div>
       <aside className="grid gap-3 print:hidden">
         <button type="button" className="tombol tombol-utama" onClick={() => window.print()}><IconPrinter size={18} />Cetak CV ini</button>

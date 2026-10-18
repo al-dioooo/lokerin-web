@@ -3,15 +3,16 @@ import { getKategori } from "../icons/categories";
 import { IconChevronRight, IconMapPin, IconShieldCheck } from "../icons/tabler";
 import { CekUpah } from "../ui/CekUpah";
 import { upahTeks, type Lowongan, type PersonaId } from "@/lib/data";
+import { Bersama } from "./Halaman";
 import { SisaWaktu } from "./SisaWaktu";
 
 /** Compact job row for lists. */
-export function BarisLowongan({ lowongan: l, persona }: { lowongan: Lowongan; persona?: PersonaId }) {
+export function BarisLowongan({ lowongan: l, persona, bersama = true }: { lowongan: Lowongan; persona?: PersonaId; bersama?: boolean }) {
   const { Icon } = getKategori(l.kategori);
   const skor = persona ? l.cocok?.[persona] : undefined;
   return (
-    <Link href={`/app/lowongan/${l.id}`} className="baris-lowongan">
-      <span className="ubin-ikon"><Icon size={32} /></span>
+    <Link href={`/app/lowongan/${l.id}`} transitionTypes={["nav-maju"]} className="baris-lowongan">
+      {bersama ? <Bersama nama={`ikon-${l.id}`}><span className="ubin-ikon"><Icon size={32} /></span></Bersama> : <span className="ubin-ikon"><Icon size={32} /></span>}
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="font-bold leading-tight">{l.judul}</span>
@@ -37,10 +38,10 @@ export function BarisLowongan({ lowongan: l, persona }: { lowongan: Lowongan; pe
 export function KartuMendesak({ lowongan: l }: { lowongan: Lowongan }) {
   const { Icon } = getKategori(l.kategori);
   return (
-    <Link href={`/app/lowongan/${l.id}`} className="kartu-mendesak">
+    <Link href={`/app/lowongan/${l.id}`} transitionTypes={["nav-maju"]} className="kartu-mendesak">
       <span className="flex items-center justify-between gap-2"><span className="urgent-tag">Butuh hari ini</span>{l.mendesakMenit && <SisaWaktu menit={l.mendesakMenit} />}</span>
       <span className="mt-3 flex items-center gap-3">
-        <span className="ubin-ikon bg-white"><Icon size={30} /></span>
+        <Bersama nama={`ikon-${l.id}`}><span className="ubin-ikon bg-white"><Icon size={30} /></span></Bersama>
         <span className="min-w-0"><span className="block font-bold leading-tight">{l.judul}</span><span className="block truncate text-sm text-abu">{l.usaha}</span></span>
       </span>
       <span className="mt-3 flex items-center justify-between gap-2 text-sm"><span className="font-bold tabular-nums">{upahTeks(l)}</span><span className="text-xs text-abu">{String(l.jarakKm).replace(".", ",")} km · {l.jadwal.replace("Hari ini, ", "")}</span></span>

@@ -52,6 +52,16 @@ export function AsuhIcon(props: IconProps) {
 export function MagangIcon(props: IconProps) {
   return <Gambar {...props}><path d="M9 11h30v20H9ZM4 37h40l-3 5H7ZM20 37l1 2h6l1-2M15 17h10m-10 5h14m-14 5h7" /><path d="M31 15h4v4h-4Z" fill={accent} stroke="none" /></Gambar>;
 }
+export function DesainIcon(props: IconProps) {
+  return <Gambar {...props}><rect x="5" y="7" width="38" height="30" rx="4" /><path d="M5 31h38M18 44h12m-6-7v7" /><path d="m14 26 12-12 4 4-12 12h-4Z" /><path d="m26 14 4-4 4 4-4 4" fill={accent} /></Gambar>;
+}
+export function TeknologiIcon(props: IconProps) {
+  return <Gambar {...props}><rect x="8" y="8" width="32" height="22" rx="3" /><path d="M3 38h42l-4-8H7Z" /><path d="m19 15-4 4 4 4m10-8 4 4-4 4" /><path d="m26 13-4 12" stroke={accent} strokeWidth="2.6" /></Gambar>;
+}
+export function KantorIcon(props: IconProps) {
+  return <Gambar {...props}><path d="M11 6h18l8 8v28H11Z" /><path d="M29 6v8h8M17 22h14m-14 6h14m-14 6h8" /><circle cx="33" cy="36" r="6" fill={accent} /><path d="m30.5 36 2 2 3.5-4" /></Gambar>;
+}
+
 export const KATEGORI = [
   { slug: "las", label: "Tukang Las", Icon: LasIcon, warna: "jingga-terang", ucapan: "Tukang las. Kerja mengelas besi dan pagar." },
   { slug: "ojek", label: "Ojek & Driver", Icon: OjekIcon, warna: "jingga-terang", ucapan: "Ojek dan driver. Kerja mengantar penumpang atau menyetir kendaraan." },
@@ -70,7 +80,14 @@ export const KATEGORI = [
   { slug: "magang", label: "Magang", Icon: MagangIcon, warna: "jingga-terang", ucapan: "Magang. Belajar kerja di kantor, studio, atau usaha digital sambil dibayar." },
 ] as const;
 
-export type KategoriSlug = (typeof KATEGORI)[number]["slug"];
+/** Internship categories (the second segment). Kept apart so the 14 informal categories stay as they are. */
+export const KATEGORI_MAGANG = [
+  { slug: "desain", label: "Desain & Kreatif", Icon: DesainIcon, warna: "jingga-terang", ucapan: "Desain dan kreatif. Magang mendesain tampilan, poster, atau konten." },
+  { slug: "teknologi", label: "Teknologi", Icon: TeknologiIcon, warna: "jingga-terang", ucapan: "Teknologi. Magang membuat situs, aplikasi, atau mengelola data." },
+  { slug: "kantor", label: "Administrasi", Icon: KantorIcon, warna: "jingga-terang", ucapan: "Administrasi. Magang mengurus dokumen, data, dan pelayanan kantor." },
+] as const;
+
+export type KategoriSlug = (typeof KATEGORI)[number]["slug"] | (typeof KATEGORI_MAGANG)[number]["slug"];
 export function getKategori(slug: KategoriSlug) {
-  return KATEGORI.find((kategori) => kategori.slug === slug)!;
+  return [...KATEGORI, ...KATEGORI_MAGANG].find((kategori) => kategori.slug === slug)!;
 }

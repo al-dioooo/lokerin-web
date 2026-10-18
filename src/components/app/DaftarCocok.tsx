@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
-import { LOWONGAN_TAYANG, PEKERJA, type JenisUpah, type Lowongan, type PersonaId } from "@/lib/data";
+import { KATEGORI, KATEGORI_MAGANG, type KategoriSlug } from "@/components/icons/categories";
+import { LOWONGAN_TAYANG, PEKERJA, type JenisUpah, type Kota, type Lowongan, type PersonaId, type Segmen } from "@/lib/data";
 import { api, apiAktif } from "@/lib/api/klien";
 import { useApi } from "@/lib/api/hooks";
 import { keLowongan } from "@/lib/api/adaptor";
@@ -94,23 +95,43 @@ function HasilCari({ personaId, jenis }: { personaId: string; jenis: JenisUpah |
   );
 }
 
+const KOTA: (Kota | "semua")[] = ["semua", "Banyumas", "Purbalingga", "Cilacap"];
+
 function CocokContoh({ awal }: { awal: Lowongan[] }) {
   const [persona, setPersona] = useState<PersonaId>("las");
+  const [segmen, setSegmen] = useState<Segmen>("informal");
+  const [kota, setKota] = useState<Kota | "semua">("semua");
+  const [kategori, setKategori] = useState<KategoriSlug | "semua">("semua");
   const [jenis, setJenis] = useState<JenisUpah | "semua">("semua");
+  const daftarKategori = segmen === "magang" ? KATEGORI_MAGANG : KATEGORI.filter((k) => k.slug !== "magang");
   const daftar = awal
+    .filter((l) => (l.segmen ?? "informal") === segmen)
+    .filter((l) => kota === "semua" || (l.kota ?? "Banyumas") === kota)
+    .filter((l) => kategori === "semua" || l.kategori === kategori)
     .filter((l) => jenis === "semua" || l.jenisUpah === jenis)
     .toSorted((a, b) => (b.cocok?.[persona] ?? 0) - (a.cocok?.[persona] ?? 0));
   return (
     <section aria-labelledby="judul-cocok">
       <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 id="judul-cocok" className="text-lg">Cocok untuk CV {PEKERJA.persona[persona].judul}</h2>
-          <p className="text-sm text-abu">Diurutkan dari yang paling cocok dengan pengalamanmu.</p>
+          <h2 id="judul-cocok" className="text-lg">{segmen === "magang" ? "Lowongan magang" : `Cocok untuk CV ${PEKERJA.persona[persona].judul}`}</h2>
+          <p className="text-sm text-abu">{segmen === "magang" ? "Magang dengan uang saku di Banyumas." : "Diurutkan dari yang paling cocok dengan pengalamanmu."}</p>
         </div>
-        <TabPil label="Pilih CV" nilai={persona} onUbah={setPersona} pilihan={(Object.keys(PEKERJA.persona) as PersonaId[]).map((p) => ({ id: p, label: PEKERJA.persona[p].judul }))} />
+        {segmen === "informal" && <TabPil label="Pilih CV" nilai={persona} onUbah={setPersona} pilihan={(Object.keys(PEKERJA.persona) as PersonaId[]).map((p) => ({ id: p, label: PEKERJA.persona[p].judul }))} />}
+      </div>
+      <div className="saringan mb-3">
+        <TabPil label="Jenis lowongan" className="w-fit" nilai={segmen} onUbah={(x) => { setSegmen(x); setKategori("semua"); }} pilihan={[{ id: "informal", label: "Kerja" }, { id: "magang", label: "Magang" }]} />
+        <div className="saringan-baris" role="group" aria-label="Kota">
+          {KOTA.map((k) => <button key={k} type="button" className="chip-peta shrink-0" aria-pressed={kota === k} onClick={() => setKota(k)}>{k === "semua" ? "Semua kota" : k}</button>)}
+        </div>
+        <div className="saringan-baris" role="group" aria-label="Kategori">
+          <button type="button" className="chip-peta shrink-0" aria-pressed={kategori === "semua"} onClick={() => setKategori("semua")}>Semua kategori</button>
+          {daftarKategori.map(({ slug, label, Icon }) => <button key={slug} type="button" className="chip-peta chip-ikon shrink-0" aria-pressed={kategori === slug} onClick={() => setKategori(slug)}><Icon size={18} />{label}</button>)}
+        </div>
       </div>
       <PilihJenis jenis={jenis} onUbah={setJenis} />
-      {daftar.length ? <ul key={`${persona}-${jenis}`} className="urut grid gap-2">{daftar.map((l, i) => <li key={l.id} style={{ "--i": i } as CSSProperties}><BarisLowongan lowongan={l} persona={persona} /></li>)}</ul> : <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-sm text-abu">Belum ada lowongan dengan upah {jenis} di sekitarmu.</p>}
+      <p className="mb-2 text-xs text-abu">{daftar.length} lowongan</p>
+      {daftar.length ? <ul key={`${persona}-${segmen}-${kota}-${kategori}-${jenis}`} className="urut grid gap-2">{daftar.map((l, i) => <li key={l.id} style={{ "--i": Math.min(i, 12) } as CSSProperties}><BarisLowongan lowongan={l} persona={segmen === "informal" ? persona : undefined} /></li>)}</ul> : <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-sm text-abu">Belum ada lowongan yang cocok dengan saringan ini.</p>}
     </section>
   );
 }

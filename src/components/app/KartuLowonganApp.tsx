@@ -16,11 +16,12 @@ export function BarisLowongan({ lowongan: l, persona, skor: skorServer }: { lowo
         <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="font-bold leading-tight">{l.judul}</span>
           {l.mendesakMenit && <span className="urgent-tag">Butuh hari ini</span>}
+          {l.segmen === "magang" && <span className="lencana-magang">Magang</span>}
         </span>
         <span className="mt-0.5 block truncate text-sm text-abu">{l.usaha}</span>
         <span className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-abu">
           <span className="text-sm font-bold text-tinta tabular-nums">{upahTeks(l)}</span>
-          <span className="inline-flex items-center gap-1"><IconMapPin size={14} />{l.area} · {String(l.jarakKm).replace(".", ",")} km</span>
+          <span className="inline-flex items-center gap-1"><IconMapPin size={14} />{l.area}{l.kota && l.kota !== "Banyumas" ? `, ${l.kota}` : ""} · {String(l.jarakKm).replace(".", ",")} km</span>
           {l.verifikasi.ktp && <span className="inline-flex items-center gap-1 font-bold text-daun"><IconShieldCheck size={14} />Terverifikasi</span>}
           {l.cekUpah !== "wajar" && <CekUpah status={l.cekUpah} />}
         </span>

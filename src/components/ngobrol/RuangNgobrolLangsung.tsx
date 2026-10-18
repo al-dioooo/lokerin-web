@@ -24,6 +24,7 @@ import "./ngobrol.css";
 type Tempat = keyof typeof LOKASI_KERJA;
 type Kalimat = { siapa: "ai" | "kamu"; teks: string; kunci: string };
 type Kartu = { kunci: string; hasil: { widget?: string } & Record<string, unknown> };
+type PesanRiwayat = { id: string; role: "user" | "assistant" | "system"; parts: { type: string; text?: string; state?: string; output?: unknown }[] };
 
 const TEMPAT_KATEGORI: Partial<Record<string, Tempat>> = { dapur: "warung", toko: "warung", las: "bengkel", bengkel: "bengkel", laundry: "laundry", bersih: "laundry", bangunan: "bangunan", angkut: "bangunan" };
 const BATAS_DETIK = 300;
@@ -64,18 +65,50 @@ export function RuangNgobrolLangsung() {
 
   useEffect(() => () => void akhiriSuara(), []);
 
+  function nyalakan(hasil: Kartu["hasil"]) {
+    if (hasil.widget !== "daftar_lowongan") return;
+    const tempat = ((hasil.hasil as LowonganApi[]) ?? [])
+      .map((l) => TEMPAT_KATEGORI[kategoriDari(l)])
+      .filter((t): t is Tempat => Boolean(t));
+    setNyala([...new Set(tempat)]);
+  }
+
   function tambahKartu(hasil: Kartu["hasil"]) {
     if (!hasil?.widget) return;
     setKartu((k) => [{ kunci: `${Date.now()}-${k.length}`, hasil }, ...k].slice(0, 12));
     // On a phone the open panel would cover the conversation, so new results only announce themselves.
     setBelumDilihat((n) => n + 1);
-    if (hasil.widget === "daftar_lowongan") {
-      const tempat = ((hasil.hasil as LowonganApi[]) ?? [])
-        .map((l) => TEMPAT_KATEGORI[kategoriDari(l)])
-        .filter((t): t is Tempat => Boolean(t));
-      setNyala([...new Set(tempat)]);
-    }
+    nyalakan(hasil);
   }
+
+  // The server keeps the conversation, so a reload picks up where it left off instead of starting blank.
+  const akun = pengguna?.id;
+  useEffect(() => {
+    if (!akun) return;
+    const kendali = new AbortController();
+    api<{ messages: PesanRiwayat[] }>("/chat/riwayat?id=utama", { signal: kendali.signal })
+      .then(({ messages }) => {
+        const lama: Kalimat[] = [];
+        const hasilLama: Kartu[] = [];
+        for (const m of messages) {
+          if (m.role === "system") continue;
+          const teks = m.parts.filter((p) => p.type === "text" && p.text).map((p) => p.text).join("\n\n").trim();
+          if (teks) lama.push({ siapa: m.role === "user" ? "kamu" : "ai", teks, kunci: `riwayat-${m.id}` });
+          m.parts.forEach((p, i) => {
+            const hasil = p.output as Kartu["hasil"] | undefined;
+            if (p.type.startsWith("tool-") && p.state === "output-available" && hasil?.widget) hasilLama.push({ kunci: `riwayat-${m.id}-${i}`, hasil });
+          });
+        }
+        if (!lama.length && !hasilLama.length) return;
+        // Anything said since the page opened stays after the history.
+        setKalimat((k) => [...lama, ...k].slice(-30));
+        setKartu((k) => [...k, ...hasilLama.reverse()].slice(0, 12));
+        const terakhir = hasilLama.find((k) => k.hasil.widget === "daftar_lowongan");
+        if (terakhir) nyalakan(terakhir.hasil);
+      })
+      .catch(() => {});
+    return () => kendali.abort();
+  }, [akun]);
 
   function tambahKalimat(siapa: Kalimat["siapa"], potongan: string, baru = false) {
     setKalimat((k) => {

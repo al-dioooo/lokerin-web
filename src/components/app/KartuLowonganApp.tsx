@@ -6,9 +6,9 @@ import { TautanArah } from "./TautanArah";
 import { SisaWaktu } from "./SisaWaktu";
 
 /** Compact job row for lists. */
-export function BarisLowongan({ lowongan: l, persona }: { lowongan: Lowongan; persona?: PersonaId }) {
+export function BarisLowongan({ lowongan: l, persona, skor: skorServer }: { lowongan: Lowongan; persona?: PersonaId; skor?: number }) {
   const { Icon } = getKategori(l.kategori);
-  const skor = persona ? l.cocok?.[persona] : undefined;
+  const skor = skorServer ?? (persona ? l.cocok?.[persona] : undefined);
   return (
     <TautanArah arah="maju" href={`/app/lowongan/${l.id}`} className="baris-lowongan">
       <span className="ubin-ikon"><Icon size={32} /></span>

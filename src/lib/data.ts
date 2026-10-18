@@ -44,6 +44,8 @@ export type Lowongan = {
   wa: string;
   /** Sisa menit untuk lowongan Butuh Hari Ini saat halaman dibuka. */
   mendesakMenit?: number;
+  /** Koordinat tempat kerja, untuk lowongan dari server yang punya lokasi. */
+  titik?: { lat: number; lng: number };
   /** Skor kecocokan persona Darto (las, ojek) dan Raka (uiux, frontend). */
   cocok?: Partial<Record<string, number>>;
   dipasang: string;

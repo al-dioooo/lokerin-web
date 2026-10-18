@@ -40,6 +40,16 @@ export async function satuLowongan(id: string): Promise<Sumber<{ lowongan: Lowon
   return { data: api ? { lowongan: keLowongan(api), api } : null, dariServer: true };
 }
 
+export const RADIUS_PETA_KM = 8;
+export type Titik = { lat: number; lng: number };
+
+/** Peta Kerja Sekitar: published jobs within a few km of the centre, nearest first. */
+export async function lowonganSekitar(): Promise<Sumber<{ pusat: Titik; lowongan: Lowongan[] } | null>> {
+  const hasil = await ambil<{ pusat: Titik; lowongan: LowonganApi[] }>(`/lowongan/peta?radius_km=${RADIUS_PETA_KM}`);
+  if (!hasil) return { data: null, dariServer: false };
+  return { data: { pusat: hasil.pusat, lowongan: hasil.lowongan.map((l) => keLowongan(l)).filter((l) => l.cekUpah !== "curiga") }, dariServer: true };
+}
+
 export async function jumlahDitahan(): Promise<number> {
   return LOWONGAN.filter((l) => l.cekUpah === "curiga").length;
 }

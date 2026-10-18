@@ -111,6 +111,7 @@ export function keLowongan(api: LowonganApi, sekarang = Date.now()): Lowongan {
     },
     wa: "",
     mendesakMenit,
+    titik: api.lokasi.lat != null && api.lokasi.lng != null ? { lat: api.lokasi.lat, lng: api.lokasi.lng } : undefined,
     dipasang: waktuLalu(api.diterbitkan_pada, sekarang),
   };
 }

@@ -39,6 +39,7 @@ export function BerandaPemberi() {
             {usaha.terverifikasi ? `Terverifikasi · ${usaha.yang_dicek.join(" · ")}` : usaha.status_verifikasi === "menunggu" ? "Sedang dicek Lokerin" : "Belum terverifikasi"}
           </p>
         )}
+        {usaha && !usaha.terverifikasi && <Link href="/app/verifikasi" className="mt-2 flex w-fit items-center gap-1 text-sm font-bold text-jingga-tua underline-offset-4 hover:underline">Lengkapi verifikasi <IconChevronRight size={16} /></Link>}
       </section>
 
       <Link href="/app/pasang" className="tombol tombol-utama min-h-16 text-lg"><IconPlus size={22} />Pasang lowongan</Link>

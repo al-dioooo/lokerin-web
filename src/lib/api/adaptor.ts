@@ -89,6 +89,7 @@ export function keLowongan(api: LowonganApi, sekarang = Date.now()): Lowongan {
   const pk = api.pemberi_kerja;
   return {
     id: api.id,
+    segmen: api.segmen,
     kategori: kategoriDari(api),
     judul: api.judul,
     usaha: pk.nama_usaha,

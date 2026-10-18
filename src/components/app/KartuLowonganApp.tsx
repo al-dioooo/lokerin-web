@@ -6,15 +6,16 @@ import { TautanArah } from "./TautanArah";
 import { SisaWaktu } from "./SisaWaktu";
 
 /** Compact job row for lists. */
-export function BarisLowongan({ lowongan: l, persona, skor: skorServer }: { lowongan: Lowongan; persona?: PersonaId; skor?: number }) {
+export function BarisLowongan({ lowongan: l, persona, skor: skorServer, baru }: { lowongan: Lowongan; persona?: PersonaId; skor?: number; baru?: boolean }) {
   const { Icon } = getKategori(l.kategori);
   const skor = skorServer ?? (persona ? l.cocok?.[persona] : undefined);
   return (
-    <TautanArah arah="maju" href={`/app/lowongan/${l.id}`} className="baris-lowongan">
+    <TautanArah arah="maju" href={`/app/lowongan/${l.id}`} className="baris-lowongan" data-baru={baru || undefined}>
       <span className="ubin-ikon"><Icon size={32} /></span>
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="font-bold leading-tight">{l.judul}</span>
+          {baru && <span className="lencana-baru">Baru</span>}
           {l.mendesakMenit && <span className="urgent-tag">Butuh hari ini</span>}
           {l.segmen === "magang" && <span className="lencana-magang">Magang</span>}
         </span>
@@ -34,12 +35,12 @@ export function BarisLowongan({ lowongan: l, persona, skor: skorServer }: { lowo
   );
 }
 
-/** Card for the horizontal Butuh Hari Ini strip. */
-export function KartuMendesak({ lowongan: l }: { lowongan: Lowongan }) {
+/** Card for the horizontal Butuh Hari Ini strip. `baru` marks one that just arrived over the live feed. */
+export function KartuMendesak({ lowongan: l, baru }: { lowongan: Lowongan; baru?: boolean }) {
   const { Icon } = getKategori(l.kategori);
   return (
-    <TautanArah arah="maju" href={`/app/lowongan/${l.id}`} className="kartu-mendesak">
-      <span className="flex items-center justify-between gap-2"><span className="urgent-tag">Butuh hari ini</span>{l.mendesakMenit && <SisaWaktu menit={l.mendesakMenit} />}</span>
+    <TautanArah arah="maju" href={`/app/lowongan/${l.id}`} className="kartu-mendesak" data-baru={baru || undefined}>
+      <span className="flex items-center justify-between gap-2"><span className="flex items-center gap-1.5"><span className="urgent-tag">Butuh hari ini</span>{baru && <span className="lencana-baru">Baru</span>}</span>{l.mendesakMenit && <SisaWaktu menit={l.mendesakMenit} />}</span>
       <span className="mt-3 flex items-center gap-3">
         <span className="ubin-ikon bg-white"><Icon size={30} /></span>
         <span className="min-w-0"><span className="block font-bold leading-tight">{l.judul}</span><span className="block truncate text-sm text-abu">{l.usaha}</span></span>

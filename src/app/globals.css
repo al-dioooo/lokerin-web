@@ -299,6 +299,8 @@
   .saringan-baris::-webkit-scrollbar { display: none; }
   .chip-ikon { display: inline-flex; align-items: center; gap: 6px; padding-left: 8px; }
   .lencana-magang { border-radius: 999px; padding: 2px 8px; font-size: 10.5px; font-weight: 800; color: #4338CA; background: #EEF0FF; }
+  .lencana-baru { border-radius: 999px; padding: 2px 8px; font-size: 10.5px; font-weight: 800; color: white; background: var(--color-daun); }
+  .kartu-mendesak[data-baru], .baris-lowongan[data-baru] { animation: sorot-baru 2.6s ease-out both; }
   .demo-dialog { margin: auto; width: min(460px, calc(100% - 40px)); max-height: calc(100dvh - 40px); overflow-y: auto; border: 1px solid var(--color-garis); border-radius: 24px; padding: 28px; color: var(--color-tinta); background: white; }
   .demo-dialog::backdrop { background: rgb(22 24 29 / .4); }
   .pegangan { display: none; }
@@ -332,6 +334,7 @@
 @keyframes pudar { from { opacity: 0; } }
 @keyframes geser { from { translate: var(--geser); } to { translate: 0; } }
 @keyframes kabur-masuk { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: blur(0); } }
+@keyframes sorot-baru { 0%, 40% { box-shadow: 0 0 0 3px var(--color-jingga), 0 12px 28px -10px rgb(242 119 25 / .5); } 100% { box-shadow: 0 0 0 0 rgb(242 119 25 / 0); } }
 @keyframes panggil { 0% { transform: scale(.94); opacity: .35; } 80%, 100% { transform: scale(1.18); opacity: 0; } }
 @media (min-width: 640px) {
   .shell { width: min(100% - 64px, 1440px); }

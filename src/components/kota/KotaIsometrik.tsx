@@ -172,23 +172,23 @@ function Jalan() {
   );
 }
 
-export function KotaIsometrik({ className = "", judul = "Ilustrasi kota kecil di Banyumas. Warung, bengkel, laundry, dan toko bangunan yang membuka lowongan ditandai jingga." }: { className?: string; judul?: string }) {
+export function KotaIsometrik({ className = "", nyala, judul = "Ilustrasi kota kecil di Banyumas. Warung, bengkel, laundry, dan toko bangunan yang membuka lowongan ditandai jingga." }: { className?: string; nyala?: string[]; judul?: string }) {
   const objek: Objek[] = [
     { kunci: 7, isi: <Masjid x={3} y={2} /> },
     { kunci: 15, isi: <Rumah x={14} y={2} w={6} d={6} /> },
     { kunci: 22, isi: <Rumah x={21} y={1.5} w={7} d={6} jendela={3} /> },
     { kunci: 20, isi: <Rumah x={3} y={11} w={6} d={6} arah="y" /> },
     { kunci: 24, isi: <Ruko x={10} y={11} w={7} d={6} /> },
-    { kunci: 32, isi: <Warung /> },
+    { kunci: 32, isi: <g data-tempat="warung"><Warung /></g> },
     { kunci: 44, isi: <Rumah x={38} y={2} w={7} d={6} jendela={3} /> },
     { kunci: 53, isi: <Rumah x={47} y={2} w={8} d={6} jendela={3} /> },
-    { kunci: 50, isi: <Bengkel /> },
+    { kunci: 50, isi: <g data-tempat="bengkel"><Bengkel /></g> },
     { kunci: 61, isi: <Rumah x={47} y={11} w={6} d={6} arah="y" /> },
     { kunci: 67, isi: <Ruko x={54} y={11} w={5} d={6} /> },
     { kunci: 33, isi: <Rumah x={2} y={26} w={6} d={6} /> },
     { kunci: 41, isi: <Rumah x={10} y={26} w={7} d={6} arah="y" /> },
-    { kunci: 54, isi: <Laundry /> },
-    { kunci: 68, isi: <TokoBangunan /> },
+    { kunci: 54, isi: <g data-tempat="laundry"><Laundry /></g> },
+    { kunci: 68, isi: <g data-tempat="bangunan"><TokoBangunan /></g> },
     { kunci: 79, isi: <TumpukanBata x={47.5} y={30.5} /> },
     { kunci: 81, isi: <Rumah x={52} y={26} w={6} d={6} /> },
     { kunci: 50.1, isi: <Rumah x={4} y={41} w={6} d={4} /> },
@@ -205,7 +205,7 @@ export function KotaIsometrik({ className = "", judul = "Ilustrasi kota kecil di
   objek.sort((a, b) => a.kunci - b.kunci);
   const { x, y, w, h } = KOTAK_PANDANG;
   return (
-    <svg viewBox={`${x} ${y} ${w} ${h}`} className={className} role="img" aria-label={judul} preserveAspectRatio="xMidYMid slice">
+    <svg viewBox={`${x} ${y} ${w} ${h}`} className={className} role="img" aria-label={judul} preserveAspectRatio="xMidYMid slice" data-nyala={nyala?.join(" ") || undefined}>
       <rect x={x} y={y} width={w} height={h} fill="#FFFFFF" />
       <Jalan />
       <Lantai x={18} y={9} w={10} d={9.6} isi={PLOT} garis="#F7C9A0" />

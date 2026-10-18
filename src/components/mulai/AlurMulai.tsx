@@ -24,6 +24,25 @@ import "./alur.css";
 type Peran = "pencari" | "pemberi";
 
 const AREA = ["Purwokerto Utara", "Purwokerto Selatan", "Purwokerto Timur", "Purwokerto Barat", "Sokaraja", "Kembaran", "Ajibarang", "Baturraden"];
+/** Category labels are not all job titles ("Warung & Dapur"), so each gets its own phrasing. */
+const KERJA_SELAMA: Record<KategoriSlug, string> = {
+  las: "jadi tukang las",
+  ojek: "ngojek atau nyopir",
+  dapur: "kerja di warung atau dapur",
+  bangunan: "jadi tukang bangunan",
+  bengkel: "kerja di bengkel",
+  bersih: "kerja bersih-bersih",
+  toko: "jaga toko",
+  angkut: "kerja angkut barang",
+  kebun: "kerja di kebun atau sawah",
+  jahit: "menjahit",
+  laundry: "kerja cuci dan setrika",
+  kurir: "jadi kurir",
+  acara: "bantu acara",
+  asuh: "jaga anak atau lansia",
+  magang: "belajar di bidang ini",
+};
+
 const PENGALAMAN = [
   { id: "baru", label: "Baru mulai", periode: "kurang dari 1 tahun" },
   { id: "1-3", label: "1 sampai 3 tahun", periode: "1–3 tahun" },
@@ -220,7 +239,7 @@ export function AlurMulai() {
             const slug = ini.split(":")[1] as KategoriSlug;
             const { label, Icon } = KATEGORI.find((k) => k.slug === slug)!;
             return (
-              <Pertanyaan atas={label} judul={`Sudah berapa lama jadi ${label.toLowerCase()}?`} ikon={<span className="ubin-ikon size-16"><Icon size={44} /></span>}>
+              <Pertanyaan atas={label} judul={`Sudah berapa lama ${KERJA_SELAMA[slug]}?`} ikon={<span className="ubin-ikon size-16"><Icon size={44} /></span>}>
                 <div className="grid gap-2.5">
                   {PENGALAMAN.map((p) => (
                     <button key={p.id} type="button" className="alur-pilihan" aria-pressed={pengalaman[slug] === p.id} onClick={() => pilihLaluMaju(() => setPengalaman((x) => ({ ...x, [slug]: p.id })))}>

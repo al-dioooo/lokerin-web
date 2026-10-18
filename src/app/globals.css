@@ -460,3 +460,17 @@
 .kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#6A625A"] { fill: #6A625A; }
 .kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#F7F6F3"], .kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [fill="#FFFFFF"] { fill: #FFF6EE; }
 .kota-malam[data-nyala~="bangunan"] [data-tempat="bangunan"] [stroke="#4A4743"] { stroke: #7A3A12; }
+
+/* Installed app (PWA). viewport-fit=cover lets the page run under the notch and home indicator,
+   so fixed or edge-to-edge UI adds the safe-area insets with these utilities. */
+@utility pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+@utility pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+@utility px-safe { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+@utility bottom-safe { bottom: env(safe-area-inset-bottom, 0px); }
+/* Spacing scale plus the inset, e.g. bottom-safe-4 for a bar 16px above the home indicator. */
+@utility bottom-safe-* { bottom: calc(var(--spacing) * --value(integer) + env(safe-area-inset-bottom, 0px)); }
+@utility pb-safe-* { padding-bottom: calc(var(--spacing) * --value(integer) + env(safe-area-inset-bottom, 0px)); }
+
+@media (display-mode: standalone) {
+  html { overscroll-behavior-y: none; }
+}

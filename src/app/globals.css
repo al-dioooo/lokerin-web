@@ -149,16 +149,13 @@
   .isi-baru { animation: muncul 600ms ease-out; }
   .lembar-cv { padding: 20px; border-radius: 20px; background: white; border: 1px solid var(--color-garis); box-shadow: 0 16px 40px -12px rgb(21 18 16 / .12); }
   .avatar { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; font-size: 13px; font-weight: 800; color: var(--color-jingga-tua); background: var(--color-jingga-muda); border: 1px solid #F7C9A0; }
-  .pil-nav { position: fixed; z-index: 40; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); translate: -50% 0; display: flex; align-items: center; gap: 2px; padding: 6px; border-radius: 999px; background: rgb(255 255 255 / .8); backdrop-filter: blur(16px) saturate(1.4); border: 1px solid #E4DED4; box-shadow: 0 16px 40px -12px rgb(21 18 16 / .22), 0 4px 12px -4px rgb(21 18 16 / .08), inset 0 1px 0 white; animation: pil-masuk .6s cubic-bezier(.2, .9, .3, 1.2) both; }
-  .pil-sisi { display: flex; gap: 2px; }
-  .pil-item { position: relative; display: flex; align-items: center; height: 46px; padding: 0 13px; border-radius: 999px; color: var(--color-abu); transition: background-color .3s, color .3s, padding .35s cubic-bezier(.2, .8, .2, 1); }
-  .pil-item:hover { color: var(--color-tinta); background: rgb(243 243 239 / .9); }
-  .pil-item[aria-current="page"] { color: var(--color-jingga-tua); padding: 0 15px 0 13px; }
-  .pil-item[aria-current="page"]:hover { background: transparent; }
-  .pil-sorot { position: absolute; inset: 0; border-radius: 999px; background: var(--color-jingga-muda); box-shadow: inset 0 0 0 1px #F7C9A0; }
-  .pil-label { max-width: 0; overflow: hidden; opacity: 0; white-space: nowrap; font-size: 13px; font-weight: 700; transition: max-width .4s cubic-bezier(.2, .8, .2, 1), opacity .25s, margin .4s; }
-  .pil-item[aria-current="page"] .pil-label { max-width: 80px; opacity: 1; margin-left: 7px; }
-  .pil-ngobrol { position: relative; display: flex; flex-direction: column; align-items: center; margin: -30px 6px 0; }
+  .pil-nav { position: fixed; z-index: 40; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); translate: -50% 0; display: flex; align-items: center; gap: 2px; padding: 6px; border-radius: 999px; background: rgb(255 255 255 / .82); backdrop-filter: blur(16px) saturate(1.4); border: 1px solid #E4DED4; box-shadow: 0 16px 40px -12px rgb(21 18 16 / .22), 0 4px 12px -4px rgb(21 18 16 / .08), inset 0 1px 0 white; animation: pil-masuk .6s cubic-bezier(.2, .9, .3, 1.2) both; }
+  .pil-item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 58px; height: 50px; border-radius: 18px; color: var(--color-abu); transition: color .2s; }
+  .pil-item:hover { color: var(--color-tinta); }
+  .pil-item[aria-current="page"] { color: var(--color-jingga-tua); }
+  .pil-sorot { position: absolute; inset: 0; border-radius: 18px; background: var(--color-jingga-muda); box-shadow: inset 0 0 0 1px #F7C9A0; }
+  .pil-label { font-size: 10.5px; font-weight: 700; line-height: 1; }
+  .pil-ngobrol { position: relative; display: flex; flex-direction: column; align-items: center; margin: -30px 8px 0; }
   .pil-ngobrol::before { content: ""; position: absolute; top: -6px; width: 72px; height: 72px; border-radius: 50%; background: conic-gradient(from 0deg, #F26A1B, #FFD2A8, #F26A1B, #FFB37A, #F26A1B); filter: blur(6px); opacity: .75; animation: putar 3.2s linear infinite; }
   .pil-ngobrol-orb { position: relative; display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; color: white; background: linear-gradient(#FF9A4D 0%, #F27719 55%, #E0660D 100%); border: 2px solid white; box-shadow: inset 0 2px 3px rgb(255 255 255 / .55), inset 0 -4px 6px rgb(140 50 0 / .3), 0 8px 18px rgb(242 119 25 / .45); }
   .pil-ngobrol-orb::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgb(242 119 25 / .55); animation: panggil 2.2s ease-out infinite; }
@@ -166,8 +163,17 @@
   .pil-ajak::after { content: ""; position: absolute; top: 100%; left: 50%; translate: -50% 0; border: 6px solid transparent; border-top-color: var(--color-tinta); }
   .pil-ngobrol:hover .pil-ajak { animation: none; opacity: 1; }
   .pil-ngobrol-label { margin-top: 3px; font-size: 9px; text-transform: uppercase; color: var(--color-jingga-tua); }
-  .pil-ngobrol[aria-current="page"] .pil-ngobrol-orb { background: linear-gradient(#2A2D33, #16181D); }
-  .pil-ngobrol[aria-current="page"] .pil-ngobrol-orb::after { border-color: rgb(22 24 29 / .4); }
+  .pil-ngobrol[aria-current="page"] .pil-ngobrol-orb { box-shadow: 0 0 0 3px var(--color-jingga-muda), 0 0 0 5px var(--color-jingga), 0 8px 18px rgb(242 119 25 / .45); }
+  .pil-ngobrol[aria-current="page"] .pil-ngobrol-label { color: var(--color-tinta); }
+  .halaman[data-arah] { animation: masuk-halaman .5s cubic-bezier(.2, .9, .3, 1) backwards; }
+  .halaman[data-arah="kanan"] { --dari: 36px 0; }
+  .halaman[data-arah="kiri"] { --dari: -36px 0; }
+  .halaman[data-arah="maju"] { --dari: 0 28px; }
+  .halaman[data-arah="mundur"] { --dari: 0 -20px; }
+  .muncul { transition: opacity .7s cubic-bezier(.2, .8, .2, 1) var(--jeda, 0s), translate .8s cubic-bezier(.2, .8, .2, 1) var(--jeda, 0s), scale .8s cubic-bezier(.2, .8, .2, 1); }
+  .muncul:not([data-terlihat]) { opacity: 0; translate: 0 28px; }
+  .maju:not([data-terlihat]) { scale: .94; translate: 0 40px; }
+  .masuk-geser { animation: masuk-halaman .45s cubic-bezier(.2, .9, .3, 1) backwards; --dari: 24px 0; }
   .urut > li { animation: naik .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 45ms); }
   .baris-lowongan:active, .kartu-mendesak:active, .kolom-cari:active { transform: scale(.985); }
   .kartu-mendesak, .kolom-cari { transition: transform 150ms, box-shadow 150ms; }
@@ -190,6 +196,7 @@
 @keyframes denyut { 0% { box-shadow: 0 0 0 0 rgb(242 119 25 / .5); } 100% { box-shadow: 0 0 0 14px rgb(242 119 25 / 0); } }
 @keyframes gelombang { 0%, 100% { height: 30%; } 50% { height: 100%; } }
 @keyframes muncul { 0% { background: var(--color-jingga-muda); opacity: .2; } 30% { opacity: 1; } 100% { background: transparent; } }
+@keyframes masuk-halaman { from { opacity: 0; translate: var(--dari, 0 12px); } 40% { opacity: 1; } }
 @keyframes naik { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
 @keyframes pil-masuk { from { opacity: 0; translate: -50% 40px; scale: .9; } to { opacity: 1; translate: -50% 0; scale: 1; } }
 @keyframes ajak { 0% { opacity: 0; transform: translateY(8px) scale(.9); } 8%, 85% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(4px); } }
@@ -236,24 +243,4 @@
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-}
-
-/* Page transitions (React ViewTransition). Pages slide the way the pill nav moves; detail pages push in. */
-::view-transition { pointer-events: none; }
-::view-transition-group(app-atas), ::view-transition-group(pil-nav) { animation: none; z-index: 100; }
-::view-transition-old(app-atas), ::view-transition-old(pil-nav) { display: none; }
-::view-transition-new(app-atas), ::view-transition-new(pil-nav) { animation: none; }
-::view-transition-old(.nav-kanan) { --geser: -48px; animation: 160ms ease-in both pudar reverse, 420ms cubic-bezier(.2, .8, .2, 1) both geser reverse; }
-::view-transition-new(.nav-kanan) { --geser: 48px; animation: 240ms ease-out 120ms both kabur-masuk, 420ms cubic-bezier(.2, .8, .2, 1) both geser; }
-::view-transition-old(.nav-kiri) { --geser: 48px; animation: 160ms ease-in both pudar reverse, 420ms cubic-bezier(.2, .8, .2, 1) both geser reverse; }
-::view-transition-new(.nav-kiri) { --geser: -48px; animation: 240ms ease-out 120ms both kabur-masuk, 420ms cubic-bezier(.2, .8, .2, 1) both geser; }
-::view-transition-old(.nav-maju) { --geser: 0 -16px; animation: 160ms ease-in both pudar reverse, 380ms ease-out both geser reverse; }
-::view-transition-new(.nav-maju) { --geser: 0 24px; animation: 260ms ease-out 100ms both kabur-masuk, 460ms cubic-bezier(.2, .9, .3, 1) both geser; }
-::view-transition-old(.nav-mundur) { --geser: 0 24px; animation: 160ms ease-in both pudar reverse, 380ms ease-out both geser reverse; }
-::view-transition-new(.nav-mundur) { --geser: 0 -16px; animation: 260ms ease-out 100ms both kabur-masuk, 460ms cubic-bezier(.2, .9, .3, 1) both geser; }
-::view-transition-group(.morph) { animation-duration: 460ms; animation-timing-function: cubic-bezier(.2, .9, .3, 1); }
-::view-transition-image-pair(.morph) { animation-name: lewat-kabur; }
-@keyframes lewat-kabur { 40% { filter: blur(2px); } }
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(*), ::view-transition-new(*), ::view-transition-group(*) { animation-duration: 0s !important; animation-delay: 0s !important; }
 }

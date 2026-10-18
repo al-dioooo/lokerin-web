@@ -12,7 +12,7 @@ export default function AppLayout({ children }: LayoutProps<"/app">) {
   return (
     <Gerak>
     <div className="app-kerangka">
-      <header className="app-atas" style={{ viewTransitionName: "app-atas" }}>
+      <header className="app-atas">
         <Link href="/" aria-label="Lokerin, halaman utama" className="inline-flex min-h-11 items-center"><Logo size={22} /></Link>
         <span className="piksel hidden rounded-full border border-garis bg-white px-3 py-1 text-[10px] uppercase text-abu sm:inline">Contoh data · belum tersambung ke server</span>
         <div className="flex items-center gap-2">

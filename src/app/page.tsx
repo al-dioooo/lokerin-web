@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
-import { Gerak, Maju, Muncul, Paralaks } from "@/components/gerak/Gerak";
+import { Gerak, Paralaks } from "@/components/gerak/Gerak";
+import { Maju, Muncul } from "@/components/gerak/Muncul";
 import { GulirHalus } from "@/components/gerak/GulirHalus";
 import { MicIcon } from "@/components/icons/interface";
 import { KotaIsometrik } from "@/components/kota/KotaIsometrik";

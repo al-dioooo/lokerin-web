@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { AksiLowongan } from "@/components/app/AksiLowongan";
-import { Bersama, Halaman } from "@/components/app/Halaman";
+import { Halaman } from "@/components/app/Halaman";
+import { TautanArah } from "@/components/app/TautanArah";
 import { SisaWaktu } from "@/components/app/SisaWaktu";
 import { getKategori } from "@/components/icons/categories";
 import { IconArrowLeft, IconCalendar, IconCash, IconCheck, IconClock, IconMapPin, IconShieldCheck, IconX } from "@/components/icons/tabler";
@@ -38,9 +38,9 @@ async function IsiLowongan({ params }: Pick<PageProps<"/app/lowongan/[id]">, "pa
   return (
     <Halaman>
     <article className="mx-auto grid max-w-2xl gap-5">
-      <Link href="/app" transitionTypes={["nav-mundur"]} className="inline-flex min-h-11 w-fit items-center gap-1.5 text-sm font-semibold text-abu"><IconArrowLeft size={18} />Kembali</Link>
+      <TautanArah arah="mundur" href="/app" className="inline-flex min-h-11 w-fit items-center gap-1.5 text-sm font-semibold text-abu"><IconArrowLeft size={18} />Kembali</TautanArah>
       <header className="flex items-start gap-3">
-        <Bersama nama={`ikon-${l.id}`}><span className="ubin-ikon size-14"><Icon size={40} /></span></Bersama>
+        <span className="ubin-ikon size-14"><Icon size={40} /></span>
         <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold text-abu">{label} · dipasang {l.dipasang.toLowerCase()}</p>
           <h1 className="text-2xl leading-tight">{l.judul}</h1>

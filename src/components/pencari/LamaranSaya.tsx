@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { IconBrandWhatsapp, IconChevronRight, IconCircleCheck, IconMapPin, IconMessageCircle } from "../icons/tabler";
+import { RatingKontak } from "../app/RatingKontak";
 import { Laci } from "../lapis/Laci";
 import { useApi, useLangsung } from "@/lib/api/hooks";
 import { apiAktif } from "@/lib/api/klien";
@@ -85,6 +86,7 @@ export function LamaranSaya() {
                 {t.catatan && <p className="mt-1 text-[15px] text-abu">{t.catatan}</p>}
               </section>
             ))}
+            {l.status === "lolos" && <RatingKontak lamaranId={l.id} sisi="pelamar" untuk={l.pemberi_kerja.nama_usaha} />}
           </div>
         )}
       </Laci>

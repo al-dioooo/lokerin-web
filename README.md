@@ -11,7 +11,7 @@ Live URL: not deployed yet.
 - Next.js (App Router) and Tailwind CSS v4, hosted on Vercel
 - Convex for the database, realtime queries, vector search and file storage (planned)
 - OpenAI Realtime API over WebRTC for voice calls, with short-lived tokens issued by a Convex HTTP action (planned)
-- Fonts: Bungee, Atkinson Hyperlegible Next and Doto via `next/font`
+- Fonts: Plus Jakarta Sans and JetBrains Mono via `next/font/google`
 
 ## Setup and run
 
@@ -24,7 +24,11 @@ npm run lint
 npm run build
 ```
 
-The design system lives at `/desain`.
+The Garis Kota design system lives at `/desain`; the hero illustration is `public/hero-kota.png`.
+
+The pages are still a preview. "Bacakan" reads text aloud with the browser's `speechSynthesis` in Indonesian. The talk, apply and post-job buttons only show a notice; they don't record audio or send data yet.
+
+The build downloads both fonts from Google Fonts, so it needs network access.
 
 ## Environment variables
 
@@ -37,7 +41,7 @@ src/app/            routes: / (landing) and /desain (design system)
 src/components/
   brand/            logo mark and wordmark
   icons/            14 job category icons and UI icons
-  ui/               primitives: buttons, LED countdown board, job card, badges
+  ui/               primitives: buttons, countdown, job card, badges
 docs/               design brief and decision notes
 ```
 

@@ -6,12 +6,15 @@
  */
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState, type CSSProperties, type ReactNode } from "react";
 import { KATEGORI } from "../icons/categories";
 import { IconArrowLeft, IconCheck, IconMicrophone } from "../icons/tabler";
 import { Bacakan } from "../ui/Bacakan";
 import { TautanNgobrol } from "../app/TautanNgobrol";
 import { KartuDraf } from "./KartuDraf";
+import { kategoriDari } from "@/lib/api/adaptor";
+import { useApi } from "@/lib/api/hooks";
 import { api, apiAktif, GalatApi } from "@/lib/api/klien";
 import type { LowonganApi } from "@/lib/api/tipe";
 import "../lapis/lapis.css";
@@ -42,25 +45,63 @@ function besok(n = 1) {
   return d.toISOString().slice(0, 10);
 }
 
+const URUTAN = ["kategori", "judul", "jenis-upah", "upah", "jam", "hari", "jenis-kerja", "mulai", "deskripsi", "draf"];
+
+/** The screen that asks for the field a Pemeriksaan problem points at (holds first, then warnings). */
+function langkahMasalah(draf: LowonganApi) {
+  const masalah = draf.pemeriksaan?.masalah ?? [];
+  const kode = (masalah.find((m) => m.tingkat === "tahan") ?? masalah[0])?.field;
+  const peta: Record<string, string> = { title: "judul", payMin: "upah", hoursText: "jam", employmentType: "jenis-kerja", description: "deskripsi", city: "judul" };
+  return URUTAN.indexOf(peta[kode ?? ""] ?? "judul");
+}
+
+/**
+ * New job, or an existing draft opened from the employer home with `?draf=<id>`. A draft comes back
+ * with its answers filled in and starts at the question its Pemeriksaan flagged; saving updates it.
+ */
 export function PasangLowongan() {
-  const [langkah, setLangkah] = useState(0);
+  const idDraf = useSearchParams().get("draf");
+  const lama = useApi<LowonganApi>(apiAktif && idDraf ? `/lowongan/${encodeURIComponent(idDraf)}` : null);
+  if (idDraf && apiAktif) {
+    if (lama.data?.status === "draf") return <AlurPasang key={lama.data.id} awal={lama.data} />;
+    if (lama.galat || lama.data) {
+      return (
+        <div className="mx-auto grid max-w-md gap-4">
+          <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-[15px] text-abu">{lama.data ? "Lowongan ini sudah terbit, jadi tidak bisa diubah lagi." : lama.galat?.message}</p>
+          <Link href="/app" className="tombol tombol-garis min-h-14 text-lg">Kembali ke beranda</Link>
+        </div>
+      );
+    }
+    return <p className="py-10 text-center text-abu" role="status">Membuka draf...</p>;
+  }
+  return <AlurPasang />;
+}
+
+function jamDari(teks: string | null) {
+  const [a, b] = (teks ?? "").split(/\s*[–-]\s*/);
+  const ok = (x?: string) => (x && /^\d{1,2}[.:]\d{2}$/.test(x) ? x.replace(":", ".").padStart(5, "0") : null);
+  return { mulai: ok(a) ?? "08.00", selesai: ok(b) ?? "16.00" };
+}
+
+function AlurPasang({ awal }: { awal?: LowonganApi }) {
+  const [langkah, setLangkah] = useState(() => (awal ? langkahMasalah(awal) : 0));
   const [arah, setArah] = useState<"maju" | "mundur">("maju");
-  const [kategori, setKategori] = useState<string | null>(null);
-  const [judul, setJudul] = useState("");
-  const [jenisUpah, setJenisUpah] = useState<string | null>(null);
-  const [upah, setUpah] = useState("");
-  const [jamMulai, setJamMulai] = useState("08.00");
-  const [jamSelesai, setJamSelesai] = useState("16.00");
-  const [hari, setHari] = useState<number | null>(null);
-  const [jenisKerja, setJenisKerja] = useState<string | null>(null);
-  const [mulai, setMulai] = useState<string | null>(null);
-  const [mendesak, setMendesak] = useState(false);
-  const [deskripsi, setDeskripsi] = useState("");
-  const [draf, setDraf] = useState<LowonganApi | null>(null);
+  const [kategori, setKategori] = useState<string | null>(awal ? kategoriDari(awal) : null);
+  const [judul, setJudul] = useState(awal?.judul ?? "");
+  const [jenisUpah, setJenisUpah] = useState<string | null>(awal?.upah.jenis ?? null);
+  const [upah, setUpah] = useState(awal?.upah.min ? String(awal.upah.min) : "");
+  const [jamMulai, setJamMulai] = useState(() => jamDari(awal?.jam_kerja ?? null).mulai);
+  const [jamSelesai, setJamSelesai] = useState(() => jamDari(awal?.jam_kerja ?? null).selesai);
+  const [hari, setHari] = useState<number | null>(awal?.hari_per_minggu ?? null);
+  const [jenisKerja, setJenisKerja] = useState<string | null>(awal?.jenis_kerja ?? null);
+  const [mulai, setMulai] = useState<string | null>(awal?.mulai ?? null);
+  const [mendesak, setMendesak] = useState(Boolean(awal?.butuh_hari_ini));
+  const [deskripsi, setDeskripsi] = useState(awal?.deskripsi ?? "");
+  const [draf, setDraf] = useState<LowonganApi | null>(awal ?? null);
   const [proses, setProses] = useState(false);
   const [galat, setGalat] = useState("");
 
-  const urutan = ["kategori", "judul", "jenis-upah", "upah", "jam", "hari", "jenis-kerja", "mulai", "deskripsi", "draf"];
+  const urutan = URUTAN;
   const ini = urutan[langkah]!;
 
   function ke(n: number) {
@@ -113,10 +154,7 @@ export function PasangLowongan() {
 
   /** From a Pemeriksaan problem, jump back to the screen that asks for that field. */
   function lengkapi() {
-    const masalah = draf?.pemeriksaan?.masalah ?? [];
-    const kode = (masalah.find((m) => m.tingkat === "tahan") ?? masalah[0])?.field;
-    const peta: Record<string, string> = { title: "judul", payMin: "upah", hoursText: "jam", employmentType: "jenis-kerja", description: "deskripsi", city: "judul" };
-    ke(urutan.indexOf(peta[kode ?? ""] ?? "judul"));
+    if (draf) ke(langkahMasalah(draf));
   }
 
   if (!apiAktif) {

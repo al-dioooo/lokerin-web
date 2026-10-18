@@ -84,7 +84,7 @@ export function BerandaPemberi() {
           <KartuDraf
             lowongan={dipilih}
             onBerubah={() => daftar.muatUlang()}
-            onUbah={() => router.push("/app/pasang")}
+            onUbah={() => router.push(`/app/pasang?draf=${dipilih.id}`)}
           />
         )}
       </Laci>

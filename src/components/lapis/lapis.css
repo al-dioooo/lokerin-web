@@ -1,0 +1,153 @@
+/* Laci (drawer) and Dialog (modal). Imported once from the root layout. */
+
+.laci-dialog,
+.modal-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  /* clip, not hidden: the sheet's under-extension must never let the dialog scroll */
+  overflow: clip;
+  color: var(--color-tinta);
+}
+.laci-dialog::backdrop,
+.modal-dialog::backdrop { background: transparent; }
+
+.laci-tirai {
+  position: absolute;
+  inset: 0;
+  background: rgb(22 24 29 / 0.42);
+}
+
+.laci-lembar {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-putih, #fff);
+  box-shadow: 0 -8px 40px rgb(22 24 29 / 0.12);
+  touch-action: pan-y;
+}
+.laci-bawah {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: min(92dvh, 820px);
+  border-radius: 28px 28px 0 0;
+}
+/* The sheet extends below the screen edge so a rubber-band pull upward never shows a gap. */
+.laci-bawah::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 200px;
+  background: inherit;
+}
+.laci-samping {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 100%);
+  border-radius: 28px 0 0 28px;
+  box-shadow: -8px 0 40px rgb(22 24 29 / 0.12);
+}
+
+.laci-kepala {
+  padding: 12px 20px 12px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.laci-samping .laci-kepala { padding-top: 24px; cursor: default; }
+.laci-pegangan {
+  display: block;
+  width: 44px;
+  height: 5px;
+  margin: 0 auto 14px;
+  border-radius: 999px;
+  background: var(--color-garis);
+}
+.laci-isi {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 20px 20px;
+  font-size: 17px;
+}
+.laci-aksi {
+  display: grid;
+  gap: 8px;
+  padding: 12px 20px calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--color-garis);
+  background: rgb(255 255 255 / 0.86);
+  backdrop-filter: blur(16px) saturate(160%);
+}
+.laci-aksi .tombol { min-height: 56px; font-size: 18px; }
+
+.modal-kartu {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(420px, calc(100% - 32px));
+  translate: -50% -50%;
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--color-putih, #fff);
+  box-shadow: 0 24px 60px rgb(22 24 29 / 0.18);
+}
+.modal-kartu .tombol { min-height: 54px; font-size: 17px; }
+
+.tombol-bahaya {
+  background: var(--color-merah, #B42318);
+  color: #fff;
+  border: 0;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .laci-aksi { background: #fff; backdrop-filter: none; }
+}
+@media (prefers-contrast: more) {
+  .laci-tirai { background: rgb(22 24 29 / 0.7); }
+  .laci-lembar, .modal-kartu { border: 2px solid var(--color-tinta); }
+}
+
+/* Big tappable choice row, shared by onboarding and drawers. */
+.alur-pilihan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  padding: 14px 20px;
+  border-radius: 18px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: left;
+  background: #fff;
+  border: 1.5px solid var(--color-garis);
+  transition: border-color 0.15s, background-color 0.15s, transform 0.1s ease-out;
+}
+.alur-pilihan:active { transform: scale(0.98); }
+.alur-pilihan[aria-pressed="true"] {
+  color: var(--color-jingga-tua);
+  border-color: var(--color-jingga);
+  background: var(--color-jingga-muda);
+}
+
+
+/* CV Khusus editor: the page is the CV. */
+.cv-sunting { border-radius: 6px; outline: none; transition: background-color 0.15s; cursor: text; }
+.cv-sunting:hover { background: var(--color-kabut); }
+.cv-sunting:focus-visible { background: var(--color-jingga-muda); box-shadow: 0 0 0 2px var(--color-jingga); }
+.cv-dua .cv-badan { display: grid; grid-template-columns: minmax(0, 1fr) 34%; gap: 0 20px; }
+.cv-dua .cv-samping { border-left: 1px solid var(--color-garis); padding-left: 16px; }
+@media (max-width: 640px) { .cv-dua .cv-badan { grid-template-columns: 1fr; } .cv-dua .cv-samping { border: 0; padding: 0; } }

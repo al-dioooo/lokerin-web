@@ -1,63 +1,66 @@
-# Lokerin design system: "Cat Warung"
+# Lokerin design system: "Garis Kota"
 
-Lokerin is a voice-first job board for Indonesian informal workers (welders, ojol drivers, warung helpers) and small employers. Full product spec: `../lokerin-docs/docs/prd.md`. UI is 30% of the competition score and the brief rewards something anti-mainstream, so this must NOT look like a generic SaaS/shadcn template (no soft gradients, no glassmorphism, no rounded-2xl grey cards, no purple).
+Replaces the earlier "Cat Warung" direction (chosen by the team on 18 Oct 2026). Product spec: `../lokerin-docs/docs/prd.md`. Reference image of the chosen look: `docs/garis-kota-preview.png`.
 
-## Direction
+## Idea
 
-The visual language comes from where these jobs are advertised today: hand-painted warung signs, "DICARI KARYAWAN" cardboard notices taped to shop windows, rubber stamps, and the red LED running-text boards in front of shops. Think **hand-painted signwriting meets neo-brutalist web**: flat saturated paint colours on warm newsprint paper, thick ink outlines, hard offset shadows (like a sign cut out of plywood), slightly rotated taped notes, stamp-style badges. Big, bold, friendly, legible for people who rarely read long text.
+Banyumas drawn as a calm grey line-art town on white. Orange is the only accent, and it always means "there is work here": the highlighted buildings in the hero, the map pins, the urgent tag, the primary action. Everything else is near-black text, grey lines and soft grey cards. The illustration doubles as the Peta Kerja Sekitar map, and the urgent warung pulses for Butuh Hari Ini. Polished and friendly, lots of white space, big readable type.
 
 ## Tokens
 
-Colours (all checked for WCAG AA; respect the pairings):
+Expose as Tailwind v4 `@theme` tokens in `src/app/globals.css` (e.g. `bg-putih`, `text-tinta`, `bg-jingga`, `font-sans`, `font-mono`). Light theme only.
 
-| Token | Hex | Use | Text on it |
-|---|---|---|---|
-| kertas | #F3EAD7 | page background (newsprint) | arang |
-| kertas-terang | #FBF6EC | raised paper cards | arang |
-| kardus | #C9A36B | cardboard surfaces, tape | arang |
-| arang | #1B1712 | ink: text, outlines, shadows | kertas / white |
-| abu | #5E564A | secondary text on kertas (6:1) | - |
-| cabai | #C8261B | urgent, Butuh Hari Ini, primary CTA | white or kertas |
-| kunyit | #F5B400 | highlight, voice button, attention | arang only |
-| daun | #1E6E3A | Terverifikasi, upah wajar | white |
-| langit | #1F5AA6 | links, info, map water | white |
-| malam | #14110D | LED board background | led |
-| led | #FF3B2F | LED dot-matrix text | on malam only |
+| Token | Hex | Use |
+|---|---|---|
+| putih | #FFFFFF | page background |
+| kertas | #FAFAF7 | alternate section background |
+| kabut | #F3F3EF | grey cards, inputs, icon tiles |
+| garis | #D9D9D4 | borders, dividers, line art |
+| abu | #5C6066 | secondary text (6.3:1 on white) |
+| tinta | #16181D | text, icons |
+| jingga | #EA5A0C | accent: headline second line, primary button (white text only at >= 19px bold), pins, urgent tag |
+| jingga-terang | #F26A1B | illustration fills, decorative only, never text |
+| jingga-tua | #C2410C | orange text below 19px (eyebrows, links, countdown digits) (5.2:1) |
+| jingga-muda | #FFF1E8 | orange tint backgrounds |
+| daun | #18794E | Terverifikasi, upah wajar |
+| daun-muda | #E8F5EE | green tint |
+| kuning-tua | #8A5A00 on #FFF6DB | "di bawah UMK" warning |
+| merah | #B42318 on #FDECEA | "terlalu tinggi, hati-hati" |
 
-Type (via `next/font/google`, all verified available):
-- Display / sign headings: **Bungee** (400). Uppercase signage. Use for H1/H2, category labels on tiles, big numbers.
-- Body / UI: **Atkinson Hyperlegible Next** (variable). Chosen because it was designed for legibility, which matters for low-literacy users. Base size 18px on mobile, generous line-height.
-- LED / countdown: **Doto** (dot-matrix, weight 800-900).
+Type (via `next/font/google`, both verified available):
+- **Plus Jakarta Sans** (variable) for everything readable: headlines 800 with tight tracking (-0.03em), body 500 at 18px on mobile, line-height 1.6.
+- **JetBrains Mono** (variable) for small uppercase eyebrows with wide tracking, card numbering ("01 / 14"), and the tabular countdown digits.
 
-Shape: border width 3px (arang) on interactive surfaces; radius small (4-6px) or none; shadow = hard offset `4px 4px 0 arang` (pressed state: translate 2px, shadow 2px). Taped notes: a kardus-coloured translucent strip at the top, card rotated ±1-2deg. Optional subtle paper grain via CSS (no image files needed).
-
-Expose everything as Tailwind v4 `@theme` tokens in `src/app/globals.css` (e.g. `bg-cabai`, `text-arang`, `font-papan`, `font-baca`, `font-led`, `shadow-cetak`). Light theme only for now.
+Shape: radius 16px on cards, 999px on buttons and pills, 1px `garis` borders, almost no shadow (a soft `0 1px 2px rgb(0 0 0 / 0.04)` at most; the phone mockup may have a larger soft shadow). Eyebrow pattern: small orange dot + mono uppercase label.
 
 ## Deliverables
 
-1. `src/app/globals.css`: tokens above, base styles, visible focus ring (thick kunyit outline + arang offset), `prefers-reduced-motion` handling.
-2. `src/app/layout.tsx`: the three fonts, `lang="id"`, metadata title "Lokerin" and an Indonesian description.
-3. **Logo** in `src/components/brand/Logo.tsx`: `LogoMark` and `Logo` (mark + wordmark "LOKERIN" in Bungee-like letterforms, or the mark next to text set in Bungee). Concept: a map pin whose head is a speech bubble (voice + nearby work), drawn as a flat cabai shape with a thick arang outline and a kunyit dot/sound-wave inside. Must read at 24px. Also export static `public/logo.svg` and a favicon `src/app/icon.svg`.
-4. **Job category icon set** in `src/components/icons/categories.tsx`: 14 hand-drawn-feeling SVG icons on a 48x48 grid, 3px arang strokes, round caps, with one flat paint-colour fill block each, as React components taking `size` and `className`. Categories (slug: label):
-   las: Tukang Las, ojek: Ojek & Driver, dapur: Warung & Dapur, bangunan: Tukang Bangunan, bengkel: Bengkel, bersih: Bersih-bersih, toko: Jaga Toko, angkut: Angkut Barang, kebun: Kebun & Tani, jahit: Jahit, laundry: Cuci & Setrika, kurir: Kurir & Antar, acara: Bantu Acara, asuh: Jaga Anak & Lansia.
-   Also export a `KATEGORI` array: `{ slug, label, Icon, warna, ucapan }` where `ucapan` is the sentence read aloud in Mode baca-dengar (e.g. "Tukang las. Kerja mengelas besi dan pagar.").
-5. **UI primitives** in `src/components/ui/` (server components where possible, client only when needed):
-   - `Tombol`: variants `utama` (cabai), `sorot` (kunyit), `garis` (outline on paper); sizes incl. a huge round `Mic` button ("Mulai ngobrol") with a pulsing ring.
-   - `LencanaTerverifikasi`: rubber-stamp style badge in daun, slightly rotated, showing what was checked (props: ktp, npwp, fotoUsaha, tanggal), e.g. "TERVERIFIKASI · KTP · FOTO USAHA".
-   - `PapanLed`: client component. LED dot-matrix board (malam background, led text in Doto, faint unlit-dot grid behind). Props `until: number` (ms timestamp) and `teks`. Shows a live HH:MM:SS countdown and a marquee of `teks` ("BUTUH HARI INI · TUKANG CUCI PIRING · WARUNG BU WATI · RP120.000"). Marquee stops under reduced motion. This is the hero of the demo video, make it great.
-   - `KartuLowongan`: taped paper job card: category icon, title, employer, upah, lokasi + jarak, jadwal, verified badge, optional `mendesak` state that adds a cabai "BUTUH HARI INI" strip and a small LED countdown, and a "Bacakan" (speaker) button.
-   - `CekUpah`: chip showing wage fairness vs local UMK. States `wajar` (daun), `rendah` (kunyit, "Di bawah UMK"), `curiga` (cabai, "Terlalu tinggi, hati-hati").
-   - `UbinKategori`: big tappable category tile for Mode baca-dengar: large icon, Bungee label, and a speaker button that uses `window.speechSynthesis` with `lang="id-ID"` to read `ucapan`.
-   - `KartuKerja`: preview of the shareable QR profile card in 9:16 (WhatsApp status size): name, personas as chips, city, verified-style stamp, and a QR placeholder drawn in SVG (no new dependency).
-   - `PinPeta`: map pin marker (category icon inside a pin, cabai ring when urgent) for the future Peta Kerja Sekitar.
-6. `src/app/desain/page.tsx`: a showcase page titled "Sistem Desain Lokerin" that displays every token, the type scale, the logo at several sizes, all 14 icons with labels, and every primitive with realistic Banyumas sample data (Purwokerto, Sokaraja, Ajibarang; wages like Rp120.000/hari). Copy in Bahasa Indonesia.
-7. Replace `src/app/page.tsx` with a simple placeholder landing in the new style: logo, the headline "Cari kerja cukup ngobrol.", one line naming the problem (lowongan warung, bengkel dan UMKM jarang masuk portal kerja dan rawan penipuan), the big Mic button (no voice logic yet), a PapanLed with a sample urgent job, and a link to `/desain`.
+Rework the existing files in place (same component names and props where they still make sense) so the old Cat Warung styling is gone:
+
+1. `globals.css` and `layout.tsx`: tokens and fonts above; drop Bungee, Atkinson and Doto, the warung stripe, paper grain, tape and stamp styles. Keep the visible focus ring (2px `tinta` outline with 3px offset plus a `jingga` halo) and `prefers-reduced-motion` handling.
+2. **Logo** (`src/components/brand/Logo.tsx`, `public/logo.svg`, `src/app/icon.svg`): lowercase wordmark "lokerin" in Plus Jakarta Sans 800, where the dot of the i is an orange map-pin dot. `LogoMark` is that orange pin dot alone (for the favicon), readable at 16px.
+3. **14 category icons** (`src/components/icons/categories.tsx`, keep the `KATEGORI` array and its `ucapan` read-aloud text): redraw as line icons matching the hero, 48x48 grid, 2px `tinta` strokes, round caps and joins, with one small `jingga-terang` fill accent each (sparks for las, a helmet for ojek, steam for dapur...). Keep slugs and labels.
+4. **Primitives** in `src/components/ui/`, restyled:
+   - `Tombol`: `utama` (jingga bg, white 19px+ bold text), `garis` (white bg, tinta 1.5px border), `halus` (kabut bg); pill shape, min height 52px. `Mic`: big round jingga button with a microphone and "Mulai ngobrol", with a soft pulsing ring.
+   - `LencanaTerverifikasi`: green pill with a check, "Terverifikasi", plus a quiet line listing what was checked (KTP · NPWP · Foto usaha) and the date.
+   - `PapanLed` -> rename to `HitungMundur` (update imports): an orange pill "BUTUH HARI INI" plus mono tabular HH:MM:SS countdown in jingga-tua on jingga-muda; live, client component, accessible label, ticks stop under reduced motion only for animation (the numbers still update).
+   - `KartuLowongan`: white card, 1px garis border, 16px radius: category icon tile, title, employer, upah, lokasi + jarak, jadwal, verified pill, `CekUpah`, optional `mendesak` state with the HitungMundur row on top, a primary "Saya bisa" button and a "Bacakan" speaker button.
+   - `CekUpah`: pills for `wajar`, `rendah`, `curiga` with the colours above.
+   - `UbinKategori`: grey (kabut) rounded card like the preview's bottom strip: line icon, label, mono "01 / 14" numbering, a round arrow button, and the Bacakan speaker (speechSynthesis, `id-ID`) for Mode baca-dengar. Large tap target.
+   - `KartuKerja`: 9:16 WhatsApp-status card in the new style: logo, name, persona pills, city, QR placeholder, "Pindai untuk melihat profil di Lokerin". No verified badge (only employers are verified).
+   - `PinPeta`: orange map pin with the category line icon inside; `mendesak` adds a pulsing ring and a small "BUTUH HARI INI" tag.
+5. **Landing page** `src/app/page.tsx`, matching `docs/garis-kota-preview.png`:
+   - Nav: logo; links "Cari kerja", "Pasang lowongan", "Cara kerja" (anchors on the page are fine); "Mulai ngobrol" pill button.
+   - Left: eyebrow "UNTUK PEKERJA DAN UMKM BANYUMAS"; h1 "Cari kerja" / "cukup ngobrol." (second line jingga); sentence "Lowongan warung, bengkel, dan UMKM terverifikasi di dekatmu. Ceritakan pengalamanmu, CV-mu tersusun dari obrolan."; buttons "Mulai ngobrol" (with mic icon) and "Pasang lowongan".
+   - Right: the hero illustration `public/hero-kota.png` (via `next/image`, priority, descriptive Indonesian alt text) with an absolutely positioned `PinPeta`/tag "BUTUH HARI INI" over the orange warung (position via percentage props so it can be tuned), and a phone mockup (pure HTML/CSS, not an image) overlapping it that shows `KartuLowongan` in the urgent state: Tukang cuci piring, Warung Bu Wati, Rp120.000/hari, Purwokerto · 1,2 km, Terverifikasi, Saya bisa.
+   - Below: the category strip with four `UbinKategori` (Las, Ojek, Dapur, Bangunan) and a link to all 14 on `/desain`.
+   - Mobile (360px): text first, then the illustration cropped to the town with the pin, then the phone card full width (no phone frame needed on mobile), then the category tiles in a 2x2 grid. No horizontal scroll.
+6. **`/desain`** showcase: update every section to the new tokens, type, logo, 14 icons, all primitives, pins over a small piece of the illustration, and the Kartu Kerja, with sample Banyumas data. Short plain section titles (Warna, Huruf, Logo, Ikon kategori, Tombol, Kartu lowongan, Peta, Kartu Kerja).
 
 ## Rules
 
-- All user-facing copy in Bahasa Indonesia; code identifiers can mix Indonesian names as above.
-- No new npm dependencies. No external icon libraries; draw icons yourself.
-- Responsive from 360px to desktop; no horizontal scroll; tap targets >= 48px.
-- WCAG AA contrast, keyboard reachable, visible focus, `aria-label`s on icon-only buttons, decorative SVGs `aria-hidden`.
-- Read the relevant guides in `node_modules/next/dist/docs/` before writing Next.js code (this Next.js version differs from older ones).
-- Finish with `npm run lint` and `npm run build` both passing.
+- Follow `AGENTS.md` (no AI attribution anywhere; plain human copy in Bahasa Indonesia; no slogans or filler).
+- No new npm dependencies. Draw icons yourself.
+- Responsive 360px to desktop, tap targets >= 48px, WCAG AA, keyboard reachable, visible focus, `aria-label` on icon-only buttons, decorative SVGs `aria-hidden`.
+- Read the relevant guides in `node_modules/next/dist/docs/` before writing Next.js code.
+- Do not commit; leave changes in the working tree. Finish with `npm run lint` and `npm run build` passing (if the sandbox blocks Google Fonts during build, say so).

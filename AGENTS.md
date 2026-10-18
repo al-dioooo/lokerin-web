@@ -22,7 +22,7 @@ These follow the team's GitHub repository guideline (kept in `lokerin-docs`), wi
 
 **README.** Keep these sections current: project overview, tech stack, setup and run, environment variables, deployment. Extra docs go in `docs/`: architecture diagram, API spec, ADR decision log.
 
-**Sprint exceptions** (until the competition ends): TDD and new tests are not required, and PRs need no reviewer, so the author merges their own PR once lint and build pass.
+**Sprint exceptions** (until the competition ends): TDD and new tests are not required, and PRs need no reviewer. Always ask Alice before merging any PR, and merge only after she says yes.
 
 ## Attribution
 

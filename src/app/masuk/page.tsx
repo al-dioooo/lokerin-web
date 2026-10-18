@@ -4,6 +4,7 @@ import { Logo } from "@/components/brand/Logo";
 import { IconArrowRight, IconKey, IconPhoneOff, IconTrash } from "@/components/icons/tabler";
 import { KOTAK_PANDANG, KotaIsometrik, LOKASI_KERJA } from "@/components/kota/KotaIsometrik";
 import { TombolGoogle } from "@/components/masuk/TombolGoogle";
+import { PilihAkunContoh } from "@/components/masuk/PilihAkunContoh";
 import { AUTH_DEMO } from "@/lib/auth";
 
 export const metadata = { title: "Masuk · Lokerin" };
@@ -45,6 +46,7 @@ export default function Masuk() {
         <h1 className="mt-8 text-[1.9rem] leading-tight">Masuk ke Lokerin</h1>
         <p className="mt-2 text-[15px] text-abu">Satu akun untuk cari kerja di sekitar rumah, atau cari orang untuk usahamu.</p>
         <div className="mt-7"><TombolGoogle /></div>
+        <PilihAkunContoh />
         <ul className="mt-7 grid gap-3 border-t border-dashed border-garis pt-6 text-sm">
           {JANJI.map(({ Icon, teks }) => <li key={teks} className="flex items-center gap-3"><span className="grid size-8 place-items-center rounded-full bg-jingga-muda text-jingga-tua"><Icon size={16} /></span>{teks}</li>)}
         </ul>

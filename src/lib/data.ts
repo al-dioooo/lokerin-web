@@ -24,9 +24,10 @@ export type PemberiKerja = {
 
 export type Lowongan = {
   id: string;
-  segmen: Segmen;
-  kota: Kota;
-  pemberiId: string;
+  /** Informal work or an internship. Listings from the API may leave it out (treated as informal). */
+  segmen?: Segmen;
+  kota?: Kota;
+  pemberiId?: string;
   kategori: KategoriSlug;
   judul: string;
   usaha: string;
@@ -396,7 +397,7 @@ const daftarLowongan: Omit<Lowongan, "usaha" | "pemilik" | "verifikasi" | "wa">[
 ];
 
 export const LOWONGAN: Lowongan[] = daftarLowongan.map((lowongan) => {
-  const pemberi = cariPemberi(lowongan.pemberiId);
+  const pemberi = cariPemberi(lowongan.pemberiId ?? "");
   if (!pemberi) throw new Error(`Pemberi kerja tidak ditemukan: ${lowongan.pemberiId}`);
   return { ...lowongan, usaha: pemberi.nama, pemilik: pemberi.pemilik, verifikasi: pemberi.verifikasi, wa: pemberi.wa };
 });

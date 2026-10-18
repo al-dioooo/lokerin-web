@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { ViewTransition, useState } from "react";
 import { getKategori } from "../icons/categories";
 import { IconIdBadge2, IconMicrophone, IconPencil, IconPrinter } from "../icons/tabler";
 import { PEKERJA, type PersonaId } from "@/lib/data";
+import { TabPil } from "./TabPil";
 
 export function ProfilCv() {
   const [persona, setPersona] = useState<PersonaId>("las");
@@ -14,9 +15,8 @@ export function ProfilCv() {
   return (
     <div className="grid items-start gap-5 lg:grid-cols-[1fr_300px]">
       <div className="grid gap-4">
-        <div className="inline-flex w-fit rounded-full bg-kabut p-1 print:hidden" role="tablist" aria-label="Pilih CV">
-          {(Object.keys(PEKERJA.persona) as PersonaId[]).map((k) => <button key={k} type="button" role="tab" aria-selected={persona === k} className="tab-persona" onClick={() => setPersona(k)}>CV {PEKERJA.persona[k].judul}</button>)}
-        </div>
+        <TabPil className="w-fit print:hidden" label="Pilih CV" nilai={persona} onUbah={setPersona} pilihan={(Object.keys(PEKERJA.persona) as PersonaId[]).map((k) => ({ id: k, label: `CV ${PEKERJA.persona[k].judul}` }))} />
+        <ViewTransition key={persona} name="lembar-cv" share="auto" enter="auto" default="none">
         <article className="lembar-cv" role="tabpanel" aria-label={`CV ${p.judul}`}>
           <header className="flex items-start justify-between gap-4 border-b border-garis pb-4">
             <div>
@@ -42,6 +42,7 @@ export function ProfilCv() {
           <h3 className="mt-5 text-sm uppercase tracking-wide text-abu">Bisa kerja</h3>
           <p className="mt-1 text-[15px]">{p.waktu}</p>
         </article>
+        </ViewTransition>
       </div>
       <aside className="grid gap-3 print:hidden">
         <button type="button" className="tombol tombol-utama" onClick={() => window.print()}><IconPrinter size={18} />Cetak CV ini</button>

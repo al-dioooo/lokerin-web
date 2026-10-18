@@ -27,6 +27,7 @@ export function useDaftarLangsung(awal: Lowongan[], { masuk, muatUlang }: Opsi) 
     setAsal(awal);
     setDaftar(awal);
     setBaru(new Set());
+    setTerakhir(null);
   }
 
   useLangsung(

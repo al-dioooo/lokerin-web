@@ -8,7 +8,6 @@ import { KotaIsometrik } from "@/components/kota/KotaIsometrik";
 import { PetaKota } from "@/components/kota/PetaKota";
 import { ObrolanJadiCV } from "@/components/landing/ObrolanJadiCV";
 import { RakKategori } from "@/components/landing/RakKategori";
-import { AksiContoh } from "@/components/ui/AksiContoh";
 import { CekUpah } from "@/components/ui/CekUpah";
 
 const LANGKAH_USAHA = [
@@ -29,7 +28,7 @@ export default function Home() {
         <div className="shell flex h-16 items-center justify-between gap-4">
           <Link href="/" aria-label="Lokerin, beranda" className="inline-flex min-h-11 items-center"><Logo size={26} /></Link>
           <nav aria-label="Utama" className="hidden items-center gap-7 text-sm font-semibold md:flex"><a href="#peta">Cari kerja</a><a href="#cara-kerja">Obrolan jadi CV</a><a href="#pasang-lowongan">Pasang lowongan</a></nav>
-          <AksiContoh size="kecil">Mulai ngobrol</AksiContoh>
+          <Link href="/masuk" className="tombol tombol-utama min-h-9 px-4 text-sm">Masuk</Link>
         </div>
       </header>
       <main id="utama">
@@ -40,8 +39,8 @@ export default function Home() {
             <h1 id="judul-utama" className="judul-utama">Cari kerja<span>cukup ngobrol.</span></h1>
             <p className="mt-4 max-w-xl text-base text-abu sm:text-lg">Lowongan warung, bengkel, dan UMKM terverifikasi di dekatmu. Ceritakan pengalamanmu, CV-mu tersusun dari obrolan.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <AksiContoh size="besar"><MicIcon size={18} />Mulai ngobrol</AksiContoh>
-              <a href="#pasang-lowongan" className="tombol tombol-garis min-h-12 px-6 text-base">Pasang lowongan</a>
+              <Link href="/masuk" className="tombol tombol-utama min-h-12 px-6 text-base"><MicIcon size={18} />Mulai ngobrol</Link>
+              <Link href="/masuk" className="tombol tombol-garis min-h-12 px-6 text-base">Pasang lowongan</Link>
             </div>
             <p className="mt-4 text-xs text-abu">Tidak bisa bicara sekarang? Semua langkah juga bisa diketuk dan diketik.</p>
           </div>
@@ -68,7 +67,7 @@ export default function Home() {
           <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
               <Judul label="Untuk pemilik usaha" id="judul-usaha">Butuh orang hari ini? <span className="text-jingga">Pasang lowongan sambil bicara.</span></Judul>
-              <div className="flex flex-wrap gap-3"><AksiContoh aksi="pasang" size="besar">Pasang lowongan</AksiContoh></div>
+              <div className="flex flex-wrap gap-3"><Link href="/masuk" className="tombol tombol-utama min-h-12 px-6 text-base">Pasang lowongan</Link></div>
             </div>
             <Muncul jeda={0.15}><ol className="grid gap-3">
               {LANGKAH_USAHA.map(([judul, isi], i) => (

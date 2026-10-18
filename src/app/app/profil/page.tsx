@@ -1,9 +1,11 @@
+import { Halaman } from "@/components/app/Halaman";
 import { ProfilCv } from "@/components/app/ProfilCv";
 
 export const metadata = { title: "Profil" };
 
 export default function Profil() {
   return (
+    <Halaman>
     <div className="grid gap-5">
       <div className="print:hidden">
         <h1 className="text-[1.75rem] leading-tight">Satu profil, <span className="text-jingga">dua CV.</span></h1>
@@ -11,5 +13,6 @@ export default function Profil() {
       </div>
       <ProfilCv />
     </div>
+    </Halaman>
   );
 }

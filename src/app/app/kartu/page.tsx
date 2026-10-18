@@ -1,3 +1,4 @@
+import { Halaman } from "@/components/app/Halaman";
 import { IconDownload, IconShare } from "@/components/icons/tabler";
 import { KartuKerja } from "@/components/ui/KartuKerja";
 import { PEKERJA } from "@/lib/data";
@@ -6,6 +7,7 @@ export const metadata = { title: "Kartu Kerja" };
 
 export default function Kartu() {
   return (
+    <Halaman>
     <div className="grid items-start gap-6 lg:grid-cols-[1fr_340px]">
       <div>
         <h1 className="text-[1.75rem] leading-tight">Kartu Kerja <span className="text-jingga">untuk status WhatsApp.</span></h1>
@@ -18,5 +20,6 @@ export default function Kartu() {
       </div>
       <KartuKerja nama={PEKERJA.nama} personas={[PEKERJA.persona.las.judul, PEKERJA.persona.ojek.judul]} kota={PEKERJA.kota} />
     </div>
+    </Halaman>
   );
 }

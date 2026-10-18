@@ -1,9 +1,11 @@
+import { Halaman } from "@/components/app/Halaman";
 import { PanggilanDemo } from "@/components/app/PanggilanDemo";
 
 export const metadata = { title: "Ngobrol" };
 
 export default function Ngobrol() {
   return (
+    <Halaman>
     <div className="grid gap-5">
       <div>
         <h1 className="text-[1.75rem] leading-tight">Ceritakan pengalamanmu. <span className="text-jingga">CV-mu tersusun sambil ngobrol.</span></h1>
@@ -11,5 +13,6 @@ export default function Ngobrol() {
       </div>
       <PanggilanDemo />
     </div>
+    </Halaman>
   );
 }

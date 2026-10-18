@@ -60,12 +60,25 @@ export async function masukDenganGoogle(): Promise<Akun> {
   }
   const google = await siapkanGoogle()!;
   const aksesGoogle = await new Promise<string>((selesai, gagal) => {
+    // Google's window sets a strict opener policy, so closing it does not always reach
+    // error_callback. When focus comes back and no answer follows, treat it as cancelled.
+    let tunggu = 0;
+    const kembali = () => {
+      window.clearTimeout(tunggu);
+      tunggu = window.setTimeout(() => akhiri(() => gagal(new Error("dibatalkan"))), 1500);
+    };
+    const akhiri = (fn: () => void) => {
+      window.removeEventListener("focus", kembali);
+      window.clearTimeout(tunggu);
+      fn();
+    };
+    window.addEventListener("focus", kembali);
     google.accounts.oauth2
       .initTokenClient({
         client_id: CLIENT_ID,
         scope: "openid email profile",
-        callback: (t) => (t.access_token ? selesai(t.access_token) : gagal(new Error(t.error ?? "Google menolak masuk."))),
-        error_callback: (e) => gagal(new Error(e.type === "popup_closed" ? "dibatalkan" : "Jendela Google tidak bisa dibuka. Izinkan pop-up lalu coba lagi.")),
+        callback: (t) => akhiri(() => (t.access_token ? selesai(t.access_token) : gagal(new Error(t.error ?? "Google menolak masuk.")))),
+        error_callback: (e) => akhiri(() => gagal(new Error(e.type === "popup_closed" ? "dibatalkan" : "Jendela Google tidak bisa dibuka. Izinkan pop-up lalu coba lagi."))),
       })
       .requestAccessToken();
   });

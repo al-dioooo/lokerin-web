@@ -7,5 +7,5 @@ const states = {
 
 export function CekUpah({ status, wilayah = "Banyumas" }: { status: StatusUpah; wilayah?: string }) {
   const { label, color, icon } = states[status];
-  return <span className={`inline-flex max-w-full items-center gap-2 rounded-full px-3 py-1 text-xs font-bold ${color}`}><span aria-hidden="true">{icon}</span><span>{label}<span className="sr-only">, dibandingkan dengan UMK {wilayah}</span></span></span>;
+  return <span className={`inline-flex max-w-full items-center gap-2 rounded-full px-3 py-1 text-xs font-bold ${color}`}><span aria-hidden="true">{icon}</span><span>{label}<span className="sr-only">, dibandingkan dengan UMK {wilayah} 2026, Rp2.474.599 per bulan</span></span></span>;
 }

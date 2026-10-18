@@ -1,6 +1,6 @@
 import { DaftarCocok } from "@/components/app/DaftarCocok";
 import { Halaman } from "@/components/app/Halaman";
-import { TautanArah } from "@/components/app/TautanArah";
+import { TautanNgobrol } from "@/components/app/TautanNgobrol";
 import { KartuMendesak } from "@/components/app/KartuLowonganApp";
 import { IconMicrophone, IconSearch, IconShieldCheck } from "@/components/icons/tabler";
 import { BUTUH_HARI_INI, LOWONGAN, PEKERJA } from "@/lib/data";
@@ -15,11 +15,11 @@ export default function Beranda() {
       <section>
         <p className="text-sm text-abu">Halo,</p>
         <h1 className="text-[1.75rem] leading-tight">{PEKERJA.nama}. <span className="text-jingga">Mau kerja apa hari ini?</span></h1>
-        <TautanArah arah="kanan" href="/app/ngobrol" className="kolom-cari mt-4">
+        <TautanNgobrol className="kolom-cari mt-4">
           <IconSearch size={20} className="text-abu" />
           <span className="flex-1 text-sm text-abu">Cari kerja, misalnya &ldquo;las pagar di Sokaraja&rdquo;</span>
           <span className="tombol tombol-utama min-h-9 px-3 text-sm"><IconMicrophone size={16} />Ngobrol</span>
-        </TautanArah>
+        </TautanNgobrol>
       </section>
 
       <section aria-labelledby="judul-mendesak">

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { IconHome, IconIdBadge2, IconMap, IconMicrophone, IconUser } from "../icons/tabler";
 import { aturArah } from "./Halaman";
+import { TautanNgobrol } from "./TautanNgobrol";
 
 const MENU = [
   { href: "/app", label: "Beranda", Icon: IconHome },
@@ -24,13 +25,19 @@ function indeks(path: string) {
 export function PilNav() {
   const path = usePathname();
   // Highlight the tapped item right away instead of waiting for the next page to load.
-  const [ketuk, setKetuk] = useState<{ dari: string; ke: number } | null>(null);
-  const aktif = ketuk && ketuk.dari === path ? ketuk.ke : indeks(path);
+  const [ketuk, setKetuk] = useState<number | null>(null);
+  const [jalur, setJalur] = useState(path);
+  if (jalur !== path) {
+    // The page changed (tap, back button, or a link elsewhere): follow the URL again.
+    setJalur(path);
+    setKetuk(null);
+  }
+  const aktif = ketuk ?? indeks(path);
 
   function pergi(ke: number) {
     if (ke === aktif) return;
     aturArah(ke > aktif ? "kanan" : "kiri");
-    setKetuk({ dari: path, ke });
+    setKetuk(ke);
   }
 
   return (
@@ -40,13 +47,13 @@ export function PilNav() {
           const ini = i === aktif;
           if (i === 2) {
             return (
-              <Link key={href} href={href} onClick={() => pergi(i)} className="pil-ngobrol" aria-current={ini ? "page" : undefined} aria-label="Ngobrol: cari kerja dan susun CV dengan bicara">
+              <TautanNgobrol key={href} className="pil-ngobrol" aria-current={ini ? "page" : undefined} aria-label="Ngobrol: cari kerja dan susun CV dengan bicara">
                 {!ini && <span className="pil-ajak" aria-hidden="true">Ceritakan kerjamu, CV jadi sendiri</span>}
                 <m.span className="pil-ngobrol-orb" whileHover={{ scale: 1.06, rotate: -6 }} whileTap={{ scale: 0.92 }} transition={{ type: "spring", stiffness: 500, damping: 20 }}>
                   <Icon size={26} stroke={2} />
                 </m.span>
                 <span className="pil-ngobrol-label piksel">{label}</span>
-              </Link>
+              </TautanNgobrol>
             );
           }
           return (

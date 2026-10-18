@@ -91,6 +91,8 @@
   .pin-kaki::after { content: ""; display: block; width: 8px; height: 8px; margin: 12px 0 0 -3px; border-radius: 50%; background: var(--color-jingga); box-shadow: 0 0 0 4px rgb(242 119 25 / .25); }
   .pin-kota[data-mendesak] .pin-label { color: white; background: linear-gradient(#FF9A4D, #F27719 55%, #E0660D); border-color: #CF5C08; text-transform: uppercase; letter-spacing: .03em; }
   .pin-kota[data-mendesak] .pin-kaki::after { animation: denyut 1.6s ease-out infinite; }
+  .pin-kota[data-baru] { animation: pin-turun .7s cubic-bezier(.3, 1.6, .5, 1) backwards; }
+  .pin-kota[data-baru] .pin-label { color: white; background: var(--color-daun); border-color: var(--color-daun); }
   .pin-kota[data-aktif="true"] .pin-label { transform: scale(1.12); outline: 2px solid var(--color-tinta); outline-offset: 2px; }
   .panel-peta { padding: 16px; border-top: 1px solid var(--color-garis); background: var(--color-kertas); }
   .chip-peta { border-radius: 999px; padding: 6px 12px; min-height: 32px; font-size: 12px; font-weight: 700; background: white; border: 1px solid var(--color-garis); }
@@ -323,6 +325,7 @@
 @keyframes tirai-buka { to { clip-path: circle(150vmax at var(--x) var(--y)); } }
 @keyframes kelip { to { opacity: .55; } }
 @keyframes kota-naik { from { opacity: 0; translate: 0 60px; } }
+@keyframes pin-turun { from { opacity: 0; translate: 0 -48px; } }
 @keyframes pin-jatuh { from { opacity: 0; translate: -50% -160%; } }
 @keyframes lentera-masuk { from { opacity: 0; scale: .5; } }
 @keyframes cincin { 0% { scale: .8; opacity: .8; } 100% { scale: 1.9; opacity: 0; } }

@@ -12,7 +12,7 @@ import { BarisLowongan } from "../app/KartuLowonganApp";
 import { KartuDraf } from "../pemberi/KartuDraf";
 import { keLowongan } from "@/lib/api/adaptor";
 import { api, GalatApi } from "@/lib/api/klien";
-import type { FaktaApi, LamaranApi, LowonganApi, PersonaApi } from "@/lib/api/tipe";
+import type { FaktaApi, LamaranApi, LowonganApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
 
 type Hasil = { widget?: string } & Record<string, unknown>;
 
@@ -48,6 +48,35 @@ function FaktaUsulan({ usulan }: { usulan: FaktaApi[] }) {
         </div>
       ))}
       {galat && <p role="alert" className="text-sm text-merah">{galat}</p>}
+    </div>
+  );
+}
+
+/** What lihat_profil read: the Profil Induk, with any proposed Fakta still waiting for a tap. */
+function ProfilInduk({ profil }: { profil: ProfilApi }) {
+  const fakta = profil.fakta ?? [];
+  const tersimpan = fakta.filter((f) => f.status === "terkonfirmasi");
+  const usulan = fakta.filter((f) => f.status === "usulan");
+  const persona = profil.persona ?? [];
+  return (
+    <div className="grid gap-3">
+      <div className="rounded-2xl border border-garis bg-white p-3">
+        <p className="font-bold">{profil.pencari.nama}</p>
+        <p className="text-sm text-abu">{[profil.pencari.kecamatan, profil.pencari.kota].filter(Boolean).join(", ")}</p>
+        {tersimpan.length ? (
+          <ul className="mt-3 grid gap-1.5 text-[15px]">
+            {tersimpan.slice(0, 4).map((f) => (
+              <li key={f.id} className="flex items-start gap-2"><IconCheck size={18} className="mt-0.5 shrink-0 text-daun" /><span>{f.judul}{f.periode ? <span className="text-abu"> · {f.periode}</span> : null}</span></li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-3 text-[15px] text-abu">Belum ada Fakta tersimpan. Ceritakan kerja yang pernah kamu lakukan.</p>
+        )}
+        {tersimpan.length > 4 && <p className="mt-1.5 text-sm text-abu">dan {tersimpan.length - 4} Fakta lain</p>}
+        {persona.length > 0 && <ul className="mt-3 flex flex-wrap gap-1.5">{persona.map((p) => <li key={p.id} className="rounded-full bg-kabut px-3 py-1 text-xs font-bold">CV {p.judul}</li>)}</ul>}
+      </div>
+      {usulan.length > 0 && <FaktaUsulan usulan={usulan} />}
+      <Link href="/app/profil" className="tombol tombol-garis min-h-14">Buka profil</Link>
     </div>
   );
 }
@@ -104,6 +133,8 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
       return <BarisLowongan lowongan={keLowongan(hasil.lowongan as LowonganApi)} />;
     case "konfirmasi_fakta":
       return <FaktaUsulan usulan={(hasil.usulan as FaktaApi[]) ?? []} />;
+    case "profil_induk":
+      return hasil.pencari ? <ProfilInduk profil={hasil as unknown as ProfilApi} /> : null;
     case "persona": {
       const p = hasil.persona as PersonaApi;
       return (
@@ -152,6 +183,7 @@ export const JUDUL_WIDGET: Record<string, string> = {
   daftar_lowongan: "Lowongan yang cocok",
   detail_lowongan: "Lowongan",
   konfirmasi_fakta: "Fakta baru untuk profilmu",
+  profil_induk: "Profilmu",
   persona: "CV",
   cv_khusus: "CV Khusus",
   lamaran_siap: "Lamaran siap dikirim",

@@ -4,6 +4,7 @@
 
 import { useSyncExternalStore } from "react";
 import { api, apiAktif, bacaToken, GalatApi, simpanToken } from "./klien";
+import { kosongkan } from "./simpanan";
 import type { MeApi, Peran, Pengguna } from "./tipe";
 
 const KUNCI_PENGGUNA = "lokerin-pengguna";
@@ -47,6 +48,8 @@ export function useSesi() {
 }
 
 function simpan(token: string, pengguna: Pengguna) {
+  // Switching accounts drops what the previous one loaded.
+  if (keadaan.pengguna && keadaan.pengguna.id !== pengguna.id) kosongkan();
   simpanToken(token);
   try {
     localStorage.setItem(KUNCI_PENGGUNA, JSON.stringify(pengguna));
@@ -106,6 +109,7 @@ export async function segarkanSesi() {
 export function keluar() {
   void api("/auth/keluar", { method: "POST" }).catch(() => {});
   simpanToken(null);
+  kosongkan();
   try {
     localStorage.removeItem(KUNCI_PENGGUNA);
   } catch {}

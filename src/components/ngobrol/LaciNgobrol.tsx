@@ -7,7 +7,7 @@
  * something from inside the drawer stacks on top, with Kembali to step back.
  */
 
-import { Suspense, useCallback, useRef, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { IconArrowLeft } from "../icons/tabler";
 import { Laci } from "../lapis/Laci";
 import { RincianLowongan, bacaanLowongan } from "../app/RincianLowongan";
@@ -20,6 +20,7 @@ import { DaftarPelamar } from "../pemberi/DaftarPelamar";
 import { keLowongan } from "@/lib/api/adaptor";
 import { useApi } from "@/lib/api/hooks";
 import type { LowonganApi } from "@/lib/api/tipe";
+import { PERISTIWA_TITIPAN } from "@/lib/titipNgobrol";
 import { KonteksLaci, useBukaLaci, type IsiLaci } from "../lapis/konteksLaci";
 
 const JUDUL: Record<IsiLaci["jenis"], string> = {
@@ -88,6 +89,11 @@ export function PenyediaLaci({ children }: { children: ReactNode }) {
     terbukaRef.current = false;
     setTerbuka(false);
   }, []);
+  // "Ubah lewat Ngobrol" from a CV in the drawer continues in the thread behind it.
+  useEffect(() => {
+    window.addEventListener(PERISTIWA_TITIPAN, tutup);
+    return () => window.removeEventListener(PERISTIWA_TITIPAN, tutup);
+  }, [tutup]);
   const atas = tumpuk.at(-1);
   return (
     <KonteksLaci.Provider value={buka}>

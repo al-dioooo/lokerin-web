@@ -160,7 +160,7 @@ function Isi({ hasil }: { hasil: Hasil }) {
     case "cv_khusus":
       return (
         <div className="grid gap-2">
-          <p className="text-[15px]">CV lamaran <strong>{(hasil.isi as { judul: string }).judul}</strong> sudah jadi dari {String(hasil.fakta_dipakai)} bahan CV-mu.</p>
+          <p className="text-[15px]">CV lamaran <strong>{(hasil.isi as { judul: string }).judul}</strong> sudah jadi{Number(hasil.fakta_dipakai) > 0 ? `, dari ${Number(hasil.fakta_dipakai)} bahan CV-mu` : ""}.</p>
           <TautanLaci isi={{ jenis: "cv", id: String(hasil.id) }} href={`/app/cv/${String(hasil.id)}`} className="grid gap-2" label="Lihat dan ubah CV lamaran">
             <IntipCv id={String(hasil.id)} />
             <span className="tombol tombol-utama min-h-12"><IconFileCv size={18} />Lihat dan ubah CV</span>

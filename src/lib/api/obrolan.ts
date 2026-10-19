@@ -4,6 +4,7 @@
 // as ordered parts, text and tool calls, so cards show up in the thread where the agent made them.
 
 import { api, API_URL, bacaToken } from "./klien";
+import { tanpaKonteks } from "../titipNgobrol";
 
 export type HasilAlat = { widget?: string } & Record<string, unknown>;
 export type BagianPesan =
@@ -77,7 +78,11 @@ function susunPesan(messages: PesanUi[]): Pesan[] {
   messages.forEach((m, i) => {
     if (m.role === "system") return;
     const peran = m.role === "user" ? "kamu" : "ai";
-    const bagian = bagianDariUi(m.parts ?? []);
+    const bagian = bagianDariUi(m.parts ?? []).flatMap((b) => {
+      if (peran !== "kamu" || b.jenis !== "teks") return [b];
+      const teks = tanpaKonteks(b.teks);
+      return teks.trim() ? [{ ...b, teks }] : [];
+    });
     if (!bagian.length) return;
     const akhir = pesan.at(-1);
     // One reply can be saved as several assistant messages (one per step); show it as one.

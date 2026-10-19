@@ -12,7 +12,8 @@ import { LaporkanLowongan } from "../app/LaporkanLowongan";
 import { Laci } from "../lapis/Laci";
 import { TawaranKabar } from "../app/TawaranKabar";
 import { Bacakan } from "../ui/Bacakan";
-import { api, GalatApi, urlBertoken } from "@/lib/api/klien";
+import { api, GalatApi } from "@/lib/api/klien";
+import { IntipCv } from "../cv/PratinjauCv";
 import { useApi } from "@/lib/api/hooks";
 import { useSesi } from "@/lib/api/sesi";
 import type { LamaranApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
@@ -135,10 +136,10 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
               <div className="flex justify-between gap-3"><dt className="text-abu">CV Khusus</dt><dd className="text-right font-bold">{cv ? "Terlampir" : "Tidak"}</dd></div>
             </dl>
             {cv && (
-              <div className="flex flex-wrap gap-2">
-                <Link href={`/app/cv/${cv.id}`} className="tombol tombol-garis flex-1"><IconFileCv size={18} />Lihat dan edit CV</Link>
-                <a href={urlBertoken(`/cv/${cv.id}/pdf`)} target="_blank" rel="noopener noreferrer" className="tombol tombol-halus flex-1">Buka PDF</a>
-              </div>
+              <Link href={`/app/cv/${cv.id}`} className="grid gap-2" aria-label="Lihat dan ubah CV Khusus">
+                <IntipCv id={cv.id} />
+                <span className="tombol tombol-garis min-h-12"><IconFileCv size={18} />Lihat dan ubah CV</span>
+              </Link>
             )}
             <label className="grid gap-1.5 text-[15px] font-semibold text-abu">
               Pesan singkat untuk {usaha} (boleh dikosongkan)

@@ -154,6 +154,14 @@
 .pilihan-jawab[data-tema="terang"] .pilihan-jawab-tombol { background: white; box-shadow: none; border: 1.5px solid var(--color-garis); }
 .pilihan-jawab[data-tema="terang"] .pilihan-jawab-tombol[aria-pressed="true"] { border-color: var(--color-jingga); background: var(--color-jingga-muda); outline: none; }
 .pilihan-jawab[data-tema="terang"] .pilihan-jawab-ketik { color: var(--color-abu); }
+.pilihan-jawab[data-tema="terang"] { padding: 14px; border-radius: 22px; background: white; border: 1px solid var(--color-garis); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-tombol { background: var(--color-kertas); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-soal { color: var(--color-tinta); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-petunjuk { color: var(--color-abu); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-kembali, .pilihan-jawab[data-tema="terang"] .pilihan-jawab-lewati { color: var(--color-abu); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-langkah { color: var(--color-jingga-tua); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-ringkas > li { background: var(--color-kertas); border: 1px solid var(--color-garis); color: var(--color-tinta); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-ubah { background: white; border: 1px solid var(--color-garis); color: var(--color-tinta); }
 
 @media (prefers-reduced-motion: reduce) {
   .ngobrol-malam, .ngobrol-tombol-kepala { transition: none; }

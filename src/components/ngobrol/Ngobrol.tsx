@@ -25,7 +25,7 @@ import { BATAS_DETIK, useSuara } from "./useSuara";
 import { kategoriDari } from "@/lib/api/adaptor";
 import { kirimPesan, muatObrolan, type BagianPesan, type HasilAlat, type Pesan } from "@/lib/api/obrolan";
 import { useSesi } from "@/lib/api/sesi";
-import type { LowonganApi, PertanyaanAgen } from "@/lib/api/tipe";
+import { bacaPertanyaan, type LowonganApi, type PertanyaanAgen } from "@/lib/api/tipe";
 import "./ngobrol.css";
 import "./obrolan.css";
 import { PenyediaLaci } from "./LaciNgobrol";
@@ -59,7 +59,7 @@ function pertanyaanTerbuka(pesan: Pesan[]): PertanyaanAgen | null {
   const akhir = pesan.at(-1);
   if (akhir?.peran !== "ai") return null;
   const alat = [...akhir.bagian].reverse().find((b) => b.jenis === "alat");
-  return alat?.jenis === "alat" && alat.hasil?.widget === "pertanyaan" ? (alat.hasil as unknown as PertanyaanAgen) : null;
+  return alat?.jenis === "alat" && alat.hasil ? bacaPertanyaan(alat.hasil) : null;
 }
 
 export function Ngobrol() {
@@ -208,7 +208,6 @@ export function Ngobrol() {
     kirimTerbaru.current = kirim;
   });
   const kirimStabil = useCallback((t: string) => void kirimTerbaru.current(t), []);
-  const fokuskan = useCallback(() => setFokus((f) => f + 1), []);
 
   // --- Derived ---
 
@@ -278,7 +277,7 @@ export function Ngobrol() {
             />
           </section>
           <section className="ngobrol-lapis ngobrol-teks" data-aktif={mode === "teks" || undefined} inert={mode !== "teks"} aria-label="Ngobrol pakai teks">
-            <Utas pesan={pesan} sibuk={sibuk} pertanyaan={pertanyaan} saran={SARAN[peran]} onKirim={kirimStabil} onKetik={fokuskan} />
+            <Utas pesan={pesan} sibuk={sibuk} pertanyaan={pertanyaan} saran={SARAN[peran]} onKirim={kirimStabil} />
             {(galat || suara.galat) && <p role="alert" className="ngobrol-galat">{galat || suara.galat}</p>}
             {suara.status === "hidup" && (
               <button type="button" className="pita-suara" onClick={() => gantiMode("suara")}>

@@ -61,14 +61,12 @@ export const Utas = memo(function Utas({
   pertanyaan,
   saran,
   onKirim,
-  onKetik,
 }: {
   pesan: Pesan[];
   sibuk: boolean;
   pertanyaan: PertanyaanAgen | null;
   saran: string[];
   onKirim: (teks: string) => void;
-  onKetik: () => void;
 }) {
   const gulir = useRef<HTMLDivElement>(null);
   const diBawah = useRef(true);
@@ -122,7 +120,7 @@ export const Utas = memo(function Utas({
         )}
         {pertanyaan && !sibuk && (
           <div className="mt-1">
-            <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={sibuk} onJawab={onKirim} onKetik={onKetik} tema="terang" />
+            <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={sibuk} onJawab={onKirim} tema="terang" />
           </div>
         )}
       </div>

@@ -161,11 +161,27 @@ export type KabarApi = { id: string; jenis: JenisKabar; judul: string; isi: stri
 export type DaftarKabarApi = { kabar: KabarApi[]; belum_dibaca: number };
 
 /** What tanya_pengguna asks: one question with big answer buttons (ADR 0008). */
-export type PertanyaanAgen = {
-  widget: "pertanyaan";
+/** One question from tanya_pengguna: a short label for the summary, the question, and its choices. */
+export type SoalAgen = {
   id: string;
-  pertanyaan: string;
+  judul: string;
+  teks: string;
   pilihan: { label: string; keterangan?: string }[];
   boleh_banyak: boolean;
   boleh_ketik: boolean;
 };
+
+/** What tanya_pengguna asked: 1 to 4 questions, answered together in one message. */
+export type PertanyaanAgen = { widget: "pertanyaan"; id: string; daftar: SoalAgen[] };
+
+/** Older conversations hold the single-question shape; both read as a list here. */
+export function bacaPertanyaan(hasil: Record<string, unknown>): PertanyaanAgen | null {
+  if (hasil.widget !== "pertanyaan" || typeof hasil.id !== "string") return null;
+  if (Array.isArray(hasil.daftar)) return { widget: "pertanyaan", id: hasil.id, daftar: hasil.daftar as SoalAgen[] };
+  if (typeof hasil.pertanyaan !== "string" || !Array.isArray(hasil.pilihan)) return null;
+  return {
+    widget: "pertanyaan",
+    id: hasil.id,
+    daftar: [{ id: "q1", judul: "", teks: hasil.pertanyaan, pilihan: hasil.pilihan as SoalAgen["pilihan"], boleh_banyak: Boolean(hasil.boleh_banyak), boleh_ketik: Boolean(hasil.boleh_ketik) }],
+  };
+}

@@ -1,0 +1,35 @@
+/* Peta Kerja Sekitar on Mapbox (ADR 0009): a map card with chips on top and a card strip at the bottom. */
+.peta-kartu-wadah {
+  display: flex; flex-direction: column; overflow: hidden; border-radius: 26px; border: 1px solid var(--color-garis); background: white;
+  height: max(500px, calc(100dvh - 250px));
+}
+/* The map keeps its own area so the Mapbox logo and attribution are never covered. */
+.peta-gl-wadah { position: relative; flex: 1; min-height: 0; background: #EEF0EC; }
+.peta-gl { position: absolute; inset: 0; }
+.peta-memuat { position: absolute; inset: 0; display: grid; place-items: center; color: var(--color-abu); font-weight: 600; }
+.peta-atas { position: absolute; inset: 12px 12px auto; display: flex; gap: 8px; align-items: flex-start; pointer-events: none; }
+.peta-chip-baris { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; pointer-events: auto; padding-bottom: 2px; }
+.peta-chip {
+  flex: none; min-height: 44px; padding: 0 16px; border-radius: 999px; background: rgb(255 255 255 / .95); border: 1px solid var(--color-garis);
+  font-size: 15px; font-weight: 700; color: var(--color-tinta); box-shadow: 0 4px 12px rgb(21 18 16 / .08);
+}
+.peta-chip[aria-pressed="true"] { background: var(--color-tinta); border-color: var(--color-tinta); color: white; }
+.peta-lokasiku {
+  pointer-events: auto; flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px;
+  background: white; border: 1px solid var(--color-garis); color: #2563EB; box-shadow: 0 4px 12px rgb(21 18 16 / .1);
+}
+.peta-pesan {
+  position: absolute; left: 50%; top: 66px; translate: -50% 0; max-width: calc(100% - 24px); padding: 8px 14px; border-radius: 999px;
+  background: var(--color-tinta); color: white; font-size: 14px; font-weight: 600; text-align: center;
+}
+.peta-bawah { flex: none; padding: 12px 0; border-top: 1px solid var(--color-garis); }
+.peta-strip {
+  display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding: 0 12px; scroll-padding: 0 12px;
+}
+.peta-strip > li { flex: none; width: min(86%, 360px); scroll-snap-align: center; }
+.peta-strip > li .baris-lowongan { height: 100%; transition: border-color .2s, box-shadow .2s; }
+.peta-strip > li[data-terpilih] .baris-lowongan { border-color: var(--color-jingga); box-shadow: 0 0 0 2px var(--color-jingga); }
+.peta-kosong { margin: 0 12px; padding: 14px 16px; border-radius: 18px; background: white; border: 1px solid var(--color-garis); font-size: 15px; color: var(--color-abu); }
+.peta-kartu-wadah .mapboxgl-ctrl-attrib { font-size: 10px; }
+@media (min-width: 1024px) { .peta-kartu-wadah { height: calc(100dvh - 220px); } }

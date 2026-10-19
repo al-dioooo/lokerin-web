@@ -101,14 +101,30 @@ export type LamaranApi = {
   tahap_berikutnya: TahapApi[];
 };
 
-export type ItemCv = { id: string; text: string; fakta_ids: string[]; diedit_pengguna?: boolean };
+/** CV Khusus versi 2 (ADR 0009): bagian berisi Entri dengan judul, tempat, periode, dan poin. */
+export type PoinCv = { id: string; text: string; fakta_ids: string[]; diedit_pengguna?: boolean };
+export type EntriCv = {
+  id: string;
+  judul: string;
+  tempat?: string;
+  keterangan?: string;
+  periode?: string;
+  lokasi?: string;
+  poin: PoinCv[];
+  fakta_ids: string[];
+  diedit_pengguna?: boolean;
+};
+export type JenisBagianCv = "pengalaman" | "pendidikan" | "proyek" | "prestasi" | "lainnya";
+export type BagianCv = { id: string; judul: string; jenis: JenisBagianCv; entri: EntriCv[] };
+export type KelompokKeahlian = { id: string; label: string; isi: string[] };
 export type IsiCv = {
+  versi: 2;
   nama: string;
   judul: string;
-  kontak: { telepon?: string; email?: string; kota?: string };
+  kontak: { telepon?: string; email?: string; kota?: string; tautan?: string[] };
   ringkasan: string;
-  keahlian: string[];
-  bagian: { id: string; judul: string; items: ItemCv[] }[];
+  keahlian: KelompokKeahlian[];
+  bagian: BagianCv[];
 };
 
 export type CvApi = {
@@ -126,3 +142,17 @@ export type Pengguna = { id: string; peran: Peran; nama: string; kota: string };
 export type MeApi = Pengguna & { kecamatan: string | null; pemberi_kerja: PemberiKerjaApi | null };
 
 export type AkunDemo = { key: string; peran: Peran; nama: string; kota: string; pemberi_kerja: PemberiKerjaApi | null };
+
+export type JenisKabar = "lamaran_masuk" | "lamaran_dilihat" | "lamaran_lolos" | "tahap_baru" | "lamaran_tidak_lolos" | "butuh_hari_ini";
+export type KabarApi = { id: string; jenis: JenisKabar; judul: string; isi: string; tautan: string; dibaca: boolean; dibuat_pada: string };
+export type DaftarKabarApi = { kabar: KabarApi[]; belum_dibaca: number };
+
+/** What tanya_pengguna asks: one question with big answer buttons (ADR 0008). */
+export type PertanyaanAgen = {
+  widget: "pertanyaan";
+  id: string;
+  pertanyaan: string;
+  pilihan: { label: string; keterangan?: string }[];
+  boleh_banyak: boolean;
+  boleh_ketik: boolean;
+};

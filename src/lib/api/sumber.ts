@@ -40,7 +40,7 @@ export async function satuLowongan(id: string): Promise<Sumber<{ lowongan: Lowon
   return { data: api ? { lowongan: keLowongan(api), api } : null, dariServer: true };
 }
 
-export const RADIUS_PETA_KM = 8;
+export const RADIUS_PETA_KM = 5;
 export type Titik = { lat: number; lng: number };
 
 /** Peta Kerja Sekitar: published jobs within a few km of the centre, nearest first. */

@@ -105,3 +105,42 @@ async function simpan(cache, nama, req, res) {
   const lebih = kunci.length - BATAS[nama];
   for (let i = 0; i < lebih; i++) await cache.delete(kunci[i]);
 }
+
+// Kabar sent as Web Push (ADR 0008). The payload never carries contact details; the link opens them.
+self.addEventListener("push", (event) => {
+  let isi = {};
+  try {
+    isi = event.data ? event.data.json() : {};
+  } catch {
+    isi = { isi: event.data ? event.data.text() : "" };
+  }
+  const tautan = isi.tautan || "/app";
+  event.waitUntil(
+    self.registration.showNotification(isi.judul || "Lokerin", {
+      body: isi.isi || "",
+      tag: tautan,
+      icon: "/icons/192",
+      badge: "/icons/96",
+      lang: "id",
+      data: { tautan },
+    }),
+  );
+});
+
+// Open the link in a Lokerin window that is already open, or a new one.
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const tujuan = new URL(event.notification.data?.tautan || "/app", self.location.origin).href;
+  event.waitUntil(
+    (async () => {
+      const jendela = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      const ada = jendela.find((c) => c.url.startsWith(self.location.origin));
+      if (ada) {
+        await ada.focus();
+        if ("navigate" in ada) await ada.navigate(tujuan);
+        return;
+      }
+      await self.clients.openWindow(tujuan);
+    })(),
+  );
+});

@@ -23,7 +23,7 @@ import "./alur.css";
 
 type Peran = "pencari" | "pemberi";
 
-const AREA = ["Purwokerto Utara", "Purwokerto Selatan", "Purwokerto Timur", "Purwokerto Barat", "Sokaraja", "Kembaran", "Ajibarang", "Baturraden"];
+export const AREA = ["Purwokerto Utara", "Purwokerto Selatan", "Purwokerto Timur", "Purwokerto Barat", "Sokaraja", "Kembaran", "Ajibarang", "Baturraden"];
 /** Category labels are not all job titles ("Warung & Dapur"), so each gets its own phrasing. */
 const KERJA_SELAMA: Record<KategoriSlug, string> = {
   las: "jadi tukang las",

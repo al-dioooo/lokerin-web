@@ -39,7 +39,7 @@ export function useApi<T>(path: string | null): Muat<T> {
 export type PeristiwaLangsung = { type: string; data: unknown };
 
 const NAMA_PERISTIWA = [
-  "lowongan.baru", "butuh_hari_ini", "lowongan.tutup", "lamaran.masuk", "lamaran.status",
+  "lowongan.baru", "butuh_hari_ini", "lowongan.tutup", "lamaran.masuk", "lamaran.status", "kabar.baru",
   "suara.mulai", "suara.transkrip", "suara.tugas", "suara.widget", "suara.peringatan", "suara.selesai",
 ];
 

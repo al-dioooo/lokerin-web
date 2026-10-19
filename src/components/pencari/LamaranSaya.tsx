@@ -6,6 +6,7 @@ import { IconBrandWhatsapp, IconChevronRight, IconCircleCheck, IconMapPin, IconM
 import { RatingKontak } from "../app/RatingKontak";
 import { Laci } from "../lapis/Laci";
 import { useApi, useLangsung } from "@/lib/api/hooks";
+import { useBukaDariTautan } from "@/lib/api/tautan";
 import { apiAktif } from "@/lib/api/klien";
 import { waktuLalu } from "@/lib/api/adaptor";
 import type { LamaranApi, TahapApi } from "@/lib/api/tipe";
@@ -36,6 +37,7 @@ export function LamaranSaya() {
   useLangsung(null, (p) => {
     if (p.type === "lamaran.status") daftar.muatUlang();
   });
+  useBukaDariTautan(daftar.data?.lamaran, (l) => setDipilihId(l.id));
 
   if (!apiAktif) return <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-abu">Daftar lamaran butuh sambungan ke server.</p>;
 

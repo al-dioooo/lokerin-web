@@ -8,12 +8,14 @@
  */
 
 import { useState } from "react";
-import { IconBrandWhatsapp, IconCheck, IconFileCv, IconMapPin, IconPhone, IconUser, IconX } from "../icons/tabler";
+import { IconBrandWhatsapp, IconCheck, IconMapPin, IconPhone, IconUser, IconX } from "../icons/tabler";
 import { Dialog } from "../lapis/Dialog";
 import { RatingKontak } from "../app/RatingKontak";
 import { Laci } from "../lapis/Laci";
-import { api, apiAktif, GalatApi, urlBertoken } from "@/lib/api/klien";
+import { api, apiAktif, GalatApi } from "@/lib/api/klien";
+import { PratinjauCv } from "../cv/PratinjauCv";
 import { useApi, useLangsung } from "@/lib/api/hooks";
+import { useBukaDariTautan } from "@/lib/api/tautan";
 import { waktuLalu } from "@/lib/api/adaptor";
 import type { LamaranApi, TahapApi } from "@/lib/api/tipe";
 
@@ -58,6 +60,8 @@ export function DaftarPelamar() {
       } catch {}
     }
   }
+
+  useBukaDariTautan(daftar.data?.lamaran, (l) => void buka(l));
 
   async function loloskan() {
     if (!dipilih || !jenis) return;
@@ -152,7 +156,10 @@ export function DaftarPelamar() {
               <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 text-[15px] font-bold text-daun"><IconPhone size={18} />{l.pencari.telepon ?? l.pencari.email}</p>
             )}
             {l.cv_khusus_id && (
-              <a href={urlBertoken(`/cv/${l.cv_khusus_id}/pdf`)} target="_blank" rel="noopener noreferrer" className="tombol tombol-garis"><IconFileCv size={20} />Buka CV Khusus</a>
+              <section className="grid gap-2" aria-label="CV Khusus">
+                <h3 className="text-base">CV Khusus untuk lowonganmu</h3>
+                <PratinjauCv key={`${l.cv_khusus_id}-${l.status}`} id={l.cv_khusus_id} />
+              </section>
             )}
             {l.tahap_berikutnya.length > 0 && (
               <section>

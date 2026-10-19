@@ -1,0 +1,46 @@
+/*
+ * The CV Khusus paper, matching lokerin-backend src/cv/template.ts so what people see is what the
+ * PDF prints: the LaTeX `resume` look with CMU Serif (Computer Modern, SIL Open Font License,
+ * public/fonts/cmu/OFL.txt). Measurements are A4 at 96 dpi: 794 x 1123 px.
+ */
+@font-face { font-family: "CMU Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/cmu/cmu-serif-500-roman.woff2") format("woff2"); }
+@font-face { font-family: "CMU Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/cmu/cmu-serif-500-italic.woff2") format("woff2"); }
+@font-face { font-family: "CMU Serif"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/cmu/cmu-serif-700-roman.woff2") format("woff2"); }
+@font-face { font-family: "CMU Serif"; font-style: italic; font-weight: 700; font-display: swap; src: url("/fonts/cmu/cmu-serif-700-italic.woff2") format("woff2"); }
+
+.kertas-skala { width: 100%; overflow: hidden; }
+.kertas-cv {
+  width: 794px; min-height: 1123px; padding: 34px 42px 38px; background: #fff; color: #000;
+  font-family: "CMU Serif", "Latin Modern Roman", "Times New Roman", serif; font-size: 14px; line-height: 1.24;
+  box-shadow: 0 1px 2px rgb(21 18 16 / .06), 0 12px 32px -12px rgb(21 18 16 / .22); border-radius: 4px;
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+}
+.kertas-cv a { color: #1a35c4; text-decoration: none; }
+.kertas-cv header { text-align: center; margin-bottom: 5px; }
+.kertas-cv h1 { margin: 0; font-size: 25px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; line-height: 1.15; }
+.kertas-cv .posisi { margin-top: 1px; font-size: 14.7px; }
+.kertas-cv .kontak { margin-top: 2px; }
+.kertas-cv .sembunyi { font-style: italic; color: #444; }
+.kertas-cv section { margin-top: 8px; }
+.kertas-cv h2 { margin: 0 0 4px; padding-bottom: 2px; border-bottom: 1px solid #000; font-size: 15.3px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+.kertas-cv p { margin: 0; }
+.kertas-cv .ringkasan p, .kertas-cv li { text-align: justify; hyphens: auto; }
+.kertas-cv .entri { margin-top: 4px; }
+.kertas-cv .entri:first-of-type { margin-top: 0; }
+.kertas-cv .baris { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.kertas-cv .periode, .kertas-cv .lokasi { flex: none; white-space: nowrap; }
+.kertas-cv .keterangan, .kertas-cv .lokasi { font-style: italic; }
+.kertas-cv ul { margin: 2px 0 0; padding-left: 16px; }
+.kertas-cv li { margin: 1px 0; padding-left: 1px; }
+.kertas-cv li::marker { content: "•  "; }
+.kertas-cv .keahlian { display: grid; grid-template-columns: max-content 1fr; column-gap: 21px; row-gap: 1px; margin: 0; }
+.kertas-cv .keahlian dt { font-weight: 700; }
+.kertas-cv .keahlian dd { margin: 0; }
+.kertas-cv .dua-kolom { display: grid; grid-template-columns: 1fr 32%; gap: 0 21px; }
+.kertas-cv .dua-kolom .samping .keahlian { grid-template-columns: 1fr; }
+.kertas-cv .dua-kolom .samping .keahlian dd { margin-bottom: 4px; }
+
+/* A glance of the first page, for cards: the top of the paper, fading out. */
+.kertas-intip { position: relative; max-height: 220px; overflow: hidden; border-radius: 14px; border: 1px solid var(--color-garis); background: #fff; }
+.kertas-intip::after { content: ""; position: absolute; inset: auto 0 0; height: 64px; background: linear-gradient(transparent, #fff); }
+.kertas-intip .kertas-cv { box-shadow: none; border-radius: 0; }

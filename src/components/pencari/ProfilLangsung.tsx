@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { IconCheck, IconIdBadge2, IconMicrophone, IconPlus, IconShieldCheck, IconX } from "../icons/tabler";
+import { IconCheck, IconIdBadge2, IconMicrophone, IconPencil, IconPlus, IconShieldCheck, IconX } from "../icons/tabler";
 import { Dialog } from "../lapis/Dialog";
 import { Laci } from "../lapis/Laci";
 import { ProfilCv } from "../app/ProfilCv";
 import { api, apiAktif, GalatApi } from "@/lib/api/klien";
 import { useApi } from "@/lib/api/hooks";
 import { keluar, useSesi } from "@/lib/api/sesi";
-import type { FaktaApi, MeApi, ProfilApi } from "@/lib/api/tipe";
+import type { FaktaApi, MeApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
+import { UbahPersona } from "./UbahPersona";
 
 const JENIS: Record<FaktaApi["jenis"], string> = { pengalaman: "Pengalaman", keahlian: "Keahlian", pendidikan: "Pendidikan", prestasi: "Prestasi", lainnya: "Lainnya" };
 
@@ -48,6 +49,7 @@ function ProfilUsaha() {
 function ProfilPencari() {
   const profil = useApi<ProfilApi>("/profil");
   const [tambah, setTambah] = useState(false);
+  const [ubah, setUbah] = useState<PersonaApi | null>(null);
   const [judul, setJudul] = useState("");
   const [tempat, setTempat] = useState("");
   const [lama, setLama] = useState("");
@@ -103,7 +105,10 @@ function ProfilPencari() {
         <ul className="grid gap-2">
           {p?.persona.map((x) => (
             <li key={x.id} className="rounded-2xl border border-garis bg-white p-4">
-              <p className="font-bold">CV {x.judul}</p>
+              <div className="flex items-start justify-between gap-3">
+                <p className="font-bold">CV {x.judul}</p>
+                <button type="button" className="tombol tombol-garis min-h-11 shrink-0 px-4 text-[15px]" onClick={() => setUbah(x)}><IconPencil size={16} />Ubah</button>
+              </div>
               <p className="text-[15px] text-abu">{x.ringkasan}</p>
               <ul className="mt-2 flex flex-wrap gap-1.5">{x.keahlian.map((k) => <li key={k} className="chip-kategori py-1 pl-3 text-[13px]">{k}</li>)}</ul>
             </li>
@@ -130,6 +135,8 @@ function ProfilPencari() {
         <Link href="/app/kartu" className="tombol tombol-halus min-h-14"><IconIdBadge2 size={20} />Kartu Kerja</Link>
         <TombolKeluar />
       </div>
+
+      <UbahPersona persona={ubah} onTutup={() => setUbah(null)} onTersimpan={() => { setUbah(null); profil.muatUlang(); }} />
 
       <Laci buka={tambah} onTutup={() => setTambah(false)} label="Profil" judul="Tambah pengalaman" aksi={<button type="button" className="tombol tombol-utama" disabled={judul.trim().length < 2} onClick={() => void simpanFakta()}>Simpan</button>}>
         <div className="grid gap-3">

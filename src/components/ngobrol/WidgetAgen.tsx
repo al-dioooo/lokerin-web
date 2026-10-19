@@ -12,7 +12,9 @@ import { BarisLowongan } from "../app/KartuLowonganApp";
 import { KartuDraf } from "../pemberi/KartuDraf";
 import { keLowongan } from "@/lib/api/adaptor";
 import { api, GalatApi } from "@/lib/api/klien";
-import type { FaktaApi, LamaranApi, LowonganApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
+import type { DaftarKabarApi, FaktaApi, KartuKerjaApi, LamaranApi, LowonganApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
+import { IntipCv } from "../cv/PratinjauCv";
+import { DaftarKabarWidget, KartuKerjaWidget, LaporanSiap, PelamarWidget, TahapSiap } from "./WidgetBaru";
 
 type Hasil = { widget?: string } & Record<string, unknown>;
 
@@ -149,7 +151,10 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
       return (
         <div className="grid gap-2">
           <p className="text-[15px]">CV Khusus <strong>{(hasil.isi as { judul: string }).judul}</strong> sudah jadi dari {String(hasil.fakta_dipakai)} Fakta-mu.</p>
-          <Link href={`/app/cv/${String(hasil.id)}`} className="tombol tombol-utama min-h-12"><IconFileCv size={18} />Lihat dan edit CV</Link>
+          <Link href={`/app/cv/${String(hasil.id)}`} className="grid gap-2" aria-label="Lihat dan ubah CV Khusus">
+            <IntipCv id={String(hasil.id)} />
+            <span className="tombol tombol-utama min-h-12"><IconFileCv size={18} />Lihat dan ubah CV</span>
+          </Link>
         </div>
       );
     case "lamaran_siap":
@@ -172,6 +177,16 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
       const daftar = (hasil.lamaran as LamaranApi[]) ?? [];
       return <Link href="/app/pelamar" className="block rounded-2xl border border-garis bg-white p-3 text-[15px]">{daftar.length} pelamar masuk <span className="font-bold text-jingga-tua">Buka daftar pelamar</span></Link>;
     }
+    case "kartu_kerja":
+      return <KartuKerjaWidget kartu={hasil.kartu as KartuKerjaApi} />;
+    case "laporan_siap":
+      return <LaporanSiap lowongan={hasil.lowongan as { id: string; judul: string; nama_usaha: string }} alasan={String(hasil.alasan ?? "")} />;
+    case "daftar_kabar":
+      return <DaftarKabarWidget daftar={hasil as unknown as DaftarKabarApi} />;
+    case "pelamar":
+      return <PelamarWidget lamaran={hasil.lamaran as LamaranApi} />;
+    case "tahap_siap":
+      return <TahapSiap mode={hasil.mode === "tambah" ? "tambah" : "lolos"} lamaran={hasil.lamaran as LamaranApi} tahap={hasil.tahap as Parameters<typeof TahapSiap>[0]["tahap"]} />;
     case "galat":
       return <p className="text-[15px] text-merah">{String(hasil.pesan ?? "Ada yang belum berhasil.")}</p>;
     default:
@@ -191,5 +206,10 @@ export const JUDUL_WIDGET: Record<string, string> = {
   draf_lowongan: "Draf lowongan",
   lowongan_saya: "Lowonganmu",
   lamaran_masuk: "Pelamar",
+  kartu_kerja: "Kartu Kerja",
+  laporan_siap: "Laporan siap dikirim",
+  daftar_kabar: "Kabar terbaru",
+  pelamar: "Pelamar",
+  tahap_siap: "Tahap berikutnya siap",
   galat: "Belum berhasil",
 };

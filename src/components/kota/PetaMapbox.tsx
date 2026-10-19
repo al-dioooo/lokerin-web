@@ -105,6 +105,12 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
   const lebar = useLayarLebar();
   const tinggi = useMotionValue(0);
   const putaranMuat = useRef(0);
+  // The map object outlives a hidden page: Next keeps visited pages alive in the background and
+  // re-runs their effects when you come back, so the map is only rebuilt when its token runs out.
+  const instans = useRef<PetaGl | null>(null);
+  const kedaluwarsa = useRef(0);
+  const [petaKe, setPetaKe] = useState(0);
+  const bingkaiTerakhir = useRef("");
   // Map listeners are attached once; they reach the latest state through this ref.
   const dariPeta = useRef({ pilih: (id: string) => void id, lepas: () => {}, geser: () => {}, ruang: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) });
 
@@ -122,6 +128,24 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
 
   // Map setup, once: token from the backend, then the map itself.
   useEffect(() => {
+    // Removing waits a tick: if the container is still in the page, this was only a hide.
+    const lepasNanti = (m: PetaGl) =>
+      window.setTimeout(() => {
+        if (m.getContainer().isConnected) return;
+        m.remove();
+        if (instans.current === m) instans.current = null;
+        if (peta.current === m) peta.current = null;
+      }, 0);
+    const lama = instans.current;
+    if (lama && kedaluwarsa.current - Date.now() > 120_000) {
+      lama.resize();
+      return () => void lepasNanti(lama);
+    }
+    if (lama) {
+      lama.remove();
+      instans.current = null;
+      peta.current = null;
+    }
     let batal = false;
     let map: PetaGl | undefined;
     void (async () => {
@@ -131,6 +155,7 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
       const { default: mapboxgl } = await import("mapbox-gl");
       if (batal) return;
       mapboxgl.accessToken = kunci.token;
+      kedaluwarsa.current = Date.parse(kunci.kedaluwarsa) || Date.now() + 50 * 60_000;
       map = new mapboxgl.Map({
         container: wadah.current,
         style: kunci.gaya,
@@ -212,12 +237,13 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
         }
         peta.current = m;
         setStatus("siap");
+        setPetaKe((n) => n + 1);
       });
+      instans.current = map;
     })();
     return () => {
       batal = true;
-      peta.current = null;
-      map?.remove();
+      if (map) lepasNanti(map);
     };
     // The map is created once; later changes go through the effects below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -276,7 +302,7 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
     const m = peta.current;
     if (status !== "siap" || !m) return;
     (m.getSource("lowongan") as GeoJSONSource | undefined)?.setData(koleksi(daftar, baru));
-  }, [status, daftar, baru]);
+  }, [status, petaKe, daftar, baru]);
 
   // The selected pin, and the one under the pointer in the list, grow.
   useEffect(() => {
@@ -286,7 +312,7 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
     return () => {
       if (peta.current?.getSource("lowongan")) peta.current.setFeatureState({ source: "lowongan", id: terpilih }, { terpilih: false });
     };
-  }, [status, terpilih, daftar]);
+  }, [status, petaKe, terpilih, daftar]);
   useEffect(() => {
     const m = peta.current;
     if (status !== "siap" || !m || !sorot) return;
@@ -294,7 +320,7 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
     return () => {
       if (peta.current?.getSource("lowongan")) peta.current.setFeatureState({ source: "lowongan", id: sorot }, { sorot: false });
     };
-  }, [status, sorot, daftar]);
+  }, [status, petaKe, sorot, daftar]);
 
   // Radius ring and framing follow the centre and the distance, leaving room for the sheet.
   useEffect(() => {
@@ -302,6 +328,10 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
     if (status !== "siap" || !m) return;
     const cincin = lingkaran(pusat, radius);
     (m.getSource("radius") as GeoJSONSource | undefined)?.setData(cincin);
+    // Coming back to a kept-alive page keeps the view you left; only a new area is framed again.
+    const bingkai = `${petaKe}|${pusat.lat},${pusat.lng}|${radius}`;
+    if (bingkai === bingkaiTerakhir.current) return;
+    bingkaiTerakhir.current = bingkai;
     const lng = cincin.geometry.coordinates[0].map((c) => c[0]);
     const lat = cincin.geometry.coordinates[0].map((c) => c[1]);
     const ruang = dariPeta.current.ruang();
@@ -309,7 +339,7 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
       padding: { top: ruang.top + 8, bottom: ruang.bottom + 16, left: 20, right: 20 },
       duration: gerakHalus() ? 600 : 0,
     });
-  }, [status, pusat, radius]);
+  }, [status, petaKe, pusat, radius]);
 
   // Blue dot for "Lokasiku".
   useEffect(() => {
@@ -319,7 +349,7 @@ export function PetaMapbox({ awal, pusat: pusatAwal, radiusKm }: { awal: Lowonga
       type: "FeatureCollection",
       features: aku ? [{ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [aku.lng, aku.lat] } }] : [],
     });
-  }, [status, aku]);
+  }, [status, petaKe, aku]);
 
   async function muat(baruPusat: Titik, kmBaru: number, mendesak: boolean) {
     const putaran = ++putaranMuat.current;

@@ -25,6 +25,7 @@ import { BATAS_DETIK, useSuara } from "./useSuara";
 import { kategoriDari } from "@/lib/api/adaptor";
 import { kirimPesan, muatObrolan, type BagianPesan, type HasilAlat, type Pesan } from "@/lib/api/obrolan";
 import { useSesi } from "@/lib/api/sesi";
+import { ambilTitipan, PERISTIWA_TITIPAN } from "@/lib/titipNgobrol";
 import { bacaPertanyaan, type LowonganApi, type PertanyaanAgen } from "@/lib/api/tipe";
 import "./ngobrol.css";
 import "./obrolan.css";
@@ -87,6 +88,10 @@ export function Ngobrol() {
   const [tanyaMic, setTanyaMic] = useState(false);
   const [fokus, setFokus] = useState(0);
   const kendali = useRef<AbortController | null>(null);
+  // A message handed over from another screen (lib/titipNgobrol) waits here until the conversation
+  // it goes to has loaded, so loading the history cannot replace the bubble it adds.
+  const tertunda = useRef<{ teks: string; konteks: string } | null>(null);
+  const dimuat = useRef<string | null>(null);
 
   useLayoutEffect(() => {
     ngobrolSiap(layar.current);
@@ -97,9 +102,12 @@ export function Ngobrol() {
   useEffect(() => {
     if (!akun) return;
     const k = new AbortController();
+    dimuat.current = null;
     muatObrolan(obrolanId, k.signal)
       .then((h) => {
         setPesan(h.pesan);
+        dimuat.current = obrolanId;
+        kirimTertunda();
         if (h.judul) setJudul((j) => j || h.judul!);
         // A link to a conversation that is not in this account says so instead of quietly showing
         // an empty chat. A new conversation of your own is the one remembered on this phone.
@@ -136,8 +144,9 @@ export function Ngobrol() {
 
   // --- Text ---
 
-  async function kirim(teks: string) {
-    if (suara.status === "hidup" && suara.kirimTeks(teks)) {
+  /** `konteks` goes to the agent after the text but is not shown in the bubble. */
+  async function kirim(teks: string, konteks = "") {
+    if (!konteks && suara.status === "hidup" && suara.kirimTeks(teks)) {
       tambahTranskrip("kamu", teks, true);
       return;
     }
@@ -152,7 +161,7 @@ export function Ngobrol() {
     setSibuk(true);
     setGalat("");
     try {
-      await kirimPesan(obrolanId, teks, {
+      await kirimPesan(obrolanId, konteks ? `${teks}\n\n${konteks}` : teks, {
         signal: k.signal,
         onBagian: (bagian: BagianPesan[]) =>
           setPesan((p) => (p.at(-1)?.id === idAi ? [...p.slice(0, -1), { id: idAi, peran: "ai", bagian }] : [...p, { id: idAi, peran: "ai", bagian }])),
@@ -191,6 +200,24 @@ export function Ngobrol() {
 
   const suara = useSuara({ obrolanId, aktif: Boolean(pengguna), onTranskrip: (s, t) => tambahTranskrip(s, t), onHasil: tambahHasil });
 
+  function kirimTertunda() {
+    const t = tertunda.current;
+    if (!t) return;
+    tertunda.current = null;
+    void kirimTerbaru.current(t.teks, t.konteks);
+  }
+
+  /** A handed-over message: switch to text, then send it in a new or the open conversation. */
+  function terimaTitipan() {
+    const t = ambilTitipan();
+    if (!t) return;
+    void suara.akhiri();
+    gantiMode("teks");
+    tertunda.current = { teks: t.teks, konteks: t.konteks };
+    if (t.baru) gantiObrolan(`cv-${crypto.randomUUID().slice(0, 8)}`);
+    else if (dimuat.current === obrolanId) kirimTertunda();
+  }
+
   function tekanLentera() {
     if (suara.status === "hidup") void suara.akhiri();
     else setTanyaMic(true);
@@ -204,9 +231,21 @@ export function Ngobrol() {
 
   // Stable handlers for the memoized thread; they always call the latest kirim.
   const kirimTerbaru = useRef(kirim);
+  const terimaTitipanTerbaru = useRef(terimaTitipan);
   useLayoutEffect(() => {
     kirimTerbaru.current = kirim;
+    terimaTitipanTerbaru.current = terimaTitipan;
   });
+  // Each time Ngobrol comes on screen, and while it is open, take a message handed over to it.
+  useEffect(() => {
+    const terima = () => terimaTitipanTerbaru.current();
+    const t = window.setTimeout(terima, 0);
+    window.addEventListener(PERISTIWA_TITIPAN, terima);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener(PERISTIWA_TITIPAN, terima);
+    };
+  }, []);
   const kirimStabil = useCallback((t: string) => void kirimTerbaru.current(t), []);
 
   // --- Derived ---

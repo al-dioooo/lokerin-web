@@ -104,6 +104,8 @@ export function Ngobrol() {
   const [galat, setGalat] = useState("");
   const [riwayat, setRiwayat] = useState(false);
   const [tanyaMic, setTanyaMic] = useState(false);
+  // The Dialog calls onTutup after "Izinkan mikrofon" too; only "Ketik saja" should switch to text.
+  const micDiizinkan = useRef(false);
   // Where the thread stood when the current call began: the voice stage shows cards from then on.
   const [awalKartu, setAwalKartu] = useState<number | null>(null);
   const [fokus, setFokus] = useState(0);
@@ -241,7 +243,10 @@ export function Ngobrol() {
 
   function tekanLentera() {
     if (suara.status === "hidup") void suara.akhiri();
-    else setTanyaMic(true);
+    else {
+      micDiizinkan.current = false;
+      setTanyaMic(true);
+    }
   }
 
   function tutup() {
@@ -372,12 +377,13 @@ export function Ngobrol() {
         buka={tanyaMic}
         onTutup={() => {
           setTanyaMic(false);
-          gantiMode("teks");
+          if (!micDiizinkan.current) gantiMode("teks");
         }}
         judul="Ngobrol pakai suara?"
         labelYa="Izinkan mikrofon"
         labelBatal="Ketik saja"
         onYa={async () => {
+          micDiizinkan.current = true;
           setTanyaMic(false);
           setAwalKartu(pesan.length);
           const ok = await suara.mulai();

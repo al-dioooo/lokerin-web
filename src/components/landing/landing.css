@@ -56,6 +56,14 @@
 .asap-3 { animation-delay: -3.4s; }
 .air-mengalir { animation: alir 3s linear infinite; }
 
+/* Employer section: speech into the phone becomes a Draf Lowongan. Without motion the card is complete. */
+.suara-lowongan { display: block; width: 100%; max-width: 520px; height: auto; }
+.suara-batang rect { transform-box: fill-box; transform-origin: center; animation: batang 1.1s ease-in-out infinite; }
+.suara-riak { transform-box: fill-box; transform-origin: center; animation: riak 1.8s ease-out infinite; }
+.suara-jejak { animation: jejak 1.2s linear infinite; }
+.suara-baris { stroke-dasharray: 1; stroke-dashoffset: 0; animation: tulis 6s cubic-bezier(.3, .7, .3, 1) infinite; }
+.suara-centang { transform-box: fill-box; transform-origin: center; animation: centang 6s ease-out infinite; }
+
 .kaki { background: var(--color-kertas); }
 .kaki-tautan { display: inline-flex; align-items: center; min-height: 40px; font-size: 14px; font-weight: 600; color: var(--color-tinta); }
 .kaki-tautan:hover { color: var(--color-jingga-tua); text-decoration: underline; text-underline-offset: 4px; }
@@ -64,6 +72,10 @@
 @keyframes kedip { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
 @keyframes ayun { 0%, 100% { rotate: -3deg; } 50% { rotate: 3deg; } }
 @keyframes pin-naik { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
+@keyframes batang { 0%, 100% { scale: 1 .35; } 50% { scale: 1 1; } }
+@keyframes jejak { to { stroke-dashoffset: -24; } }
+@keyframes tulis { 0% { stroke-dashoffset: 1; } 18%, 88% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+@keyframes centang { 0%, 38% { scale: 0; } 46% { scale: 1.2; } 52%, 88% { scale: 1; } 100% { scale: 0; } }
 @keyframes alir { to { stroke-dashoffset: -28; } }
 @keyframes putar { to { rotate: 360deg; } }
 @keyframes awan { from { translate: -24px 0; } to { translate: 36px 0; } }

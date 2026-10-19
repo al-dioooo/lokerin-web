@@ -14,6 +14,7 @@ import { MasalahLoker } from "@/components/landing/MasalahLoker";
 import { ObrolanJadiCV } from "@/components/landing/ObrolanJadiCV";
 import { PenghitungLangsung } from "@/components/landing/PenghitungLangsung";
 import { RakKategori } from "@/components/landing/RakKategori";
+import { SuaraJadiLowongan } from "@/components/landing/SuaraJadiLowongan";
 import { TanyaJawab } from "@/components/landing/TanyaJawab";
 import { UntukSemua } from "@/components/landing/UntukSemua";
 import { CekUpah } from "@/components/ui/CekUpah";
@@ -83,6 +84,7 @@ export default function Home() {
             <div>
               <Judul label="Untuk pemilik usaha" id="judul-usaha">Butuh orang hari ini? <span className="text-jingga">Pasang lowongan sambil bicara.</span></Judul>
               <div className="flex flex-wrap gap-3"><Link href="/masuk" className="tombol tombol-utama min-h-12 px-6 text-base">Pasang lowongan</Link></div>
+              <Muncul jeda={0.1} className="mt-10"><SuaraJadiLowongan /></Muncul>
             </div>
             <Muncul jeda={0.15}><ol className="grid gap-3">
               {LANGKAH_USAHA.map(([judul, isi], i) => (

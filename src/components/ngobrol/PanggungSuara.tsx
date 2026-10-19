@@ -14,6 +14,7 @@ import { PilihanJawab } from "./PilihanJawab";
 import type { PertanyaanAgen } from "@/lib/api/tipe";
 import { untukDibaca } from "./TeksAgen";
 import type { StatusSuara } from "./useSuara";
+import { RakBenda } from "./RakBenda";
 
 type Tempat = keyof typeof LOKASI_KERJA;
 
@@ -47,6 +48,9 @@ export function PanggungSuara({
   onLihatHasil,
   onJawab,
   adaLentera,
+  teksObrolan,
+  pemberi,
+  onMulai,
 }: {
   status: StatusSuara;
   detik: number;
@@ -64,6 +68,11 @@ export function PanggungSuara({
   onJawab: (teks: string) => void;
   /** False while the lentera lives in the composer (text mode); a same-size spacer keeps the layout. */
   adaLentera: boolean;
+  /** Everything said so far, for the work tools that light up as jobs are mentioned (RakBenda). */
+  teksObrolan: string[];
+  pemberi: boolean;
+  /** A tapped starter tool: the sentence to begin with. */
+  onMulai: (kalimat: string) => void;
 }) {
   const jam = (d: number) => `${String(Math.floor(d / 60)).padStart(2, "0")}:${String(d % 60).padStart(2, "0")}`;
   const keadaan =
@@ -97,7 +106,7 @@ export function PanggungSuara({
         <p className="panggung-keadaan" role="status">{keadaan}</p>
         <p className="panggung-kalimat" data-siapa={kalimat?.siapa ?? "ai"}>{kalimat ? untukDibaca(kalimat.teks) : sapaan}</p>
 
-        {pertanyaan && <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={false} onJawab={onJawab} />}
+        {pertanyaan ? <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={false} onJawab={onJawab} /> : <RakBenda teks={teksObrolan} pemberi={pemberi} onMulai={onMulai} />}
         {galat && <p role="alert" className="mx-auto max-w-sm rounded-2xl bg-white/10 px-4 py-2 text-center text-[15px] text-white">{galat}</p>}
       </div>
 

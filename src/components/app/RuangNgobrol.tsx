@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from
 import { getKategori } from "../icons/categories";
 import { IconChevronRight, IconKeyboard, IconMicrophone, IconPlayerStop, IconSend, IconX } from "../icons/tabler";
 import { KOTAK_PANDANG, KotaIsometrik, LOKASI_KERJA } from "../kota/KotaIsometrik";
+import { RakBenda } from "../ngobrol/RakBenda";
 import { aturArah } from "./Halaman";
 import { keluarNgobrol, ngobrolSiap } from "./transisiNgobrol";
 import { cariLowongan, upahTeks } from "@/lib/data";
@@ -133,6 +134,8 @@ export function RuangNgobrol() {
         <ol className="sr-only" aria-live="polite" aria-label="Isi obrolan">
           {pesan.map((p) => <li key={p.kunci}>{p.siapa === "ai" ? "Lokerin" : "Kamu"}: {p.teks}</li>)}
         </ol>
+
+        <RakBenda teks={pesan.map((p) => p.teks)} onMulai={(k) => { setKetikan((x) => [...x, { posisi: langkah, teks: k }]); if (status === "siap") setStatus("jalan"); }} />
 
         <div className="ngobrol-kendali">
           <button type="button" className="ngobrol-tombol-bulat" onClick={() => setKetik((v) => !v)} aria-pressed={ketik} aria-label="Ketik jawaban"><IconKeyboard size={20} /></button>

@@ -274,6 +274,12 @@ export function Ngobrol() {
               onLihatHasil={() => gantiMode("teks")}
               onJawab={(t) => void kirim(t)}
               adaLentera={mode === "suara"}
+              teksObrolan={pesan.flatMap((p) => p.bagian.flatMap((b) => (b.jenis === "teks" ? [b.teks] : [])))}
+              pemberi={peran === "pemberi"}
+              onMulai={(k) => {
+                gantiMode("teks");
+                void kirim(k);
+              }}
             />
           </section>
           <section className="ngobrol-lapis ngobrol-teks" data-aktif={mode === "teks" || undefined} inert={mode !== "teks"} aria-label="Ngobrol pakai teks">

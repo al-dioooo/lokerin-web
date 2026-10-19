@@ -60,9 +60,8 @@
   .urgent-tag { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--color-jingga); color: white; padding: 4px 10px; font-size: 12px; font-weight: 800; letter-spacing: .02em; line-height: 1.2; white-space: nowrap; }
   .skip-link { position: absolute; top: 12px; left: 20px; transform: translateY(-180%); z-index: 50; }
   .skip-link:focus { transform: translateY(0); }
-  .brand-wordmark { display: inline-flex; align-items: baseline; font-weight: 800; line-height: 1.1; letter-spacing: -.065em; }
-  .brand-i { position: relative; }
-  .brand-i > svg { position: absolute; width: .2em; height: .24em; top: .025em; left: .035em; }
+  .brand-wordmark { display: inline-flex; align-items: center; gap: .16em; font-weight: 800; line-height: 1.1; letter-spacing: -.035em; }
+  .brand-mark { width: 1em; height: 1em; }
   .category-tile { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; background: var(--color-kabut); border-radius: 16px; padding: 18px; min-width: 0; }
   .category-tile > svg { grid-column: 1; grid-row: 1; }
   .category-tile > div:not(.category-audio) { grid-column: 1 / -1; }

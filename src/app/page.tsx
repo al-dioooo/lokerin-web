@@ -6,10 +6,18 @@ import { GulirHalus } from "@/components/gerak/GulirHalus";
 import { MicIcon } from "@/components/icons/interface";
 import { KotaIsometrik } from "@/components/kota/KotaIsometrik";
 import { PetaKota } from "@/components/kota/PetaKota";
+import { AjakanAkhir } from "@/components/landing/AjakanAkhir";
+import { BisaDipercaya } from "@/components/landing/BisaDipercaya";
+import { JalanLamaran } from "@/components/landing/JalanLamaran";
+import { KakiHalaman } from "@/components/landing/KakiHalaman";
+import { MasalahLoker } from "@/components/landing/MasalahLoker";
 import { ObrolanJadiCV } from "@/components/landing/ObrolanJadiCV";
 import { PenghitungLangsung } from "@/components/landing/PenghitungLangsung";
 import { RakKategori } from "@/components/landing/RakKategori";
+import { TanyaJawab } from "@/components/landing/TanyaJawab";
+import { UntukSemua } from "@/components/landing/UntukSemua";
 import { CekUpah } from "@/components/ui/CekUpah";
+import "@/components/landing/landing.css";
 
 const LANGKAH_USAHA = [
   ["Ceritakan lowongannya", "Sebutkan pekerjaan, upah, jam, dan lokasi. Bisa bicara 30 detik atau isi formulir singkat."],
@@ -28,7 +36,7 @@ export default function Home() {
       <header className="kepala">
         <div className="shell flex h-16 items-center justify-between gap-4">
           <Link href="/" aria-label="Lokerin, beranda" className="inline-flex min-h-11 items-center"><Logo size={26} /></Link>
-          <nav aria-label="Utama" className="hidden items-center gap-7 text-sm font-semibold md:flex"><a href="#peta">Cari kerja</a><a href="#cara-kerja">Obrolan jadi CV</a><a href="#pasang-lowongan">Pasang lowongan</a></nav>
+          <nav aria-label="Utama" className="hidden items-center gap-7 text-sm font-semibold md:flex"><a href="#peta">Cari kerja</a><a href="#jalan">Cara kerja</a><a href="#pasang-lowongan">Pasang lowongan</a><a href="#tanya">Tanya jawab</a></nav>
           <Link href="/masuk" className="tombol tombol-utama min-h-9 px-4 text-sm">Masuk</Link>
         </div>
       </header>
@@ -52,6 +60,10 @@ export default function Home() {
           <p className="mt-3 text-center text-xs text-abu">Contoh data. Nama usaha dan upah di peta ini belum lowongan sungguhan.</p>
         </section>
 
+        <MasalahLoker />
+
+        <JalanLamaran />
+
         <section id="cara-kerja" className="shell py-20 sm:py-28" aria-labelledby="judul-cv">
           <Judul label="Obrolan jadi CV" id="judul-cv">Ceritakan pengalamanmu sekali. <span className="text-jingga">Lokerin menyusun CV-nya.</span></Judul>
           <Muncul jeda={0.1}><ObrolanJadiCV /></Muncul>
@@ -63,6 +75,8 @@ export default function Home() {
             <Muncul jeda={0.1}><RakKategori /></Muncul>
           </div>
         </section>
+
+        <BisaDipercaya />
 
         <section id="pasang-lowongan" className="shell py-20 sm:py-28" aria-labelledby="judul-usaha">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
@@ -84,10 +98,14 @@ export default function Home() {
             </ol></Muncul>
           </div>
         </section>
+
+        <UntukSemua />
+
+        <TanyaJawab />
+
+        <AjakanAkhir />
       </main>
-      <footer className="border-t border-garis">
-        <div className="shell flex flex-wrap items-center justify-between gap-4 py-8 text-sm text-abu"><Logo size={22} /><span>Banyumas, Jawa Tengah · Lokerin © 2026</span><span className="flex flex-wrap gap-4"><Link href="/privasi" className="font-semibold text-tinta underline underline-offset-4">Privasi</Link><Link href="/ketentuan" className="font-semibold text-tinta underline underline-offset-4">Ketentuan</Link><Link href="/desain" className="font-semibold text-tinta underline underline-offset-4">Sistem desain</Link></span></div>
-      </footer>
+      <KakiHalaman />
     </Gerak>
     </GulirHalus>
   );

@@ -6,7 +6,7 @@
  */
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { IconCheck, IconCircleCheck, IconFileCv, IconInfoCircle } from "../icons/tabler";
 import { LaporkanLowongan } from "../app/LaporkanLowongan";
 import { Laci } from "../lapis/Laci";
@@ -17,9 +17,10 @@ import { IntipCv } from "../cv/PratinjauCv";
 import { useApi } from "@/lib/api/hooks";
 import { useSesi } from "@/lib/api/sesi";
 import type { LamaranApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
+import { MenyusunCv } from "../cv/MenyusunCv";
 
 type Langkah = "persona" | "cv" | "kirim" | "selesai";
-type CvSiap = { id: string; isi: { judul: string } };
+type CvSiap = { id: string; isi: { judul: string }; fakta_dipakai?: number };
 
 /**
  * `diLaci`: inside a drawer (from Ngobrol) the Lamar button is a plain full-width button instead of
@@ -36,6 +37,7 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = f
   const [galat, setGalat] = useState("");
   const [terkirim, setTerkirim] = useState<LamaranApi | null>(null);
   const profil = useApi<ProfilApi>(buka && pengguna?.peran === "pencari" ? "/profil" : null);
+  const kendaliCv = useRef<AbortController | null>(null);
 
   if (siap && pengguna?.peran === "pemberi") return null;
 
@@ -47,16 +49,25 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = f
 
   async function siapkanCv() {
     if (!persona) return;
+    const kendali = new AbortController();
+    kendaliCv.current = kendali;
     setProses("cv");
     setGalat("");
     try {
-      setCv(await api<CvSiap>("/cv", { method: "POST", body: { lowongan_id: lowonganId, persona_id: persona.id } }));
+      setCv(await api<CvSiap>("/cv", { method: "POST", body: { lowongan_id: lowonganId, persona_id: persona.id }, signal: kendali.signal }));
       setLangkah("kirim");
     } catch (e) {
-      setGalat(e instanceof GalatApi ? e.message : "CV lamaran belum jadi. Coba lagi atau kirim tanpa CV.");
+      if (!kendali.signal.aborted) setGalat(e instanceof GalatApi ? e.message : "CV lamaran belum jadi. Coba lagi atau kirim tanpa CV.");
     } finally {
-      setProses("");
+      if (kendaliCv.current === kendali) setProses("");
     }
+  }
+
+  /** Stops waiting for the CV; the person can try again or send without one. */
+  function batalCv() {
+    kendaliCv.current?.abort();
+    kendaliCv.current = null;
+    setProses("");
   }
 
   async function kirim() {
@@ -82,10 +93,14 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = f
     langkah === "kirim" ? (
       <button type="button" className="tombol tombol-utama" disabled={proses !== ""} onClick={() => void kirim()}>{proses === "kirim" ? "Mengirim..." : "Kirim Lamaran"}</button>
     ) : langkah === "cv" ? (
-      <>
-        <button type="button" className="tombol tombol-utama" disabled={proses !== ""} onClick={() => void siapkanCv()}><IconFileCv size={20} />{proses === "cv" ? "Menyusun CV lamaran..." : "Susun CV lamaran"}</button>
-        <button type="button" className="tombol tombol-garis" disabled={proses !== ""} onClick={() => setLangkah("kirim")}>Kirim tanpa CV</button>
-      </>
+      proses === "cv" ? (
+        <button type="button" className="tombol tombol-garis" onClick={batalCv}>Batal</button>
+      ) : (
+        <>
+          <button type="button" className="tombol tombol-utama" disabled={proses !== ""} onClick={() => void siapkanCv()}><IconFileCv size={20} />Susun CV lamaran</button>
+          <button type="button" className="tombol tombol-garis" disabled={proses !== ""} onClick={() => setLangkah("kirim")}>Kirim tanpa CV</button>
+        </>
+      )
     ) : langkah === "selesai" ? (
       onLihatLamaran ? (
         <button type="button" className="tombol tombol-utama" onClick={() => { setBuka(false); onLihatLamaran(); }}>Lihat lamaranku</button>
@@ -116,7 +131,7 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = f
         buka={buka}
         onTutup={() => setBuka(false)}
         label={`Lamar · ${usaha}`}
-        judul={langkah === "persona" ? "Lamar sebagai apa?" : langkah === "cv" ? "Lampirkan CV lamaran?" : langkah === "kirim" ? `Kirim lamaran ke ${usaha}?` : "Lamaranmu sudah terkirim"}
+        judul={langkah === "persona" ? "Lamar sebagai apa?" : langkah === "cv" ? (proses === "cv" ? "Menyusun CV lamaranmu" : "Lampirkan CV lamaran?") : langkah === "kirim" ? `Kirim lamaran ke ${usaha}?` : "Lamaranmu sudah terkirim"}
         aksi={aksi}
       >
         {langkah === "persona" && (
@@ -132,7 +147,9 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = f
           </div>
         )}
 
-        {langkah === "cv" && (
+        {langkah === "cv" && proses === "cv" && <MenyusunCv bahan={persona?.fakta_ids.length || profil.data?.fakta.filter((f) => f.status === "terkonfirmasi").length} />}
+
+        {langkah === "cv" && proses !== "cv" && (
           <div className="grid gap-3 text-[17px]">
             <p>Lokerin menyusun CV khusus untuk lowongan ini, hanya dari bahan CV yang sudah kamu simpan. Tidak ada yang dikarang, dan kamu bisa mengubahnya sebelum mengirim.</p>
             {magang && <p className="flex items-start gap-2 rounded-2xl bg-[#FFF6DB] p-3 text-[15px] text-[#8A5A00]"><IconInfoCircle size={20} className="mt-0.5 shrink-0" />Lowongan magang biasanya membaca CV. Lamaranmu lebih kuat dengan CV lamaran.</p>}
@@ -148,7 +165,8 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = f
               <div className="flex justify-between gap-3"><dt className="text-abu">CV lamaran</dt><dd className="text-right font-bold">{cv ? "Terlampir" : "Tidak"}</dd></div>
             </dl>
             {cv && (
-              <Link href={`/app/cv/${cv.id}`} className="grid gap-2" aria-label="Lihat dan ubah CV lamaran">
+              <Link href={`/app/cv/${cv.id}`} className="cv-jadi grid gap-2" aria-label="Lihat dan ubah CV lamaran">
+                <span className="flex items-center gap-2 text-[15px] font-bold text-daun"><IconCircleCheck size={18} />CV lamaranmu sudah jadi{cv.fakta_dipakai ? `, dari ${cv.fakta_dipakai} bahan CV-mu` : ""}.</span>
                 <IntipCv id={cv.id} />
                 <span className="tombol tombol-garis min-h-12"><IconFileCv size={18} />Lihat dan ubah CV</span>
               </Link>

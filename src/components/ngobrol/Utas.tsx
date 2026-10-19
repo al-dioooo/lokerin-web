@@ -15,6 +15,7 @@ import { Bacakan, TeksAgen } from "./TeksAgen";
 import { PEGAS_LENTERA } from "./PanggungSuara";
 import { LABEL_ALAT, type Pesan } from "@/lib/api/obrolan";
 import type { PertanyaanAgen } from "@/lib/api/tipe";
+import { MenyusunCv } from "../cv/MenyusunCv";
 
 export function OrbKecil() {
   return <span className="orb-kecil" aria-hidden="true" />;
@@ -38,6 +39,7 @@ function PesanAi({ p, awalRangkaian, sedangMengalir }: { p: Pesan; awalRangkaian
       {awalRangkaian && <p className="pesan-ai-nama"><OrbKecil />Lokerin</p>}
       {p.bagian.map((b, i) => {
         if (b.jenis === "teks") return <TeksAgen key={i} teks={b.teks} />;
+        if (b.status === "jalan" && (b.nama === "siapkan_cv_khusus" || b.nama === "ubah_cv_khusus")) return <MenyusunCv key={b.id} ringkas jenis={b.nama === "ubah_cv_khusus" ? "ubah" : "susun"} />;
         if (b.status === "jalan") return <p key={b.id} className="alat-jalan" role="status">{LABEL_ALAT[b.nama] ?? "Lokerin sedang bekerja"}…</p>;
         if (b.status === "galat") return <p key={b.id} className="text-[15px] text-merah">Ada yang belum berhasil. Coba ulangi.</p>;
         if (!b.hasil?.widget || b.hasil.widget === "pertanyaan") return null;

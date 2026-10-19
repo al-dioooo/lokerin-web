@@ -13,7 +13,7 @@ import { Logo } from "../brand/Logo";
 import { BangunanIcon, DapurIcon, KATEGORI, LasIcon, OjekIcon, TokoIcon, type KategoriSlug } from "../icons/categories";
 import { IconArrowLeft, IconCamera, IconCheck, IconId, IconShieldCheck } from "../icons/tabler";
 import { Bacakan } from "../ui/Bacakan";
-import { KartuKerja } from "../ui/KartuKerja";
+import { KartuKerja, SITUS } from "../ui/KartuKerja";
 import { bacaAkun, simpanAkun } from "@/lib/auth";
 import { api, apiAktif, GalatApi } from "@/lib/api/klien";
 import { masukGoogle, masukTamu } from "@/lib/api/sesi";
@@ -82,6 +82,8 @@ export function AlurMulai() {
   const [langkah, setLangkah] = useState(0);
   const [arah, setArah] = useState<"maju" | "mundur">("maju");
   const [simpan, setSimpan] = useState<"belum" | "proses" | "beres" | "gagal">("belum");
+  // First saved Persona; the Kartu Kerja QR opens its public page.
+  const [personaPertama, setPersonaPertama] = useState<string | null>(null);
   // A retry after a failed save must not create a second account.
   const akunDibuat = useRef(false);
   const [pesanGagal, setPesanGagal] = useState("");
@@ -147,7 +149,7 @@ export function AlurMulai() {
             method: "POST",
             body: { jenis: "pengalaman", judul: label, periode: lama.periode, ...(waktu.length ? { detail: `Bisa kerja ${waktu.join(", ").toLowerCase()}` } : {}) },
           });
-          await api("/persona", {
+          const persona = await api<{ id: string }>("/persona", {
             method: "POST",
             body: {
               judul: label,
@@ -157,6 +159,7 @@ export function AlurMulai() {
               preferensi: { kota: [kecamatan], mau_pindah: (jarak ?? 5) >= 20 },
             },
           });
+          setPersonaPertama((id) => id ?? persona.id);
         }
       }
       setSimpan("beres");
@@ -341,7 +344,7 @@ export function AlurMulai() {
               judul={simpan === "gagal" ? "Belum berhasil disimpan." : peran === "pemberi" ? "Usahamu sedang dicek." : `Siap kerja, ${nama.split(" ")[0] || "kamu"}.`}
               bantu={simpan === "gagal" ? pesanGagal : simpan === "proses" ? "Menyimpan jawabanmu..." : peran === "pemberi" ? "Sambil menunggu, kamu sudah bisa menyiapkan lowongan pertama." : "Jawabanmu sudah tersimpan. Lowongan yang cocok sudah menunggu."}
             >
-              {peran === "pencari" && simpan !== "gagal" && <KartuKerja nama={nama || "Kamu"} personas={labelKerja} kota={area ?? "Banyumas"} className="alur-kartu" />}
+              {peran === "pencari" && simpan !== "gagal" && <KartuKerja nama={nama || "Kamu"} personas={labelKerja} kota={area ?? "Banyumas"} tautan={personaPertama ? `${SITUS}/kartu/${personaPertama}` : undefined} className="alur-kartu" />}
               {simpan === "gagal" ? (
                 <Lanjut aktif onClick={() => void simpanSemua()} label="Coba lagi" />
               ) : (

@@ -1,5 +1,5 @@
 // Lokerin service worker. Bump VERSI when the precache list or the caching rules change.
-const VERSI = "v1";
+const VERSI = "v2";
 const SHELL = `lokerin-shell-${VERSI}`; // offline page and its files, kept until the next version
 const HALAMAN = `lokerin-halaman-${VERSI}`; // pages, network first
 const ASET = `lokerin-aset-${VERSI}`; // static files, stale-while-revalidate

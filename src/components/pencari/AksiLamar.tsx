@@ -6,8 +6,11 @@
  */
 
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { IconCheck, IconCircleCheck, IconFileCv, IconInfoCircle } from "../icons/tabler";
+import { useRouter } from "next/navigation";
+import { useRef, useState, type MouseEvent } from "react";
+import { IconCheck, IconCircleCheck, IconFileCv, IconInfoCircle, IconSparkles } from "../icons/tabler";
+import { masukNgobrol } from "../app/transisiNgobrol";
+import { useBukaLaci } from "../lapis/konteksLaci";
 import { LaporkanLowongan } from "../app/LaporkanLowongan";
 import { Laci } from "../lapis/Laci";
 import { TawaranKabar } from "../app/TawaranKabar";
@@ -18,6 +21,7 @@ import { useApi } from "@/lib/api/hooks";
 import { useSesi } from "@/lib/api/sesi";
 import type { LamaranApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
 import { MenyusunCv } from "../cv/MenyusunCv";
+import { barisKonteks, titipKeNgobrol } from "@/lib/titipNgobrol";
 
 type Langkah = "persona" | "cv" | "kirim" | "selesai";
 type CvSiap = { id: string; isi: { judul: string }; fakta_dipakai?: number };
@@ -38,6 +42,9 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = f
   const [terkirim, setTerkirim] = useState<LamaranApi | null>(null);
   const profil = useApi<ProfilApi>(buka && pengguna?.peran === "pencari" ? "/profil" : null);
   const kendaliCv = useRef<AbortController | null>(null);
+  const router = useRouter();
+  // Inside Ngobrol's drawer the conversation is right behind it; elsewhere Ngobrol opens for it.
+  const diNgobrol = useBukaLaci() !== null;
 
   if (siap && pengguna?.peran === "pemberi") return null;
 
@@ -68,6 +75,22 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = f
     kendaliCv.current?.abort();
     kendaliCv.current = null;
     setProses("");
+  }
+
+  /**
+   * Hands the CV to Ngobrol: the agent asks what to change, revises it, then lays out the Lamaran
+   * with Kirim Lamaran in the thread. The IDs ride along in a line only the agent reads.
+   */
+  function ubahLewatNgobrol(e: MouseEvent<HTMLButtonElement>) {
+    if (!cv || !persona) return;
+    const dari = e.currentTarget;
+    setBuka(false);
+    titipKeNgobrol({
+      teks: `Aku mau menyesuaikan CV lamaranku untuk ${judul} di ${usaha}.`,
+      konteks: barisKonteks({ cv_khusus_id: cv.id, lowongan_id: lowonganId, persona_id: persona.id }),
+      baru: !diNgobrol,
+    });
+    if (!diNgobrol) masukNgobrol(dari, () => router.push("/app/ngobrol"));
   }
 
   async function kirim() {
@@ -165,11 +188,14 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = f
               <div className="flex justify-between gap-3"><dt className="text-abu">CV lamaran</dt><dd className="text-right font-bold">{cv ? "Terlampir" : "Tidak"}</dd></div>
             </dl>
             {cv && (
-              <Link href={`/app/cv/${cv.id}`} className="cv-jadi grid gap-2" aria-label="Lihat dan ubah CV lamaran">
+              <div className="cv-jadi grid gap-2">
                 <span className="flex items-center gap-2 text-[15px] font-bold text-daun"><IconCircleCheck size={18} />CV lamaranmu sudah jadi{cv.fakta_dipakai ? `, dari ${cv.fakta_dipakai} bahan CV-mu` : ""}.</span>
-                <IntipCv id={cv.id} />
-                <span className="tombol tombol-garis min-h-12"><IconFileCv size={18} />Lihat dan ubah CV</span>
-              </Link>
+                <Link href={`/app/cv/${cv.id}`} aria-label="Lihat CV lamaran"><IntipCv id={cv.id} /></Link>
+                <div className="grid gap-2 @md:grid-cols-2">
+                  <Link href={`/app/cv/${cv.id}`} className="tombol tombol-garis min-h-12"><IconFileCv size={18} />Lihat dan ubah sendiri</Link>
+                  <button type="button" className="tombol tombol-garis min-h-12" onClick={ubahLewatNgobrol}><IconSparkles size={18} />Ubah lewat Ngobrol</button>
+                </div>
+              </div>
             )}
             <label className="grid gap-1.5 text-[15px] font-semibold text-abu">
               Pesan singkat untuk {usaha} (boleh dikosongkan)

@@ -167,7 +167,7 @@ function ProfilPencari() {
             {tempatTinggal && <p className="mt-1 flex items-center gap-1 text-[15px] text-abu"><IconMapPin size={16} className="shrink-0" />{tempatTinggal}</p>}
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:max-w-md">
           <button type="button" className="tombol tombol-utama min-h-12 px-3 text-[15px]" onClick={() => setTambah(true)}><IconPlus size={18} />Pengalaman</button>
           <Link href="/app/kartu" className="tombol tombol-garis min-h-12 px-3 text-[15px]"><IconIdBadge2 size={18} />Kartu Kerja</Link>
         </div>
@@ -310,7 +310,7 @@ function ProfilUsaha() {
             <span>{u.terverifikasi ? `Terverifikasi. Yang dicek: ${u.yang_dicek.join(", ")}.` : u.status_verifikasi === "menunggu" ? "Sedang dicek. Lowonganmu tetap tayang dengan label belum terverifikasi." : "Belum terverifikasi. Lowonganmu tetap tayang, tapi pelamar lebih percaya pada usaha yang sudah dicek."}</span>
           </p>
         )}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:max-w-md">
           <Link href="/app/pasang" className="tombol tombol-utama min-h-12 whitespace-nowrap px-3 text-[15px]"><IconPlus size={18} />Pasang lowongan</Link>
           {u && !u.terverifikasi ? <Link href="/app/verifikasi" className="tombol tombol-garis min-h-12 px-3 text-[15px]"><IconShieldCheck size={18} />Verifikasi</Link> : <Link href="/app/pelamar" className="tombol tombol-garis min-h-12 px-3 text-[15px]">Lihat pelamar</Link>}
         </div>

@@ -74,14 +74,19 @@
   border-radius: 999px;
   background: var(--color-garis);
 }
+/* The content is a size container: screens shown in a drawer lay out for the drawer, not the
+   window (a side drawer on a wide screen is still phone-narrow). Nothing inside may widen it. */
 .laci-isi {
   flex: 1;
   min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 4px 20px 20px;
   font-size: 17px;
+  container-type: inline-size;
 }
+.laci-isi > *, .laci-isi .grid > * { min-width: 0; }
 .laci-aksi {
   display: grid;
   gap: 8px;

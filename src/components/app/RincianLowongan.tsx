@@ -35,11 +35,13 @@ export function RincianLowongan({ l, Judul = "h1" }: { l: Lowongan; Judul?: "h1"
         </div>
       </header>
       {l.mendesakMenit && <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#F7C9A0] bg-jingga-muda p-3"><span className="urgent-tag">Butuh hari ini</span><span className="text-sm text-jingga-tua">Lowongan tutup dalam <SisaWaktu menit={l.mendesakMenit} className="bg-white" /></span></div>}
+      <div className="@container">
       <dl className="grid grid-cols-2 gap-2">
-        <div className="fakta col-span-2 sm:col-span-1"><dt><IconCash size={16} />Upah</dt><dd className="text-lg tabular-nums">{upahTeks(l)}</dd><CekUpah status={l.cekUpah} /></div>
-        <div className="fakta col-span-2 sm:col-span-1"><dt><IconMapPin size={16} />Lokasi</dt><dd>{l.area}</dd><span className="text-xs text-abu">{jarak} km dari kamu</span></div>
+        <div className="fakta col-span-2 @md:col-span-1"><dt><IconCash size={16} />Upah</dt><dd className="text-lg tabular-nums">{upahTeks(l)}</dd><CekUpah status={l.cekUpah} /></div>
+        <div className="fakta col-span-2 @md:col-span-1"><dt><IconMapPin size={16} />Lokasi</dt><dd>{l.area}</dd><span className="text-xs text-abu">{jarak} km dari kamu</span></div>
         <div className="fakta col-span-2"><dt><IconClock size={16} />Jadwal</dt><dd>{l.jadwal}</dd></div>
       </dl>
+      </div>
       <p className="text-sm text-abu">{PENJELASAN_UPAH[l.cekUpah]}</p>
       <section><h2 className="mb-1 text-base">Tentang pekerjaan</h2><p className="text-[15px]">{l.deskripsi}</p></section>
       {l.syarat.length > 0 && <section><h2 className="mb-2 text-base">Syarat</h2><ul className="grid gap-1.5 text-[15px]">{l.syarat.map((s) => <li key={s} className="flex items-start gap-2"><IconCheck size={18} className="mt-0.5 shrink-0 text-daun" />{s}</li>)}</ul></section>}

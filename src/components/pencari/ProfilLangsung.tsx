@@ -115,7 +115,7 @@ function CaraCvDibuat({ onPaham }: { onPaham: () => void }) {
           </li>
         ))}
       </ol>
-      <button type="button" className="tombol tombol-garis mt-3 min-h-11 w-full text-[15px] sm:w-auto" onClick={onPaham}>Mengerti</button>
+      <button type="button" className="tombol tombol-garis mt-3 min-h-11 w-full text-[15px] @xl:w-auto" onClick={onPaham}>Mengerti</button>
     </section>
   );
 }
@@ -210,7 +210,7 @@ export function ProfilPencari() {
   const tempatTinggal = [p?.pencari.kecamatan, p?.pencari.kota].filter(Boolean).join(", ");
 
   return (
-    <div className="grid gap-7">
+    <div className="@container grid grid-cols-1 gap-7">
       <section className="profil-hero" aria-labelledby="nama-profil">
         <div className="flex items-center gap-4">
           <span className="profil-avatar" aria-hidden="true">{inisial(nama)}</span>
@@ -219,7 +219,7 @@ export function ProfilPencari() {
             {tempatTinggal && <p className="mt-1 flex items-center gap-1 text-[15px] text-abu"><IconMapPin size={16} className="shrink-0" />{tempatTinggal}</p>}
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:max-w-md">
+        <div className="grid grid-cols-2 gap-2 @xl:max-w-md">
           <button type="button" className="tombol tombol-utama min-h-12 px-3 text-[15px]" onClick={() => setTambah(true)}><IconPlus size={18} />Pengalaman</button>
           <Link href="/app/kartu" className="tombol tombol-garis min-h-12 px-3 text-[15px]"><IconIdBadge2 size={18} />Kartu Kerja</Link>
         </div>
@@ -268,7 +268,7 @@ export function ProfilPencari() {
             <p className="text-sm text-abu">Lowongan dicocokkan dengan ini. Ubah kalau ada yang kurang pas.</p>
           </div>
         </div>
-        <ul className="grid gap-2 sm:grid-cols-2">
+        <ul className="grid gap-2 @xl:grid-cols-2">
           {p?.persona.map((x) => (
             <li key={x.id} className="kartu-cv-persona">
               <div className="flex items-start justify-between gap-3">
@@ -296,7 +296,7 @@ export function ProfilPencari() {
           </div>
           <button type="button" className="tombol tombol-halus min-h-11 shrink-0 px-4 text-[15px]" onClick={() => setTambah(true)}><IconPlus size={16} />Tambah</button>
         </div>
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid gap-2 @xl:grid-cols-2">
           {URUTAN_JENIS.map((jenis) => {
             const isi = fakta.filter((f) => f.jenis === jenis);
             if (!isi.length) return null;
@@ -350,7 +350,7 @@ function ProfilUsaha() {
   const aktif = lowongan.data?.lowongan.filter((l) => l.status === "terbit").length ?? null;
   const baru = pelamar.data?.lamaran.filter((l) => l.status === "terkirim").length ?? null;
   return (
-    <div className="grid gap-7">
+    <div className="@container grid grid-cols-1 gap-7">
       <section className="profil-hero" aria-labelledby="nama-usaha">
         <div className="flex items-center gap-4">
           <span className="profil-avatar" aria-hidden="true"><IconBuildingStore size={30} /></span>
@@ -365,7 +365,7 @@ function ProfilUsaha() {
             <span>{u.terverifikasi ? `Terverifikasi. Yang dicek: ${u.yang_dicek.join(", ")}.` : u.status_verifikasi === "menunggu" ? "Sedang dicek. Lowonganmu tetap tayang dengan label belum terverifikasi." : "Belum terverifikasi. Lowonganmu tetap tayang, tapi pelamar lebih percaya pada usaha yang sudah dicek."}</span>
           </p>
         )}
-        <div className="grid grid-cols-2 gap-2 sm:max-w-md">
+        <div className="grid grid-cols-2 gap-2 @xl:max-w-md">
           <Link href="/app/pasang" className="tombol tombol-utama min-h-12 whitespace-nowrap px-3 text-[15px]"><IconPlus size={18} />Pasang lowongan</Link>
           {u && !u.terverifikasi ? <Link href="/app/verifikasi" className="tombol tombol-garis min-h-12 px-3 text-[15px]"><IconShieldCheck size={18} />Verifikasi</Link> : <Link href="/app/pelamar" className="tombol tombol-garis min-h-12 px-3 text-[15px]">Lihat pelamar</Link>}
         </div>

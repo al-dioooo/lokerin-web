@@ -45,7 +45,7 @@ function LowonganDiLaci({ id }: { id: string }) {
   if (!r.data) return <Memuat />;
   const l = keLowongan(r.data);
   return (
-    <article className="grid gap-5">
+    <article className="grid grid-cols-1 gap-5">
       <RincianLowongan l={l} Judul="h3" />
       {l.cekUpah === "curiga" ? (
         <p className="rounded-2xl bg-merah-muda p-4 text-sm text-merah">Lowongan ini tidak bisa dilamar. Jangan pernah membayar biaya apa pun untuk mendapat pekerjaan.</p>

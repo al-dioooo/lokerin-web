@@ -126,3 +126,17 @@ export type Pengguna = { id: string; peran: Peran; nama: string; kota: string };
 export type MeApi = Pengguna & { kecamatan: string | null; pemberi_kerja: PemberiKerjaApi | null };
 
 export type AkunDemo = { key: string; peran: Peran; nama: string; kota: string; pemberi_kerja: PemberiKerjaApi | null };
+
+export type JenisKabar = "lamaran_masuk" | "lamaran_dilihat" | "lamaran_lolos" | "tahap_baru" | "lamaran_tidak_lolos" | "butuh_hari_ini";
+export type KabarApi = { id: string; jenis: JenisKabar; judul: string; isi: string; tautan: string; dibaca: boolean; dibuat_pada: string };
+export type DaftarKabarApi = { kabar: KabarApi[]; belum_dibaca: number };
+
+/** What tanya_pengguna asks: one question with big answer buttons (ADR 0008). */
+export type PertanyaanAgen = {
+  widget: "pertanyaan";
+  id: string;
+  pertanyaan: string;
+  pilihan: { label: string; keterangan?: string }[];
+  boleh_banyak: boolean;
+  boleh_ketik: boolean;
+};

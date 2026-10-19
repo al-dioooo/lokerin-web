@@ -14,6 +14,7 @@ import { RatingKontak } from "../app/RatingKontak";
 import { Laci } from "../lapis/Laci";
 import { api, apiAktif, GalatApi, urlBertoken } from "@/lib/api/klien";
 import { useApi, useLangsung } from "@/lib/api/hooks";
+import { useBukaDariTautan } from "@/lib/api/tautan";
 import { waktuLalu } from "@/lib/api/adaptor";
 import type { LamaranApi, TahapApi } from "@/lib/api/tipe";
 
@@ -58,6 +59,8 @@ export function DaftarPelamar() {
       } catch {}
     }
   }
+
+  useBukaDariTautan(daftar.data?.lamaran, (l) => void buka(l));
 
   async function loloskan() {
     if (!dipilih || !jenis) return;

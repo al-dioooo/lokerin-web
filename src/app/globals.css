@@ -122,8 +122,39 @@
   .langkah { display: grid; grid-template-columns: 32px 1fr; gap: 10px; padding: 16px; border-radius: 16px; background: white; border: 1px solid var(--color-garis); }
   .langkah[data-genap] { background: var(--color-kertas); }
   .app-kerangka { min-height: 100dvh; background: var(--color-kertas); }
-  .app-atas { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 60px; padding: 0 max(16px, calc((100% - 1040px) / 2)); background: rgb(250 250 247 / .86); backdrop-filter: blur(12px); border-bottom: 1px solid rgb(217 217 212 / .7); }
-  .app-isi { width: min(100% - 32px, 1040px); margin: 20px auto 0; padding-bottom: 140px; }
+  /* The header follows the scroll (KepalaApp): flat at the top, a slim frosted bar with the page
+     title once you scroll, tucked away while you scroll down. It is fixed, so its changes never
+     push the page around. */
+  .app-atas {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    height: 60px; padding: 0 max(16px, calc((100% - 1040px) / 2)); background: rgb(250 250 247 / 0); border-bottom: 1px solid transparent;
+    transition: height .3s cubic-bezier(.2, .8, .2, 1), background-color .3s, border-color .3s, translate .35s cubic-bezier(.2, .8, .2, 1);
+  }
+  .app-atas[data-tergulir] { backdrop-filter: blur(16px) saturate(1.6); height: 52px; background: rgb(250 250 247 / .82); border-bottom-color: rgb(217 217 212 / .75); }
+  .app-atas[data-sembunyi]:not(:focus-within) { translate: 0 -100%; }
+  .app-atas-kiri { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .app-atas-logo { transform-origin: left center; transition: scale .3s cubic-bezier(.2, .8, .2, 1); }
+  .app-atas[data-tergulir] .app-atas-logo { scale: .88; }
+  .app-atas-judul {
+    position: absolute; left: 50%; top: 50%; max-width: calc(100% - 248px); translate: -50% -20%; opacity: 0; pointer-events: none;
+    font-size: 15px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .2s, translate .3s cubic-bezier(.2, .8, .2, 1);
+  }
+  .app-atas-judul[data-tampil] { opacity: 1; translate: -50% -50%; }
+  /* Beranda's search bar docked in the header: the logo folds away to give it the room. */
+  .app-atas-kiri { max-width: 240px; transition: max-width .35s cubic-bezier(.2, .8, .2, 1), opacity .2s; }
+  .app-atas[data-dok] .app-atas-kiri { max-width: 0; opacity: 0; overflow: hidden; pointer-events: none; }
+  .app-atas[data-dok] { gap: 10px; }
+  .app-atas-dok { flex: 1; min-width: 0; max-width: 560px; margin-left: -10px; transform-origin: center top; }
+  .cari-dok {
+    display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 4px 0 14px; border-radius: 999px;
+    background: white; border: 1px solid #E4DED4; box-shadow: 0 2px 8px rgb(33 29 26 / .06); font-size: 15px; color: var(--color-abu);
+  }
+  .cari-dok-mic { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 999px; color: white; background: linear-gradient(#FF9A4D 0%, #F27719 55%, #E0660D 100%); }
+  /* The big bar shrinks and fades as it slides under the header (where browsers support scroll-driven animations). */
+  @supports (animation-timeline: view()) {
+    .kolom-cari-beranda { animation: cari-pergi linear both; animation-timeline: view(block 60px 0px); animation-range: exit 0% exit 100%; }
+  }
+  .app-isi { width: min(100% - 32px, 1040px); margin: 80px auto 0; padding-bottom: 140px; }
   .app-isi > *, .app-isi section, .app-isi article { min-width: 0; }
   .kolom-cari { display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; min-height: 52px; border-radius: 999px; background: white; border: 1px solid #E4DED4; box-shadow: 0 3px 10px rgb(33 29 26 / .06); }
   .rak-mendesak { display: grid; grid-auto-flow: column; grid-auto-columns: min(272px, 78%); gap: 10px; overflow-x: auto; padding-block: 2px 8px; scroll-snap-type: x mandatory; scrollbar-width: none; }
@@ -326,6 +357,7 @@
 @keyframes gelombang { 0%, 100% { height: 30%; } 50% { height: 100%; } }
 @keyframes muncul { 0% { background: var(--color-jingga-muda); opacity: .2; } 30% { opacity: 1; } 100% { background: transparent; } }
 @keyframes masuk-halaman { from { opacity: 0; translate: var(--dari, 0 12px); } 40% { opacity: 1; } }
+@keyframes cari-pergi { to { opacity: 0; scale: .94; } }
 @keyframes naik { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
 @keyframes pil-masuk { from { opacity: 0; translate: -50% 40px; scale: .9; } to { opacity: 1; translate: -50% 0; scale: 1; } }
 @keyframes ajak { 0% { opacity: 0; transform: translateY(8px) scale(.9); } 8%, 85% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(4px); } }
@@ -364,7 +396,9 @@
   .kartu-cv { margin-top: 48px; }
 }
 @media (min-width: 1024px) {
-  .app-isi { margin-top: 28px; }
+  .app-isi { margin-top: 88px; }
+  .app-atas[data-dok] .app-atas-kiri { max-width: 240px; opacity: 1; pointer-events: auto; }
+  .app-atas-dok { margin-inline: auto; }
 }
 @media (min-width: 1024px) {
   .ngobrol-panggung { padding-top: 6vh; padding-right: 380px; }
@@ -397,6 +431,9 @@
   .app-kerangka { display: block; background: white; }
   .app-isi { width: 100%; margin: 0; padding: 0; }
   .lembar-cv { box-shadow: none; border: 0; padding: 0; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .app-atas[data-tergulir] { backdrop-filter: none; background: var(--color-kertas); }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }

@@ -10,7 +10,7 @@
  */
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { LayoutGroup } from "motion/react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { IconHistory, IconMicrophone, IconPencilPlus, IconX } from "../icons/tabler";
@@ -23,7 +23,7 @@ import { PanggungSuara } from "./PanggungSuara";
 import { Penyusun, Utas } from "./Utas";
 import { BATAS_DETIK, useSuara } from "./useSuara";
 import { kategoriDari } from "@/lib/api/adaptor";
-import { kirimPesan, muatRiwayat, type BagianPesan, type HasilAlat, type Pesan } from "@/lib/api/obrolan";
+import { kirimPesan, muatObrolan, type BagianPesan, type HasilAlat, type Pesan } from "@/lib/api/obrolan";
 import { useSesi } from "@/lib/api/sesi";
 import type { LowonganApi, PertanyaanAgen } from "@/lib/api/tipe";
 import "./ngobrol.css";
@@ -72,7 +72,12 @@ export function Ngobrol() {
   const [mode, setMode] = useState<Mode>("suara");
   const idTersimpan = useSyncExternalStore(tanpaLangganan, () => baca(KUNCI_OBROLAN) ?? "utama", () => "utama");
   const [idPilihan, setIdPilihan] = useState<string | null>(null);
-  const obrolanId = idPilihan ?? idTersimpan;
+  // Each conversation has its own address, /app/ngobrol/<id>. Conversations are stored per account
+  // on the server, so the address only ever opens your own; /app/ngobrol opens the last one.
+  const params = useParams<{ id?: string }>();
+  const idUrl = typeof params?.id === "string" ? decodeURIComponent(params.id) : null;
+  const obrolanId = idPilihan ?? idUrl ?? idTersimpan;
+  const [asing, setAsing] = useState(false);
 
   const [pesan, setPesan] = useState<Pesan[]>([]);
   const [judul, setJudul] = useState("");
@@ -92,11 +97,25 @@ export function Ngobrol() {
   useEffect(() => {
     if (!akun) return;
     const k = new AbortController();
-    muatRiwayat(obrolanId, k.signal)
-      .then((p) => setPesan(p))
+    muatObrolan(obrolanId, k.signal)
+      .then((h) => {
+        setPesan(h.pesan);
+        if (h.judul) setJudul((j) => j || h.judul!);
+        // A link to a conversation that is not in this account says so instead of quietly showing
+        // an empty chat. A new conversation of your own is the one remembered on this phone.
+        const milikSendiri = h.ada || obrolanId === baca(KUNCI_OBROLAN);
+        setAsing(!milikSendiri);
+        if (milikSendiri) simpan(KUNCI_OBROLAN, obrolanId);
+      })
       .catch(() => {});
     return () => k.abort();
   }, [akun, obrolanId]);
+
+  // The address follows the open conversation, without reloading the screen.
+  useEffect(() => {
+    const tujuan = `/app/ngobrol/${encodeURIComponent(obrolanId)}`;
+    if (window.location.pathname !== tujuan) window.history.replaceState(null, "", tujuan);
+  }, [obrolanId]);
 
   function gantiMode(baru: Mode) {
     setMode(baru);
@@ -108,6 +127,7 @@ export function Ngobrol() {
     void suara.akhiri();
     setIdPilihan(id);
     simpan(KUNCI_OBROLAN, id);
+    setAsing(false);
     setPesan([]);
     setJudul(judulBaru);
     setSibuk(false);
@@ -125,6 +145,8 @@ export function Ngobrol() {
     const k = new AbortController();
     kendali.current = k;
     const idAi = `ai-${crypto.randomUUID()}`;
+    setAsing(false);
+    simpan(KUNCI_OBROLAN, obrolanId);
     if (!pesan.length && !judul) setJudul(teks.length > 44 ? `${teks.slice(0, 44).replace(/\s+\S*$/, "")}…` : teks);
     setPesan((p) => [...p, { id: `kamu-${crypto.randomUUID()}`, peran: "kamu", bagian: [{ jenis: "teks", teks }] }]);
     setSibuk(true);
@@ -230,6 +252,11 @@ export function Ngobrol() {
 
         {/* Both layers stay mounted so switching is instant (the night town is a large SVG);
             only the lentera moves between them. */}
+        {asing && (
+          <p className="ngobrol-catatan" role="status">
+            Obrolan ini tidak ada di akunmu. Yang kamu tulis di sini jadi obrolan baru milikmu.
+          </p>
+        )}
         <div className="ngobrol-tumpuk">
           <section className="ngobrol-lapis" data-aktif={mode === "suara" || undefined} inert={mode !== "suara"} aria-label="Ngobrol pakai suara">
             <PanggungSuara

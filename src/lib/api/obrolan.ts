@@ -58,9 +58,21 @@ function bagianDariUi(parts: BagianUi[]): BagianPesan[] {
   return hasil;
 }
 
+/**
+ * One conversation from the server: its messages, its title, and whether it exists in this account
+ * at all (a link to someone else's conversation opens an empty one of your own instead).
+ */
+export async function muatObrolan(id: string, signal?: AbortSignal): Promise<{ pesan: Pesan[]; ada: boolean; judul: string | null }> {
+  const hasil = await api<{ messages: PesanUi[]; ada?: boolean; judul?: string | null }>(`/chat/riwayat?id=${encodeURIComponent(id)}`, { signal });
+  return { pesan: susunPesan(hasil.messages), ada: hasil.ada ?? hasil.messages.length > 0, judul: hasil.judul ?? null };
+}
+
 /** History from the server. Saved turns can repeat a message id, so ids here get their position added. */
 export async function muatRiwayat(id: string, signal?: AbortSignal): Promise<Pesan[]> {
-  const { messages } = await api<{ messages: PesanUi[] }>(`/chat/riwayat?id=${encodeURIComponent(id)}`, { signal });
+  return (await muatObrolan(id, signal)).pesan;
+}
+
+function susunPesan(messages: PesanUi[]): Pesan[] {
   const pesan: Pesan[] = [];
   messages.forEach((m, i) => {
     if (m.role === "system") return;

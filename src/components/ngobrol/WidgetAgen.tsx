@@ -15,6 +15,7 @@ import type { DaftarKabarApi, FaktaApi, KartuKerjaApi, LamaranApi, LowonganApi, 
 import { IntipCv } from "../cv/PratinjauCv";
 import { DaftarKabarWidget, KartuKerjaWidget, LaporanSiap, PelamarWidget, TahapSiap } from "./WidgetBaru";
 import { TautanLaci, useKlikLaci } from "../lapis/konteksLaci";
+import { PoinFakta } from "../pencari/UbahFakta";
 
 type Hasil = { widget?: string } & Record<string, unknown>;
 
@@ -36,7 +37,8 @@ function FaktaUsulan({ usulan }: { usulan: FaktaApi[] }) {
       {usulan.map((f) => (
         <div key={f.id} className="rounded-2xl border border-garis bg-white p-3">
           <p className="font-bold">{f.judul}</p>
-          <p className="text-sm text-abu">{[f.tempat, f.periode, f.detail].filter(Boolean).join(" · ")}</p>
+          {(f.tempat || f.periode) && <p className="text-sm text-abu">{[f.tempat, f.periode].filter(Boolean).join(" · ")}</p>}
+          <PoinFakta f={f} />
           {keputusan[f.id] ? (
             <p className={`mt-2 flex items-center gap-1.5 text-sm font-bold ${keputusan[f.id] === "simpan" ? "text-daun" : "text-abu"}`}>
               {keputusan[f.id] === "simpan" ? <><IconCircleCheck size={16} />Tersimpan di profilmu</> : "Tidak disimpan"}

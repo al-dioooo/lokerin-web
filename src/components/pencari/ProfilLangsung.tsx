@@ -19,6 +19,7 @@ import { UbahPersona } from "./UbahPersona";
 import "../cv/cv.css";
 import "./profil.css";
 import { TautanLaci, useBukaLaci, type IsiLaci } from "../lapis/konteksLaci";
+import { PoinFakta, UbahFakta } from "./UbahFakta";
 
 const JENIS: Record<FaktaApi["jenis"], string> = { pengalaman: "Pengalaman", keahlian: "Keahlian", pendidikan: "Pendidikan", prestasi: "Prestasi", lainnya: "Lainnya" };
 const URUTAN_JENIS: FaktaApi["jenis"][] = ["pengalaman", "keahlian", "pendidikan", "prestasi", "lainnya"];
@@ -166,7 +167,9 @@ export function ProfilPencari() {
   const [judul, setJudul] = useState("");
   const [tempat, setTempat] = useState("");
   const [lama, setLama] = useState("");
+  const [poinBaru, setPoinBaru] = useState("");
   const [galat, setGalat] = useState("");
+  const [faktaDiubah, setFaktaDiubah] = useState<FaktaApi | null>(null);
   const [lihatCara, setLihatCara] = useState(() => {
     try {
       return !localStorage.getItem(KUNCI_PAHAM);
@@ -192,11 +195,13 @@ export function ProfilPencari() {
   async function simpanFakta() {
     setGalat("");
     try {
-      await api("/fakta", { method: "POST", body: { jenis: "pengalaman", judul: judul.trim(), ...(tempat.trim() ? { tempat: tempat.trim() } : {}), ...(lama.trim() ? { periode: lama.trim() } : {}) } });
+      const poin = poinBaru.split("\n").map((b) => b.trim()).filter(Boolean);
+      await api("/fakta", { method: "POST", body: { jenis: "pengalaman", judul: judul.trim(), ...(tempat.trim() ? { tempat: tempat.trim() } : {}), ...(lama.trim() ? { periode: lama.trim() } : {}), ...(poin.length ? { poin } : {}) } });
       setTambah(false);
       setJudul("");
       setTempat("");
       setLama("");
+      setPoinBaru("");
       profil.muatUlang();
     } catch (e) {
       setGalat(e instanceof GalatApi ? e.message : "Belum tersimpan.");
@@ -240,7 +245,8 @@ export function ProfilPencari() {
             <div key={f.id} className="rounded-2xl bg-white p-3">
               <p className="text-xs font-bold uppercase tracking-wide text-abu">{JENIS[f.jenis]}</p>
               <p className="font-bold">{f.judul}</p>
-              <p className="text-sm text-abu">{[f.tempat, f.periode, f.detail].filter(Boolean).join(" · ")}</p>
+              {(f.tempat || f.periode) && <p className="text-sm text-abu">{[f.tempat, f.periode].filter(Boolean).join(" · ")}</p>}
+              <PoinFakta f={f} />
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <button type="button" className="tombol tombol-utama min-h-12" onClick={() => void putuskan(f.id, true)}><IconCheck size={18} />Simpan</button>
                 <button type="button" className="tombol tombol-garis min-h-12" onClick={() => void putuskan(f.id, false)}><IconX size={18} />Bukan</button>
@@ -306,8 +312,14 @@ export function ProfilPencari() {
                 <ul>
                   {isi.map((f) => (
                     <li key={f.id}>
-                      <p className="font-bold leading-snug">{f.judul}</p>
-                      {(f.tempat || f.periode) && <p className="text-sm text-abu">{[f.tempat, f.periode].filter(Boolean).join(" · ")}</p>}
+                      <button type="button" className="baris-fakta" onClick={() => setFaktaDiubah(f)} aria-label={`Ubah ${f.judul}`}>
+                        <span className="min-w-0 flex-1">
+                          <span className="block font-bold leading-snug">{f.judul}</span>
+                          {(f.tempat || f.periode) && <span className="block text-sm text-abu">{[f.tempat, f.periode].filter(Boolean).join(" · ")}</span>}
+                          <PoinFakta f={f} batas={3} />
+                        </span>
+                        <IconPencil size={16} className="mt-1 shrink-0 text-abu" />
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -329,12 +341,17 @@ export function ProfilPencari() {
       </section>
 
       <UbahPersona persona={ubah} onTutup={() => setUbah(null)} onTersimpan={() => { setUbah(null); profil.muatUlang(); }} />
+      <UbahFakta fakta={faktaDiubah} semua={fakta} onTutup={() => setFaktaDiubah(null)} onBerubah={profil.muatUlang} />
 
       <Laci buka={tambah} onTutup={() => setTambah(false)} label="Profil" judul="Tambah pengalaman" aksi={<button type="button" className="tombol tombol-utama" disabled={judul.trim().length < 2} onClick={() => void simpanFakta()}>Simpan</button>}>
         <div className="grid gap-3">
           <label className="grid gap-1.5 text-[15px] font-semibold text-abu">Kerja apa?<input autoFocus value={judul} onChange={(e) => setJudul(e.target.value)} className="input-mulai min-h-14 text-lg text-tinta" placeholder="Misalnya Tukang las pagar" /></label>
           <label className="grid gap-1.5 text-[15px] font-semibold text-abu">Di mana? (boleh kosong)<input value={tempat} onChange={(e) => setTempat(e.target.value)} className="input-mulai min-h-14 text-lg text-tinta" placeholder="Misalnya Bengkel di Sokaraja" /></label>
           <label className="grid gap-1.5 text-[15px] font-semibold text-abu">Berapa lama? (boleh kosong)<input value={lama} onChange={(e) => setLama(e.target.value)} className="input-mulai min-h-14 text-lg text-tinta" placeholder="Misalnya 3 tahun" /></label>
+          <label className="grid gap-1.5 text-[15px] font-semibold text-abu">
+            Tugas dan hasilmu di sana (boleh kosong)
+            <textarea value={poinBaru} onChange={(e) => setPoinBaru(e.target.value)} rows={4} className="input-mulai min-h-28 py-3 text-[17px] font-normal leading-snug text-tinta" placeholder={"Satu baris satu poin, misalnya:\nMengelas pagar dan teralis\nMenyelesaikan 3 pesanan per minggu"} />
+          </label>
           {galat && <p role="alert" className="text-sm text-merah">{galat}</p>}
         </div>
       </Laci>

@@ -34,8 +34,10 @@
 
 .grup-fakta { overflow: hidden; border-radius: 20px; background: white; border: 1px solid var(--color-garis); }
 .grup-fakta > h3 { display: flex; justify-content: space-between; padding: 12px 16px 8px; font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--color-abu); }
-.grup-fakta li { padding: 10px 16px; border-top: 1px solid var(--color-garis); }
+.grup-fakta li { border-top: 1px solid var(--color-garis); }
 .grup-fakta li:first-child { border-top: 0; }
+.baris-fakta { display: flex; align-items: flex-start; gap: 12px; width: 100%; padding: 10px 16px; text-align: left; }
+.baris-fakta:hover { background: var(--color-kertas); }
 
 /* Settings, like the settings list on a phone: one rounded group, rows split by hairlines. */
 .atur-grup { overflow: hidden; border-radius: 20px; background: white; border: 1px solid var(--color-garis); }

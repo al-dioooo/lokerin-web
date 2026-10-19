@@ -54,7 +54,7 @@ export function DaftarObrolan({ buka, onTutup, aktifId, onPilih, onBaru }: { buk
         labelYa="Ya, hapus"
         onYa={async () => {
           if (!hapus) return;
-          await hapusObrolan(hapus.id).catch(() => {});
+          await hapusObrolan(hapus.id);
           if (hapus.id === aktifId) onBaru();
           setHapus(null);
           daftar.muatUlang();

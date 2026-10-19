@@ -78,6 +78,19 @@ export function tanggalPanjang(iso: string | null) {
   return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Jakarta" }).format(new Date(iso));
 }
 
+/** A start date (YYYY-MM-DD) as people say it, by the Jakarta calendar: "Hari ini", "Besok", "20 Okt". */
+export function tanggalMulai(tanggal: string | null, sekarang = Date.now()) {
+  const cocok = tanggal ? /^(\d{4})-(\d{2})-(\d{2})/.exec(tanggal) : null;
+  if (!cocok) return tanggal;
+  const hari = Date.UTC(Number(cocok[1]), Number(cocok[2]) - 1, Number(cocok[3]));
+  const [t, b, h] = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta" }).format(sekarang).split("-").map(Number);
+  const selisih = Math.round((hari - Date.UTC(t!, b! - 1, h!)) / 86_400_000);
+  if (selisih === 0) return "Hari ini";
+  if (selisih === 1) return "Besok";
+  const tahunLain = Number(cocok[1]) !== t;
+  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", ...(tahunLain ? { year: "numeric" } : {}), timeZone: "UTC" }).format(hari);
+}
+
 export function keLowongan(api: LowonganApi, sekarang = Date.now()): Lowongan {
   const jenis = api.upah.jenis ?? "harian";
   const jenisUpah: JenisUpah = jenis === "per_jam" ? "harian" : jenis;

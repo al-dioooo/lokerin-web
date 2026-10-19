@@ -29,7 +29,9 @@ function PilihJenis({ jenis, onUbah }: { jenis: JenisUpah | "semua"; onUbah: (j:
 }
 
 export function DaftarCocok({ awal = LOWONGAN_TAYANG }: { awal?: Lowongan[] }) {
-  const { pengguna } = useSesi();
+  const { pengguna, siap } = useSesi();
+  // Until the session is read, show a placeholder rather than the sample worker's matches.
+  if (apiAktif && !siap) return <KerangkaDaftar />;
   return apiAktif && pengguna?.peran === "pencari" ? <CocokDariServer /> : <CocokContoh awal={awal} />;
 }
 
@@ -44,13 +46,18 @@ function CocokDariServer() {
     <section aria-labelledby="judul-cocok">
       <div className="mb-3">
         <h2 id="judul-cocok" className="text-lg">Cocok untukmu</h2>
-        <p className="text-sm text-abu">Sesuai lokasi dan upah yang kamu mau, diurutkan dari yang paling cocok.</p>
+        <p className="text-sm text-abu">
+          Sesuai lokasi dan upah yang kamu mau{personas.length === 1 ? `, untuk kerja sebagai ${personas[0]!.judul}` : ""}. Yang paling cocok di atas.
+        </p>
       </div>
       {personas.length > 1 && personaId && (
-        <TabPil className="mb-2" label="Cocokkan dengan CV" nilai={personaId} onUbah={setPilihan} pilihan={personas.map((p) => ({ id: p.id, label: p.judul }))} />
+        <>
+          <p className="mb-1.5 text-[13px] font-semibold text-abu" aria-hidden="true">Cari lowongan sebagai</p>
+          <TabPil className="mb-2" label="Cari lowongan sebagai" nilai={personaId} onUbah={setPilihan} pilihan={personas.map((p) => ({ id: p.id, label: p.judul }))} />
+        </>
       )}
       <PilihJenis jenis={jenis} onUbah={setJenis} />
-      {personaId ? <HasilCari key={`${personaId}-${jenis}`} personaId={personaId} jenis={jenis} /> : !profil.memuat && <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-sm text-abu">Belum ada CV. Ceritakan pengalamanmu di Ngobrol supaya lowongan bisa dicocokkan.</p>}
+      {personaId ? <HasilCari key={`${personaId}-${jenis}`} personaId={personaId} jenis={jenis} /> : !profil.memuat && <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-sm text-abu">Lokerin belum tahu kamu bisa kerja apa. Ceritakan pengalamanmu di Ngobrol supaya lowongan bisa dicocokkan.</p>}
     </section>
   );
 }
@@ -149,12 +156,12 @@ function CocokContoh({ awal }: { awal: Lowongan[] }) {
   return (
     <section aria-labelledby="judul-cocok">
       <div className="mb-3">
-        <h2 id="judul-cocok" className="text-lg">{segmen === "magang" ? "Lowongan magang" : `Cocok untuk CV ${PEKERJA.persona[persona].judul}`}</h2>
+        <h2 id="judul-cocok" className="text-lg">{segmen === "magang" ? "Lowongan magang" : `Cocok untuk ${PEKERJA.persona[persona].judul}`}</h2>
         <p className="text-sm text-abu">{segmen === "magang" ? "Magang dengan uang saku di Banyumas." : "Diurutkan dari yang paling cocok dengan pengalamanmu."}</p>
       </div>
       <div className="saringan mb-3">
         <TabPil label="Jenis lowongan" className="w-fit" nilai={segmen} onUbah={(x) => { setSegmen(x); setKategori("semua"); }} pilihan={[{ id: "informal", label: "Kerja" }, { id: "magang", label: "Magang" }]} />
-        {segmen === "informal" && <TabPil label="Cocokkan dengan CV" nilai={persona} onUbah={setPersona} pilihan={(Object.keys(PEKERJA.persona) as PersonaId[]).map((p) => ({ id: p, label: `CV ${PEKERJA.persona[p].judul}` }))} />}
+        {segmen === "informal" && <TabPil label="Cari lowongan sebagai" nilai={persona} onUbah={setPersona} pilihan={(Object.keys(PEKERJA.persona) as PersonaId[]).map((p) => ({ id: p, label: PEKERJA.persona[p].judul }))} />}
         <div className="saringan-baris gulir-tepi" role="group" aria-label="Kota">
           {KOTA.map((k) => <button key={k} type="button" className="chip-peta shrink-0" aria-pressed={kota === k} onClick={() => setKota(k)}>{k === "semua" ? "Semua kota" : k}</button>)}
         </div>

@@ -87,13 +87,43 @@ function UnduhKecil({ id }: { id: string }) {
   );
 }
 
-/** The CV Khusus Lokerin made for each job you applied to (or are about to). */
+const KUNCI_PAHAM = "lokerin-paham-cv";
+
+/**
+ * The three words on this page, in the order things happen. Shown until the person taps
+ * Mengerti; "Cara kerjanya" brings it back.
+ */
+function CaraCvDibuat({ onPaham }: { onPaham: () => void }) {
+  const langkah = [
+    { href: "#bahan-cv", judul: "Bahan CV", isi: "Yang kamu ceritakan lalu kamu simpan: pengalaman, keahlian, pendidikan." },
+    { href: "#kerja", judul: "Kerja yang kamu bisa", isi: "Bahan itu dikelompokkan per jenis kerja. Lowongan dicocokkan dari sini." },
+    { href: "#cv-lamaran", judul: "CV lamaran", isi: "Saat melamar, Lokerin menyusun CV khusus untuk lowongan itu, hanya dari bahanmu." },
+  ];
+  return (
+    <section className="cara-cv" aria-labelledby="judul-cara-cv">
+      <h2 id="judul-cara-cv" className="text-[17px]">Begini CV-mu dibuat</h2>
+      <ol className="mt-3 grid gap-2">
+        {langkah.map((l, i) => (
+          <li key={l.href}>
+            <a href={l.href} className="cara-cv-langkah">
+              <span className="cara-cv-nomor" aria-hidden="true">{i + 1}</span>
+              <span className="min-w-0"><span className="block font-bold">{l.judul}</span><span className="block text-sm text-abu">{l.isi}</span></span>
+            </a>
+          </li>
+        ))}
+      </ol>
+      <button type="button" className="tombol tombol-garis mt-3 min-h-11 w-full text-[15px] sm:w-auto" onClick={onPaham}>Mengerti</button>
+    </section>
+  );
+}
+
+/** The CV lamaran (CV Khusus) Lokerin made for each job you applied to, or are about to. */
 function RakCvKhusus({ daftar }: { daftar: CvRingkasApi[] | null }) {
-  if (!daftar) return <div className="h-64 animate-pulse rounded-3xl bg-kabut" role="status" aria-label="Memuat CV Khusus" />;
+  if (!daftar) return <div className="h-64 animate-pulse rounded-3xl bg-kabut" role="status" aria-label="Memuat CV lamaran" />;
   if (!daftar.length) {
     return (
       <p className="rounded-2xl border border-dashed border-garis px-4 py-3 text-[15px] text-abu">
-        Belum ada. Saat kamu melamar, Lokerin menyusun CV khusus untuk lowongan itu dari fakta yang sudah kamu simpan, dengan tata letak yang mudah dibaca rekruter dan sistem ATS.
+        Belum ada. Saat kamu melamar, Lokerin menyusun CV untuk lowongan itu dari bahan CV-mu, dengan tata letak yang mudah dibaca pemberi kerja dan sistem ATS.
       </p>
     );
   }
@@ -132,6 +162,23 @@ function ProfilPencari() {
   const [tempat, setTempat] = useState("");
   const [lama, setLama] = useState("");
   const [galat, setGalat] = useState("");
+  const [lihatCara, setLihatCara] = useState(() => {
+    try {
+      return !localStorage.getItem(KUNCI_PAHAM);
+    } catch {
+      return true;
+    }
+  });
+  function tutupCara() {
+    setLihatCara(false);
+    try {
+      localStorage.setItem(KUNCI_PAHAM, "1");
+    } catch {}
+  }
+  function bukaCara() {
+    setLihatCara(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   async function putuskan(id: string, terima: boolean) {
     await api("/fakta/putuskan", { method: "POST", body: { ids: [id], terima } });
@@ -172,16 +219,18 @@ function ProfilPencari() {
           <Link href="/app/kartu" className="tombol tombol-garis min-h-12 px-3 text-[15px]"><IconIdBadge2 size={18} />Kartu Kerja</Link>
         </div>
         <nav className="profil-angka" aria-label="Ringkasan">
-          <Angka nilai={p ? p.persona.length : null} label="CV" href="#cv-mu" />
-          <Angka nilai={cvKhusus.data ? cvKhusus.data.cv.length : null} label="CV Khusus" href="#cv-khusus" />
+          <Angka nilai={p ? p.persona.length : null} label="Jenis kerja" href="#kerja" />
+          <Angka nilai={p ? fakta.length : null} label="Bahan CV" href="#bahan-cv" />
           <Angka nilai={lamaran.data ? lamaran.data.lamaran.length : null} label="Lamaran" href="/app/lamaran" />
         </nav>
       </section>
 
+      {lihatCara && <CaraCvDibuat onPaham={tutupCara} />}
+
       {usulan.length > 0 && (
         <section className="grid gap-2 rounded-3xl border border-[#F7C9A0] bg-jingga-muda p-4" aria-labelledby="judul-usulan">
           <h2 id="judul-usulan" className="text-lg">Dari obrolan, benar begini?</h2>
-          <p className="-mt-1 text-sm text-jingga-tua">Yang kamu simpan dipakai untuk CV. Yang bukan, dibuang.</p>
+          <p className="-mt-1 text-sm text-jingga-tua">Yang kamu simpan jadi bahan CV. Yang bukan, dibuang.</p>
           {usulan.map((f) => (
             <div key={f.id} className="rounded-2xl bg-white p-3">
               <p className="text-xs font-bold uppercase tracking-wide text-abu">{JENIS[f.jenis]}</p>
@@ -196,28 +245,29 @@ function ProfilPencari() {
         </section>
       )}
 
-      <section id="cv-khusus" className="scroll-mt-20" aria-labelledby="judul-cv-khusus">
+      <section id="cv-lamaran" className="scroll-mt-20" aria-labelledby="judul-cv-lamaran">
         <div className="profil-bagian-kepala">
           <div>
-            <h2 id="judul-cv-khusus" className="text-lg">CV Khusus</h2>
-            <p className="text-sm text-abu">Satu untuk tiap lamaran, rapi dan ramah ATS.</p>
+            <h2 id="judul-cv-lamaran" className="text-lg">CV lamaran</h2>
+            <p className="text-sm text-abu">Disusun khusus untuk tiap lowongan yang kamu lamar. Ini yang dibaca pemberi kerja.</p>
           </div>
+          {!lihatCara && <button type="button" className="shrink-0 text-sm font-bold text-jingga-tua underline-offset-4 hover:underline" onClick={bukaCara}>Cara kerjanya</button>}
         </div>
         <RakCvKhusus daftar={cvKhusus.data?.cv ?? (cvKhusus.galat ? [] : null)} />
       </section>
 
-      <section id="cv-mu" className="scroll-mt-20" aria-labelledby="judul-cv-mu">
+      <section id="kerja" className="scroll-mt-20" aria-labelledby="judul-kerja">
         <div className="profil-bagian-kepala">
           <div>
-            <h2 id="judul-cv-mu" className="text-lg">CV-mu</h2>
-            <p className="text-sm text-abu">Satu untuk tiap jenis kerja. Lowongan dicocokkan dengan ini.</p>
+            <h2 id="judul-kerja" className="text-lg">Kerja yang kamu bisa</h2>
+            <p className="text-sm text-abu">Lowongan dicocokkan dengan ini. Ubah kalau ada yang kurang pas.</p>
           </div>
         </div>
         <ul className="grid gap-2 sm:grid-cols-2">
           {p?.persona.map((x) => (
             <li key={x.id} className="kartu-cv-persona">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-[17px] leading-snug">CV {x.judul}</h3>
+                <h3 className="text-[17px] leading-snug">{x.judul}</h3>
                 <button type="button" className="tombol tombol-garis min-h-11 shrink-0 px-4 text-[15px]" onClick={() => setUbah(x)}><IconPencil size={16} />Ubah</button>
               </div>
               {x.ringkasan && <p className="line-clamp-3 text-[15px] text-abu">{x.ringkasan}</p>}
@@ -229,15 +279,15 @@ function ProfilPencari() {
               )}
             </li>
           ))}
-          {p && !p.persona.length && <li className="rounded-2xl border border-dashed border-garis px-4 py-3 text-[15px] text-abu">Belum ada CV. Ceritakan kerjamu di Ngobrol, Lokerin menyusunnya.</li>}
+          {p && !p.persona.length && <li className="rounded-2xl border border-dashed border-garis px-4 py-3 text-[15px] text-abu">Lokerin belum tahu kamu bisa kerja apa. Ceritakan di Ngobrol, nanti tersusun sendiri.</li>}
         </ul>
       </section>
 
-      <section aria-labelledby="judul-fakta">
+      <section id="bahan-cv" className="scroll-mt-20" aria-labelledby="judul-bahan-cv">
         <div className="profil-bagian-kepala">
           <div>
-            <h2 id="judul-fakta" className="text-lg">Fakta tentang kamu</h2>
-            <p className="text-sm text-abu">Setiap poin di CV harus berasal dari sini.</p>
+            <h2 id="judul-bahan-cv" className="text-lg">Bahan CV</h2>
+            <p className="text-sm text-abu">Pengalaman, keahlian, dan pendidikan yang sudah kamu simpan. CV lamaran hanya memakai yang ada di sini.</p>
           </div>
           <button type="button" className="tombol tombol-halus min-h-11 shrink-0 px-4 text-[15px]" onClick={() => setTambah(true)}><IconPlus size={16} />Tambah</button>
         </div>
@@ -259,14 +309,14 @@ function ProfilPencari() {
               </section>
             );
           })}
-          {p && !fakta.length && <p className="rounded-2xl border border-dashed border-garis px-4 py-3 text-[15px] text-abu">Belum ada fakta yang kamu simpan.</p>}
+          {p && !fakta.length && <p className="rounded-2xl border border-dashed border-garis px-4 py-3 text-[15px] text-abu">Belum ada bahan CV yang kamu simpan.</p>}
         </div>
       </section>
 
       <section aria-labelledby="judul-atur">
         <h2 id="judul-atur" className="mb-2 text-lg">Lainnya</h2>
         <div className="atur-grup">
-          <BarisTautan href="/app/ngobrol" ikon={<IconMicrophone size={20} />} judul="Ceritakan lewat Ngobrol" keterangan="Tambah pengalaman dengan bicara" />
+          <BarisTautan href="/app/ngobrol" ikon={<IconMicrophone size={20} />} judul="Ceritakan lewat Ngobrol" keterangan="Tambah bahan CV dengan bicara" />
           <BarisTautan href="/app/lamaran" ikon={<IconBriefcase size={20} />} judul="Lamaranku" keterangan="Status tiap lamaran" />
           <PengaturanPush baris />
           <BarisKeluar />
@@ -335,7 +385,9 @@ function ProfilUsaha() {
 
 /** Live profile for signed-in users; Alice's sample CV otherwise. */
 export function ProfilLangsung() {
-  const { pengguna } = useSesi();
+  const { pengguna, siap } = useSesi();
+  // Until the session is read, a placeholder instead of the sample worker's CV.
+  if (apiAktif && !siap) return <div className="h-72 animate-pulse rounded-[28px] bg-kabut" role="status" aria-label="Memuat profil" />;
   if (!apiAktif || !pengguna) return <ProfilCv />;
   return pengguna.peran === "pemberi" ? <ProfilUsaha /> : <ProfilPencari />;
 }

@@ -3,7 +3,7 @@
 import { LayoutGroup, m } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { IconBriefcase, IconHome, IconIdBadge2, IconMap, IconMicrophone, IconPlus, IconUser, IconUserCheck } from "../icons/tabler";
 import { useSesi } from "@/lib/api/sesi";
 import { aturArah } from "./Halaman";
@@ -33,6 +33,37 @@ const MENU_PEMBERI = [
   { href: "/app/profil", label: "Usaha", Icon: IconUser },
 ];
 
+// The "Ceritakan kerjamu" hint plays once per browser session, not on every page: after the first
+// time it would only cover content (the apply bar on a job page sits right under it).
+const KUNCI_AJAK = "lokerin-ajak";
+let ajak: boolean | null = null;
+const pendengarAjak = new Set<() => void>();
+function bacaAjak() {
+  if (ajak === null) {
+    try {
+      ajak = !sessionStorage.getItem(KUNCI_AJAK);
+      sessionStorage.setItem(KUNCI_AJAK, "1");
+    } catch {
+      ajak = false;
+    }
+  }
+  return ajak;
+}
+function selesaiAjak() {
+  ajak = false;
+  pendengarAjak.forEach((fn) => fn());
+}
+function useAjak() {
+  return useSyncExternalStore(
+    (fn) => {
+      pendengarAjak.add(fn);
+      return () => pendengarAjak.delete(fn);
+    },
+    bacaAjak,
+    () => false,
+  );
+}
+
 function indeks(menu: typeof MENU_PENCARI, path: string) {
   if (path.startsWith("/app/lowongan")) return 0;
   const i = menu.findLastIndex(({ href }) => (href === "/app" ? path === "/app" : path.startsWith(href)));
@@ -53,6 +84,7 @@ export function PilNav() {
     setKetuk(null);
   }
   const aktif = ketuk ?? indeks(MENU, path);
+  const tampilAjak = useAjak();
 
   function pergi(ke: number) {
     if (ke === aktif) return;
@@ -68,7 +100,7 @@ export function PilNav() {
           if (i === 2) {
             return (
               <TautanNgobrol key={href} className="pil-ngobrol" aria-current={ini ? "page" : undefined} aria-label={pemberi ? "Ngobrol: pasang lowongan dan cek pelamar dengan bicara" : "Ngobrol: cari kerja dan susun CV dengan bicara"}>
-                {!ini && <span className="pil-ajak" aria-hidden="true">{pemberi ? "Bilang butuh siapa, lowongan jadi sendiri" : "Ceritakan kerjamu, CV jadi sendiri"}</span>}
+                {!ini && tampilAjak && <span className="pil-ajak" aria-hidden="true" onAnimationEnd={selesaiAjak}>{pemberi ? "Bilang butuh siapa, lowongan jadi sendiri" : "Ceritakan kerjamu, CV jadi sendiri"}</span>}
                 <m.span className="pil-ngobrol-orb" whileHover={{ scale: 1.06, rotate: -6 }} whileTap={{ scale: 0.92 }} transition={{ type: "spring", stiffness: 500, damping: 20 }}>
                   <Icon size={26} stroke={2} />
                 </m.span>

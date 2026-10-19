@@ -10,6 +10,7 @@ import { SisaWaktu } from "@/components/app/SisaWaktu";
 import { getKategori } from "@/components/icons/categories";
 import { IconArrowLeft, IconCalendar, IconCash, IconCheck, IconClock, IconMapPin, IconShieldCheck, IconX } from "@/components/icons/tabler";
 import { CekUpah } from "@/components/ui/CekUpah";
+import { GagalMuat } from "@/components/ui/GagalMuat";
 import { LOWONGAN, upahTeks } from "@/lib/data";
 
 export function generateStaticParams() {
@@ -32,7 +33,9 @@ export default function DetailLowongan({ params }: PageProps<"/app/lowongan/[id]
 }
 
 async function IsiLowongan({ params }: Pick<PageProps<"/app/lowongan/[id]">, "params">) {
-  const hasil = (await satuLowongan((await params).id)).data;
+  const sumber = await satuLowongan((await params).id);
+  if (sumber.putus) return <GagalMuat judul="Lowongan belum bisa dibuka" />;
+  const hasil = sumber.data;
   if (!hasil) notFound();
   const l = hasil.lowongan;
   const { Icon, label } = getKategori(l.kategori);

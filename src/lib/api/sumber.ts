@@ -6,19 +6,26 @@ import { API_URL, apiAktif } from "./klien";
 import { keLowongan } from "./adaptor";
 import type { LowonganApi } from "./tipe";
 
-export type Sumber<T> = { data: T; dariServer: boolean };
+export type Sumber<T> = { data: T; dariServer: boolean; putus?: boolean };
 
-async function ambil<T>(path: string): Promise<T | null> {
-  if (!apiAktif) return null;
+type Hasil<T> = { ok: true; data: T } | { ok: false; tidakAda: boolean };
+
+async function ambilHasil<T>(path: string): Promise<Hasil<T>> {
+  if (!apiAktif) return { ok: false, tidakAda: false };
   // Live listings and their "x minutes ago" labels belong to the request, not the build.
   await connection();
   try {
     const res = await fetch(`${API_URL}${path}`, { cache: "no-store", signal: AbortSignal.timeout(5000) });
-    if (!res.ok) return null;
-    return (await res.json()) as T;
+    if (!res.ok) return { ok: false, tidakAda: res.status === 404 };
+    return { ok: true, data: (await res.json()) as T };
   } catch {
-    return null;
+    return { ok: false, tidakAda: false };
   }
+}
+
+async function ambil<T>(path: string): Promise<T | null> {
+  const hasil = await ambilHasil<T>(path);
+  return hasil.ok ? hasil.data : null;
 }
 
 export async function daftarLowongan(): Promise<Sumber<Lowongan[]>> {
@@ -36,8 +43,9 @@ export async function lowonganMendesak(): Promise<Sumber<Lowongan[]>> {
 export async function satuLowongan(id: string): Promise<Sumber<{ lowongan: Lowongan; api: LowonganApi | null } | null>> {
   const contoh = cariLowongan(id);
   if (contoh || !apiAktif) return { data: contoh ? { lowongan: contoh, api: null } : null, dariServer: false };
-  const api = await ambil<LowonganApi>(`/lowongan/${encodeURIComponent(id)}`);
-  return { data: api ? { lowongan: keLowongan(api), api } : null, dariServer: true };
+  const hasil = await ambilHasil<LowonganApi>(`/lowongan/${encodeURIComponent(id)}`);
+  if (!hasil.ok) return { data: null, dariServer: true, putus: !hasil.tidakAda };
+  return { data: { lowongan: keLowongan(hasil.data), api: hasil.data }, dariServer: true };
 }
 
 export const RADIUS_PETA_KM = 5;

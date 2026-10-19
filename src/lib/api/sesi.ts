@@ -3,7 +3,7 @@
 // Session store shared by every client component: who is signed in, and how to sign in or out.
 
 import { useSyncExternalStore } from "react";
-import { api, apiAktif, bacaToken, simpanToken } from "./klien";
+import { api, apiAktif, bacaToken, GalatApi, simpanToken } from "./klien";
 import type { MeApi, Peran, Pengguna } from "./tipe";
 
 const KUNCI_PENGGUNA = "lokerin-pengguna";
@@ -95,8 +95,10 @@ export async function segarkanSesi() {
     const pengguna: Pengguna = { id: me.id, peran: me.peran, nama: me.nama, kota: me.kota };
     simpan(bacaToken()!, pengguna);
     return me;
-  } catch {
-    keluar();
+  } catch (e) {
+    // Only a rejected token ends the session. A dropped connection or a server hiccup keeps the
+    // person signed in with what we already know about them.
+    if (e instanceof GalatApi && e.status === 401) keluar();
     return null;
   }
 }

@@ -95,7 +95,7 @@
   .pin-kota[data-baru] .pin-label { color: white; background: var(--color-daun); border-color: var(--color-daun); }
   .pin-kota[data-aktif="true"] .pin-label { transform: scale(1.12); outline: 2px solid var(--color-tinta); outline-offset: 2px; }
   .panel-peta { padding: 16px; border-top: 1px solid var(--color-garis); background: var(--color-kertas); }
-  .chip-peta { border-radius: 999px; padding: 6px 12px; min-height: 32px; font-size: 12px; font-weight: 700; background: white; border: 1px solid var(--color-garis); }
+  .chip-peta { display: inline-flex; align-items: center; border-radius: 999px; padding: 0 14px; min-height: 40px; font-size: 14px; font-weight: 700; white-space: nowrap; background: white; border: 1px solid var(--color-garis); transition: background-color .2s, border-color .2s, color .2s; }
   .chip-peta[aria-pressed="true"] { background: var(--color-jingga-muda); border-color: #F7C9A0; color: var(--color-jingga-tua); }
   .kartu-peta { background: white; border: 1px solid var(--color-garis); border-radius: 16px; padding: 16px; box-shadow: 0 1px 2px rgb(21 18 16 / .05); }
   .kartu-peta .countdown-row .urgent-tag { font-size: 11px; }
@@ -126,7 +126,11 @@
   .app-isi { width: min(100% - 32px, 1040px); margin: 20px auto 0; padding-bottom: 140px; }
   .app-isi > *, .app-isi section, .app-isi article { min-width: 0; }
   .kolom-cari { display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; min-height: 52px; border-radius: 999px; background: white; border: 1px solid #E4DED4; box-shadow: 0 3px 10px rgb(33 29 26 / .06); }
-  .rak-mendesak { display: grid; grid-auto-flow: column; grid-auto-columns: min(272px, 82%); gap: 10px; overflow-x: auto; padding: 2px 2px 8px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+  .rak-mendesak { display: grid; grid-auto-flow: column; grid-auto-columns: min(272px, 78%); gap: 10px; overflow-x: auto; padding-block: 2px 8px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .rak-mendesak::-webkit-scrollbar { display: none; }
+  /* Sideways rows run to the screen edge so a half-visible last item says "there is more";
+     the padding keeps the first and last items on the page gutter. */
+  .gulir-tepi { margin-inline: -16px; padding-inline: 16px; scroll-padding-inline: 16px; }
   .rak-mendesak > li { scroll-snap-align: start; }
   .kartu-mendesak { display: block; height: 100%; padding: 14px; border-radius: 18px; background: linear-gradient(180deg, var(--color-jingga-muda), white 70%); border: 1px solid #F7C9A0; }
   .kartu-mendesak:hover, .baris-lowongan:hover { box-shadow: 0 1px 3px rgb(21 18 16 / .08), 0 1px 2px -1px rgb(21 18 16 / .05); transform: translateY(-1px); }
@@ -179,8 +183,11 @@
   .urut > li { animation: naik .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 45ms); }
   .baris-lowongan:active, .kartu-mendesak:active, .kolom-cari:active { transform: scale(.985); }
   .kartu-mendesak, .kolom-cari { transition: transform 150ms, box-shadow 150ms; }
-  .tab-pil { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); padding: 4px; border-radius: 999px; background: var(--color-kabut); }
-  .tab-pil > button { position: relative; min-height: 36px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--color-abu); white-space: nowrap; transition: color .25s; }
+  /* Sized to its labels; when they do not fit, the pill scrolls sideways instead of clipping them. */
+  .tab-pil { position: relative; display: inline-flex; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; padding: 4px; border-radius: 999px; background: var(--color-kabut); }
+  .tab-pil::-webkit-scrollbar { display: none; }
+  .tab-pil > button { position: relative; flex: none; max-width: min(260px, 72vw); min-height: 40px; padding: 0 16px; border-radius: 999px; font-size: 14px; font-weight: 700; color: var(--color-abu); white-space: nowrap; transition: color .25s; }
+  .tab-pil > button > span.relative { display: block; overflow: hidden; text-overflow: ellipsis; }
   .tab-pil > button[aria-selected="true"] { color: var(--color-tinta); }
   .tab-pil-geser { position: absolute; inset: 0; border-radius: 999px; background: white; box-shadow: 0 1px 3px rgb(21 18 16 / .12); }
   .tirai-ngobrol { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: radial-gradient(circle at var(--x) var(--y), #5A3018 0, #1A1210 30%, #0E1015 70%); clip-path: circle(0 at var(--x) var(--y)); animation: tirai-buka .6s cubic-bezier(.7, 0, .25, 1) forwards; transition: opacity .4s ease; }
@@ -393,6 +400,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  /* Without its fade-out the hint would stay over the page for good. */
+  .pil-ajak { display: none; }
 }
 
 /* Night palette for the town on the Ngobrol screen. Places named in data-nyala light up in their day colours. */

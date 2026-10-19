@@ -24,6 +24,7 @@ export function PilihAkunContoh() {
     setGalat("");
     try {
       await masukDemo(akun.key);
+      setBuka(false);
       router.push("/app");
     } catch (e) {
       setGalat(e instanceof GalatApi ? e.message : "Belum bisa masuk. Coba lagi.");

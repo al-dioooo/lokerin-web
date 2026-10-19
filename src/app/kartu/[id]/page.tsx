@@ -2,11 +2,10 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { KartuSatu } from "@/components/app/KartuPersona";
 import { API_URL, apiAktif } from "@/lib/api/klien";
+import type { KartuKerjaApi } from "@/lib/api/tipe";
 import { PEKERJA } from "@/lib/data";
 
 export const metadata = { title: "Kartu Kerja · Lokerin" };
-
-type KartuApi = { id: string; nama: string; kota: string; judul: string; ringkasan: string; keahlian: string[] };
 
 async function ambil(id: string): Promise<{ nama: string; kota: string; kartu: { id: string; judul: string; ringkasan: string; keahlian: string[] } } | null> {
   const contoh = Object.entries(PEKERJA.persona).find(([k]) => `darto-${k}` === id);
@@ -15,7 +14,7 @@ async function ambil(id: string): Promise<{ nama: string; kota: string; kartu: {
   try {
     const res = await fetch(`${API_URL}/kartu-kerja/${encodeURIComponent(id)}`, { cache: "no-store", signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
-    const k = (await res.json()) as KartuApi;
+    const k = (await res.json()) as KartuKerjaApi;
     return { nama: k.nama, kota: k.kota, kartu: { id: k.id, judul: k.judul, ringkasan: k.ringkasan, keahlian: k.keahlian } };
   } catch {
     return null;

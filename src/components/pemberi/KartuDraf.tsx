@@ -4,6 +4,7 @@ import { useState } from "react";
 import { getKategori } from "../icons/categories";
 import { IconAlertTriangle, IconCircleCheck, IconInfoCircle } from "../icons/tabler";
 import { Dialog } from "../lapis/Dialog";
+import { TawaranKabar } from "../app/TawaranKabar";
 import { kategoriDari } from "@/lib/api/adaptor";
 import { api, GalatApi } from "@/lib/api/klien";
 import type { LowonganApi } from "@/lib/api/tipe";
@@ -13,25 +14,43 @@ const LABEL_JENIS: Record<string, string> = { harian: "Harian", paruh_waktu: "Pa
 /**
  * A Draf Lowongan with its Pemeriksaan. Terbit is the employer's own decision (ADR 0004),
  * so it asks once in a Dialog: publishing makes the job visible to everyone nearby.
+ * Once someone is hired, closing it is the same kind of decision and asks the same way.
  */
 export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganApi; onBerubah?: (l: LowonganApi) => void; onUbah?: () => void }) {
   const [tanya, setTanya] = useState(false);
+  const [tanyaTutup, setTanyaTutup] = useState(false);
   const [galat, setGalat] = useState("");
   const [l, setL] = useState(lowongan);
+  const [baruTerbit, setBaruTerbit] = useState(false);
   const { Icon } = getKategori(kategoriDari(l));
   const masalah = l.pemeriksaan?.masalah ?? [];
   const tahan = masalah.filter((m) => m.tingkat === "tahan");
   const peringatan = masalah.filter((m) => m.tingkat === "peringatan");
+  const draf = l.status === "draf";
   const terbit = l.status === "terbit";
+  const terisi = l.status === "terisi";
 
   async function terbitkan() {
     setGalat("");
     try {
       const hasil = await api<LowonganApi>(`/pemberi/lowongan/${l.id}/terbit`, { method: "POST" });
       setL(hasil);
+      setBaruTerbit(true);
       onBerubah?.(hasil);
     } catch (e) {
       setGalat(e instanceof GalatApi ? e.message : "Belum bisa terbit. Coba lagi.");
+      throw e;
+    }
+  }
+
+  async function tutup() {
+    setGalat("");
+    try {
+      const hasil = await api<LowonganApi>(`/pemberi/lowongan/${l.id}/tutup`, { method: "POST" });
+      setL(hasil);
+      onBerubah?.(hasil);
+    } catch (e) {
+      setGalat(e instanceof GalatApi ? e.message : "Belum bisa ditutup. Coba lagi.");
       throw e;
     }
   }
@@ -41,7 +60,7 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
       <div className="flex items-start gap-3">
         <span className="ubin-ikon size-14 shrink-0"><Icon size={38} /></span>
         <div className="min-w-0 flex-1">
-          <p className="piksel text-[11px] uppercase text-jingga-tua">{terbit ? "Sudah terbit" : "Draf lowongan"}</p>
+          <p className="piksel text-[11px] uppercase text-jingga-tua">{terbit ? "Sudah terbit" : terisi ? "Sudah terisi" : "Draf lowongan"}</p>
           <h3 className="text-xl leading-tight">{l.judul || "Posisi belum diisi"}</h3>
           <p className="text-[15px] text-abu">{l.pemberi_kerja.nama_usaha} · {l.lokasi.kecamatan ?? l.lokasi.kota ?? "lokasi belum diisi"}</p>
         </div>
@@ -54,7 +73,7 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
       </dl>
       {l.deskripsi && <p className="mt-3 text-[15px]">{l.deskripsi}</p>}
 
-      {!terbit && (
+      {draf && (
         <div className="mt-4 grid gap-2">
           {tahan.map((m) => (
             <p key={m.kode} className="flex items-start gap-2 rounded-2xl bg-merah-muda p-3 text-[15px] text-merah"><IconAlertTriangle size={20} className="mt-0.5 shrink-0" />{m.pesan}</p>
@@ -69,8 +88,13 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
 
       <div className="mt-5 grid gap-2">
         {terbit ? (
-          <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 text-[15px] font-bold text-daun"><IconCircleCheck size={20} />Sudah tampil untuk pencari kerja di sekitarmu.</p>
-        ) : tahan.length ? (
+          <>
+            <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 text-[15px] font-bold text-daun"><IconCircleCheck size={20} />Sudah tampil untuk pencari kerja di sekitarmu.</p>
+            <button type="button" className="tombol tombol-garis min-h-14 text-lg" onClick={() => setTanyaTutup(true)}>Tutup lowongan</button>
+          </>
+        ) : terisi ? (
+          <p className="flex items-center gap-2 rounded-2xl bg-kabut p-3 text-[15px] font-bold text-abu"><IconCircleCheck size={20} />Lowongan ditutup. Pencari kerja tidak melihatnya lagi.</p>
+        ) : !draf ? null : tahan.length ? (
           onUbah && <button type="button" className="tombol tombol-utama min-h-14 text-lg" onClick={onUbah}>Lengkapi yang kurang</button>
         ) : (
           <>
@@ -83,6 +107,10 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
       <Dialog buka={tanya} onTutup={() => setTanya(false)} judul="Terbitkan lowongan ini sekarang?" labelYa="Ya, terbitkan" onYa={terbitkan}>
         Pencari kerja di sekitar {l.lokasi.kecamatan ?? l.lokasi.kota ?? "usahamu"} langsung bisa melihat dan melamar. {peringatan.length ? "Masih ada catatan Pemeriksaan di atas; pastikan sudah benar." : ""}
       </Dialog>
+      <Dialog buka={tanyaTutup} onTutup={() => setTanyaTutup(false)} bahaya judul="Tutup lowongan ini?" labelYa="Ya, sudah terisi" onYa={tutup}>
+        Lowongan ditandai sudah terisi dan langsung hilang dari beranda dan peta pencari kerja. Pelamar yang sudah masuk tetap ada di daftar pelamarmu. Lowongan yang ditutup tidak bisa dibuka lagi.
+      </Dialog>
+      <TawaranKabar picu={baruTerbit} alasan="Kami kabari begitu ada pelamar yang masuk, walau Lokerin sedang tertutup." />
     </article>
   );
 }

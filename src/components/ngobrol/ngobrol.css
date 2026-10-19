@@ -32,3 +32,56 @@
 @media (prefers-reduced-motion: reduce) {
   .titik-baru { animation: none; }
 }
+
+/* Answer buttons for tanya_pengguna, sized for every age: 60px tall, 18px text. */
+.pilihan-jawab { display: grid; gap: 10px; width: min(100%, 520px); margin-inline: auto; animation: teks-naik .45s cubic-bezier(.2, .9, .3, 1) backwards; }
+.pilihan-jawab-tombol {
+  display: grid; gap: 2px; width: 100%; min-height: 60px; padding: 12px 16px; border-radius: 18px;
+  text-align: left; font-size: 18px; font-weight: 700; color: var(--color-tinta);
+  background: rgb(255 252 248 / .96); box-shadow: 0 10px 24px rgb(0 0 0 / .28);
+  transition: transform .15s, background-color .15s;
+}
+.pilihan-jawab-tombol:active { transform: scale(.97); }
+.pilihan-jawab-tombol[aria-pressed="true"] { background: var(--color-jingga-muda); outline: 2px solid var(--color-jingga); }
+.pilihan-jawab-tombol:disabled { opacity: .6; }
+.pilihan-jawab-ket { font-size: 14px; font-weight: 500; color: var(--color-abu); }
+.pilihan-jawab-centang { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--color-jingga); color: var(--color-jingga-tua); }
+/* Several questions: a quiet header with Kembali and "1 dari 3", one question per screen, then Cek jawaban. */
+.pilihan-jawab-kepala { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 40px; }
+.pilihan-jawab-kembali { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; font-size: 15px; font-weight: 700; color: rgb(255 255 255 / .82); }
+.pilihan-jawab-langkah { font-size: 14px; font-weight: 700; color: #F9C08F; }
+.pilihan-jawab-soal { font-size: 19px; font-weight: 800; line-height: 1.3; text-align: left; color: white; }
+.pilihan-jawab-isian { display: flex; gap: 8px; }
+.pilihan-jawab-petunjuk { margin-top: -4px; font-size: 15px; text-align: left; color: rgb(255 255 255 / .72); }
+.pilihan-jawab-lewati { justify-self: center; min-height: 40px; padding: 0 12px; font-size: 14px; font-weight: 600; color: rgb(255 255 255 / .6); }
+.pilihan-jawab-ringkas { display: grid; gap: 8px; text-align: left; }
+.pilihan-jawab-ringkas > li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; background: rgb(255 255 255 / .1); color: white; }
+.pilihan-jawab-ubah { display: inline-flex; align-items: center; gap: 4px; flex: none; min-height: 40px; padding: 0 12px; border-radius: 999px; font-size: 14px; font-weight: 700; background: rgb(255 255 255 / .14); color: white; }
+.pilihan-jawab-ketik { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; font-size: 16px; font-weight: 600; color: rgb(255 255 255 / .82); text-decoration: underline; text-underline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .pilihan-jawab { animation: none; }
+  .pilihan-jawab-tombol { transition: none; }
+}
+
+/* While a question waits for an answer, the answer buttons get the room: the reply is shortened
+   and, on phones, the results bar steps aside until the question is answered. */
+.ngobrol-layar[data-tanya] .teks-berjalan[data-langsung] { max-height: 22dvh; }
+.ngobrol-layar[data-tanya] .teks-baru { font-size: clamp(1rem, 0.95rem + 0.4vw, 1.2rem); }
+@media (max-width: 1023px) {
+  .ngobrol-layar[data-tanya] .kartu-tumbuh { display: none; }
+}
+/* The stage scrolls while a question is open, so five or six answers and "Jawab dengan kata-katamu"
+   are always reachable on a short phone. */
+.ngobrol-layar[data-tanya] { display: flex; flex-direction: column; }
+.ngobrol-layar[data-tanya] .ngobrol-panggung {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+}
+.ngobrol-layar[data-tanya] .lentera { transform: scale(0.7); margin-block: -22px; }
+.ngobrol-layar[data-tanya] .gelombang-malam { display: none; }
+.ngobrol-layar[data-tanya] .pilihan-jawab-tombol { min-height: 56px; padding: 10px 14px; font-size: 17px; }
+.ngobrol-layar[data-tanya] .pilihan-jawab-ket { font-size: 13px; }

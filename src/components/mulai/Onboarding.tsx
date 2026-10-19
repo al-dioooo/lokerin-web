@@ -105,9 +105,9 @@ export function Onboarding() {
 
           {ini === "kerja" && (
             <>
-              <p className="pil-piksel">CV pertamamu</p>
+              <p className="pil-piksel">Kerjamu</p>
               <h1 className="judul-mulai">Biasanya kerja apa? <span className="text-jingga">Pilih sampai tiga.</span></h1>
-              <p className="mt-2 text-sm text-abu">Tiap pilihan jadi satu CV. Lowongan nanti dicocokkan per CV.</p>
+              <p className="mt-2 text-sm text-abu">Lowongan dicocokkan untuk tiap kerja yang kamu pilih.</p>
               <ul className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5">
                 {KATEGORI.map(({ slug, label, Icon }) => {
                   const urut = persona.findIndex((p) => p.kategori === slug);
@@ -198,7 +198,7 @@ export function Onboarding() {
             <>
               <p className="pil-piksel">Selesai</p>
               <h1 className="judul-mulai">{peran === "usaha" ? <>Usahamu <span className="text-jingga">sedang dicek.</span></> : <>Kartu Kerja-mu <span className="text-jingga">sudah jadi.</span></>}</h1>
-              <p className="mt-2 text-sm text-abu">{peran === "usaha" ? "Biasanya selesai di hari yang sama. Sambil menunggu, siapkan lowongan pertamamu." : `${persona.length} CV siap dipakai. Lowongan di sekitar ${area} sudah diurutkan dari yang paling cocok.`}</p>
+              <p className="mt-2 text-sm text-abu">{peran === "usaha" ? "Biasanya selesai di hari yang sama. Sambil menunggu, siapkan lowongan pertamamu." : `${persona.length} jenis kerja tersimpan. Lowongan di sekitar ${area} sudah diurutkan dari yang paling cocok.`}</p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {peran === "usaha" ? (
                   <Link href="/app" className="tombol tombol-utama min-h-12 px-6 text-base">Lihat contoh lowongan <IconArrowRight size={18} /></Link>
@@ -256,7 +256,7 @@ export function Onboarding() {
                     return (
                       <li key={p.kategori} className="baris-persona stempel">
                         <span className="ubin-ikon size-9 bg-white"><Icon size={24} /></span>
-                        <span className="min-w-0"><span className="block font-bold">CV {label}</span><span className="block truncate text-xs text-abu">{[peng, wkt].filter(Boolean).join(" · ") || "Pengalaman dan waktu kerja"}</span></span>
+                        <span className="min-w-0"><span className="block font-bold">{label}</span><span className="block truncate text-xs text-abu">{[peng, wkt].filter(Boolean).join(" · ") || "Pengalaman dan waktu kerja"}</span></span>
                       </li>
                     );
                   })}

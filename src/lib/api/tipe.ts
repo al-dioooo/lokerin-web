@@ -79,6 +79,9 @@ export type ProfilApi = {
   persona: PersonaApi[];
 };
 
+/** Public summary of one Persona, without contact details (GET /kartu-kerja/:id). */
+export type KartuKerjaApi = { id: string; nama: string; kota: string; judul: string; ringkasan: string; keahlian: string[]; tautan: string };
+
 export type TahapApi = { id: string; jenis: "whatsapp" | "meet" | "alamat" | "lainnya"; detail: string; jadwal: string | null; catatan: string | null };
 
 export type StatusLamaran = "terkirim" | "dilihat" | "lolos" | "tidak_lolos";
@@ -98,14 +101,30 @@ export type LamaranApi = {
   tahap_berikutnya: TahapApi[];
 };
 
-export type ItemCv = { id: string; text: string; fakta_ids: string[]; diedit_pengguna?: boolean };
+/** CV Khusus versi 2 (ADR 0009): bagian berisi Entri dengan judul, tempat, periode, dan poin. */
+export type PoinCv = { id: string; text: string; fakta_ids: string[]; diedit_pengguna?: boolean };
+export type EntriCv = {
+  id: string;
+  judul: string;
+  tempat?: string;
+  keterangan?: string;
+  periode?: string;
+  lokasi?: string;
+  poin: PoinCv[];
+  fakta_ids: string[];
+  diedit_pengguna?: boolean;
+};
+export type JenisBagianCv = "pengalaman" | "pendidikan" | "proyek" | "prestasi" | "lainnya";
+export type BagianCv = { id: string; judul: string; jenis: JenisBagianCv; entri: EntriCv[] };
+export type KelompokKeahlian = { id: string; label: string; isi: string[] };
 export type IsiCv = {
+  versi: 2;
   nama: string;
   judul: string;
-  kontak: { telepon?: string; email?: string; kota?: string };
+  kontak: { telepon?: string; email?: string; kota?: string; tautan?: string[] };
   ringkasan: string;
-  keahlian: string[];
-  bagian: { id: string; judul: string; items: ItemCv[] }[];
+  keahlian: KelompokKeahlian[];
+  bagian: BagianCv[];
 };
 
 export type CvApi = {
@@ -118,8 +137,51 @@ export type CvApi = {
   peringatan: string | null;
 };
 
+/** One CV Khusus in the owner's list (GET /cv): which job it was made for and whether it was sent. */
+export type CvRingkasApi = {
+  id: string;
+  template: CvApi["template"];
+  bahasa: CvApi["bahasa"];
+  isi: IsiCv;
+  dibuat: string;
+  diperbarui: string;
+  persona: { id: string; judul: string } | null;
+  lowongan: { id: string; judul: string; usaha: string | null } | null;
+  lamaran: { id: string; status: StatusLamaran } | null;
+};
+
 export type Pengguna = { id: string; peran: Peran; nama: string; kota: string };
 
 export type MeApi = Pengguna & { kecamatan: string | null; pemberi_kerja: PemberiKerjaApi | null };
 
 export type AkunDemo = { key: string; peran: Peran; nama: string; kota: string; pemberi_kerja: PemberiKerjaApi | null };
+
+export type JenisKabar = "lamaran_masuk" | "lamaran_dilihat" | "lamaran_lolos" | "tahap_baru" | "lamaran_tidak_lolos" | "butuh_hari_ini";
+export type KabarApi = { id: string; jenis: JenisKabar; judul: string; isi: string; tautan: string; dibaca: boolean; dibuat_pada: string };
+export type DaftarKabarApi = { kabar: KabarApi[]; belum_dibaca: number };
+
+/** What tanya_pengguna asks: one question with big answer buttons (ADR 0008). */
+/** One question from tanya_pengguna: a short label for the summary, the question, and its choices. */
+export type SoalAgen = {
+  id: string;
+  judul: string;
+  teks: string;
+  pilihan: { label: string; keterangan?: string }[];
+  boleh_banyak: boolean;
+  boleh_ketik: boolean;
+};
+
+/** What tanya_pengguna asked: 1 to 4 questions, answered together in one message. */
+export type PertanyaanAgen = { widget: "pertanyaan"; id: string; daftar: SoalAgen[] };
+
+/** Older conversations hold the single-question shape; both read as a list here. */
+export function bacaPertanyaan(hasil: Record<string, unknown>): PertanyaanAgen | null {
+  if (hasil.widget !== "pertanyaan" || typeof hasil.id !== "string") return null;
+  if (Array.isArray(hasil.daftar)) return { widget: "pertanyaan", id: hasil.id, daftar: hasil.daftar as SoalAgen[] };
+  if (typeof hasil.pertanyaan !== "string" || !Array.isArray(hasil.pilihan)) return null;
+  return {
+    widget: "pertanyaan",
+    id: hasil.id,
+    daftar: [{ id: "q1", judul: "", teks: hasil.pertanyaan, pilihan: hasil.pilihan as SoalAgen["pilihan"], boleh_banyak: Boolean(hasil.boleh_banyak), boleh_ketik: Boolean(hasil.boleh_ketik) }],
+  };
+}

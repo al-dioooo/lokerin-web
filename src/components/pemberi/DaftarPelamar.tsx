@@ -3,16 +3,19 @@
 /*
  * Applicants for the employer. Opening an applicant is a Laci (reading and choosing);
  * "Loloskan" continues in the same Laci with the Tahap Berikutnya form; "Tidak lolos"
- * is a Dialog because it is final and the applicant is told right away.
+ * is a Dialog because it is final and the applicant is told right away. After Lolos the
+ * same form adds another Tahap Berikutnya, for example an interview after the first chat.
  */
 
 import { useState } from "react";
-import { IconBrandWhatsapp, IconCheck, IconFileCv, IconMapPin, IconPhone, IconUser, IconX } from "../icons/tabler";
+import { IconBrandWhatsapp, IconCheck, IconMapPin, IconPhone, IconUser, IconX } from "../icons/tabler";
 import { Dialog } from "../lapis/Dialog";
 import { RatingKontak } from "../app/RatingKontak";
 import { Laci } from "../lapis/Laci";
-import { api, apiAktif, GalatApi, urlBertoken } from "@/lib/api/klien";
+import { api, apiAktif, GalatApi } from "@/lib/api/klien";
+import { PratinjauCv } from "../cv/PratinjauCv";
 import { useApi, useLangsung } from "@/lib/api/hooks";
+import { useBukaDariTautan } from "@/lib/api/tautan";
 import { waktuLalu } from "@/lib/api/adaptor";
 import type { LamaranApi, TahapApi } from "@/lib/api/tipe";
 
@@ -29,7 +32,8 @@ const JENIS_TAHAP: { id: TahapApi["jenis"]; label: string; contoh: string }[] = 
   { id: "meet", label: "Wawancara online", contoh: "Tautan Google Meet dan jamnya" },
 ];
 
-export function DaftarPelamar() {
+/** `diLaci`: shown in a drawer from Ngobrol (the drawer has the title); `awalId` opens one right away. */
+export function DaftarPelamar({ diLaci = false, awalId }: { diLaci?: boolean; awalId?: string } = {}) {
   const daftar = useApi<{ lamaran: LamaranApi[] }>("/pemberi/lamaran");
   const [dipilih, setDipilih] = useState<LamaranApi | null>(null);
   const [tahapan, setTahapan] = useState<"lihat" | "jenis" | "detail" | "selesai">("lihat");
@@ -58,12 +62,15 @@ export function DaftarPelamar() {
     }
   }
 
+  useBukaDariTautan(daftar.data?.lamaran, (l) => void buka(l), awalId);
+
   async function loloskan() {
     if (!dipilih || !jenis) return;
     setProses(true);
     setGalat("");
     try {
-      const hasil = await api<LamaranApi>(`/lamaran/${dipilih.id}/lolos`, { method: "POST", body: { jenis, detail: detail.trim() } });
+      const jalur = dipilih.status === "lolos" ? "tahap" : "lolos";
+      const hasil = await api<LamaranApi>(`/lamaran/${dipilih.id}/${jalur}`, { method: "POST", body: { jenis, detail: detail.trim() } });
       setDipilih(hasil);
       setTahapan("selesai");
       daftar.muatUlang();
@@ -86,6 +93,13 @@ export function DaftarPelamar() {
   const lamaran = daftar.data?.lamaran ?? [];
   const l = dipilih;
   const bisaPutuskan = l && (l.status === "terkirim" || l.status === "dilihat");
+  const tahapTambahan = l?.status === "lolos" && l.tahap_berikutnya.length > 0;
+  const mulaiTahap = () => {
+    setJenis(null);
+    setDetail("");
+    setGalat("");
+    setTahapan("jenis");
+  };
 
   const aksi =
     l && tahapan === "lihat" && bisaPutuskan ? (
@@ -93,13 +107,15 @@ export function DaftarPelamar() {
         <button type="button" className="tombol tombol-utama" onClick={() => setTahapan("jenis")}><IconCheck size={20} />Loloskan</button>
         <button type="button" className="tombol tombol-garis" onClick={() => setTolak(true)}>Tidak lolos</button>
       </>
+    ) : l && (tahapan === "lihat" || tahapan === "selesai") && l.status === "lolos" ? (
+      <button type="button" className="tombol tombol-garis min-h-14" onClick={mulaiTahap}>Tambah tahap berikutnya</button>
     ) : tahapan === "detail" ? (
       <button type="button" className="tombol tombol-utama" disabled={detail.trim().length < 3 || proses} onClick={() => void loloskan()}>{proses ? "Mengirim..." : "Kirim ke pelamar"}</button>
     ) : undefined;
 
   return (
     <div className="grid grid-cols-1 gap-5">
-      <h1 className="text-[1.9rem] leading-tight">Pelamar</h1>
+      {!diLaci && <h1 className="text-[1.9rem] leading-tight">Pelamar</h1>}
       {daftar.memuat && <p className="text-abu">Memuat...</p>}
       {!daftar.memuat && !lamaran.length && <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-[15px] text-abu">Belum ada pelamar. Lamaran baru muncul di sini tanpa perlu dimuat ulang.</p>}
       <ul className="grid grid-cols-1 gap-2">
@@ -122,14 +138,14 @@ export function DaftarPelamar() {
         buka={l !== null}
         onTutup={() => setDipilih(null)}
         label={tahapan === "lihat" ? `Pelamar · ${l?.lowongan.judul ?? ""}` : "Tahap berikutnya"}
-        judul={tahapan === "lihat" ? (l?.pencari.nama ?? "") : tahapan === "jenis" ? "Bagaimana pelamar menghubungimu?" : tahapan === "detail" ? JENIS_TAHAP.find((j) => j.id === jenis)?.label ?? "" : "Pelamar sudah diberi tahu"}
+        judul={tahapan === "lihat" ? (l?.pencari.nama ?? "") : tahapan === "jenis" ? (tahapTambahan ? "Tahap apa lagi berikutnya?" : "Bagaimana pelamar menghubungimu?") : tahapan === "detail" ? JENIS_TAHAP.find((j) => j.id === jenis)?.label ?? "" : "Pelamar sudah diberi tahu"}
         aksi={aksi}
       >
         {l && tahapan === "lihat" && (
           <div className="grid gap-4">
             <p className={`w-fit rounded-full px-3 py-1 text-sm font-bold ${LABEL_STATUS[l.status].kelas}`}>{LABEL_STATUS[l.status].teks}</p>
             <section className="rounded-2xl bg-kertas p-4">
-              <p className="piksel text-[11px] uppercase text-jingga-tua">CV {l.persona.judul}</p>
+              <p className="piksel text-[11px] uppercase text-jingga-tua">Melamar sebagai {l.persona.judul}</p>
               <p className="mt-1">{l.persona.ringkasan}</p>
               <ul className="mt-3 flex flex-wrap gap-1.5">{l.persona.keahlian.map((k) => <li key={k} className="chip-kategori py-1 pl-3 text-[13px]">{k}</li>)}</ul>
             </section>
@@ -141,7 +157,10 @@ export function DaftarPelamar() {
               <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 text-[15px] font-bold text-daun"><IconPhone size={18} />{l.pencari.telepon ?? l.pencari.email}</p>
             )}
             {l.cv_khusus_id && (
-              <a href={urlBertoken(`/cv/${l.cv_khusus_id}/pdf`)} target="_blank" rel="noopener noreferrer" className="tombol tombol-garis"><IconFileCv size={20} />Buka CV Khusus</a>
+              <section className="grid gap-2" aria-label="CV pelamar">
+                <h3 className="text-base">CV untuk lowonganmu</h3>
+                <PratinjauCv key={`${l.cv_khusus_id}-${l.status}`} id={l.cv_khusus_id} judul="CV pelamar" />
+              </section>
             )}
             {l.tahap_berikutnya.length > 0 && (
               <section>
@@ -168,14 +187,14 @@ export function DaftarPelamar() {
           <div className="grid gap-3">
             <label htmlFor="detail-tahap" className="text-[17px] text-abu">{JENIS_TAHAP.find((j) => j.id === jenis)?.contoh}</label>
             <textarea id="detail-tahap" autoFocus rows={3} value={detail} onChange={(e) => setDetail(e.target.value)} className="input-mulai min-h-28 py-3 text-lg" />
-            <p className="text-[15px] text-abu">Setelah dikirim, {l.pencari.nama.split(" ")[0]} langsung diberi tahu dan kontaknya terbuka untukmu.</p>
+            <p className="text-[15px] text-abu">Setelah dikirim, {l.pencari.nama.split(" ")[0]} langsung diberi tahu{l.status === "lolos" ? "." : " dan kontaknya terbuka untukmu."}</p>
             {galat && <p role="alert" className="rounded-2xl bg-merah-muda p-3 text-sm text-merah">{galat}</p>}
           </div>
         )}
 
         {l && tahapan === "selesai" && (
           <div className="grid gap-3">
-            <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-4 text-[17px] font-bold text-daun"><IconCheck size={22} />{l.pencari.nama} lolos ke tahap berikutnya.</p>
+            <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-4 text-[17px] font-bold text-daun"><IconCheck size={22} />{l.tahap_berikutnya.length > 1 ? `Tahap baru terkirim ke ${l.pencari.nama}.` : `${l.pencari.nama} lolos ke tahap berikutnya.`}</p>
             {l.pencari.telepon && <p className="text-[17px]">Kontak pelamar: <strong>{l.pencari.telepon}</strong></p>}
           </div>
         )}

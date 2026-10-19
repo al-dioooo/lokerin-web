@@ -2,8 +2,9 @@
 
 import { m } from "motion/react";
 import { useId, useRef, useState } from "react";
-import { IconBrandWhatsapp, IconCircleCheck, IconFlag } from "../icons/tabler";
+import { IconBrandWhatsapp, IconCircleCheck } from "../icons/tabler";
 import { Bacakan } from "../ui/Bacakan";
+import { LaporkanLowongan } from "./LaporkanLowongan";
 import { PEKERJA, type PersonaId } from "@/lib/data";
 
 export function AksiLowongan({ judul, usaha, wa, bacaan }: { judul: string; usaha: string; wa: string; bacaan: string }) {
@@ -23,7 +24,7 @@ export function AksiLowongan({ judul, usaha, wa, bacaan }: { judul: string; usah
         )}
       </div>
       {terkirim && <p role="status" className="mt-3 flex items-center gap-2 rounded-2xl bg-daun-muda p-3 text-sm text-daun"><IconCircleCheck size={18} />Minatmu dengan CV {PEKERJA.persona[terkirim].judul} terkirim ke {usaha}.</p>}
-      <button type="button" className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-abu underline underline-offset-4"><IconFlag size={14} />Laporkan lowongan ini</button>
+      <LaporkanLowongan lowonganId={judul} judul={judul} contoh />
       <dialog ref={dialog} className="demo-dialog lembar-tarik" aria-labelledby={`${id}-judul`}>
         <m.div drag="y" dragConstraints={{ top: 0, bottom: 0 }} dragElastic={{ top: 0.05, bottom: 0.7 }} dragSnapToOrigin onDragEnd={(_, info) => { if (info.offset.y > 90 || info.velocity.y > 600) dialog.current?.close(); }}>
         <span className="pegangan" aria-hidden="true" />

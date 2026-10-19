@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { DaftarCocok } from "@/components/app/DaftarCocok";
 import { Halaman } from "@/components/app/Halaman";
-import { TautanNgobrol } from "@/components/app/TautanNgobrol";
-import { KartuMendesak } from "@/components/app/KartuLowonganApp";
-import { IconMicrophone, IconSearch, IconShieldCheck } from "@/components/icons/tabler";
+import { CariBeranda } from "@/components/app/CariBeranda";
+import { RakMendesak } from "@/components/app/RakMendesak";
+import { IconShieldCheck } from "@/components/icons/tabler";
 import { BerandaSesuaiPeran } from "@/components/app/BerandaSesuaiPeran";
 import { SapaNama } from "@/components/app/SapaNama";
 import { daftarLowongan, jumlahDitahan, lowonganMendesak } from "@/lib/api/sumber";
@@ -24,29 +24,15 @@ export default function Beranda() {
 
 async function IsiBeranda() {
   const [mendesak, semua, ditahan] = await Promise.all([lowonganMendesak(), daftarLowongan(), jumlahDitahan()]);
-  const BUTUH_HARI_INI = mendesak.data;
   return (
     <div className="grid gap-8">
       <section>
         <p className="text-sm text-abu">Halo,</p>
-        <h1 className="text-[1.75rem] leading-tight"><SapaNama />. <span className="text-jingga">Mau kerja apa hari ini?</span></h1>
-        <TautanNgobrol className="kolom-cari mt-4">
-          <IconSearch size={20} className="text-abu" />
-          <span className="flex-1 text-sm text-abu">Cari kerja, misalnya &ldquo;las pagar di Sokaraja&rdquo;</span>
-          <span className="tombol tombol-utama min-h-9 px-3 text-sm"><IconMicrophone size={16} />Ngobrol</span>
-        </TautanNgobrol>
+        <h1 className="text-[1.75rem] leading-tight" data-ringkas="Beranda"><SapaNama />. <span className="text-jingga">Mau kerja apa hari ini?</span></h1>
+        <CariBeranda />
       </section>
 
-      <section aria-labelledby="judul-mendesak">
-        <div className="mb-3 flex items-end justify-between gap-3">
-          <div>
-            <h2 id="judul-mendesak" className="text-lg">Butuh hari ini</h2>
-            <p className="text-sm text-abu">Usaha di sekitarmu yang butuh orang sebelum malam.</p>
-          </div>
-          <span className="piksel shrink-0 text-[11px] uppercase text-jingga-tua">{BUTUH_HARI_INI.length} lowongan</span>
-        </div>
-        <ul className="rak-mendesak urut">{BUTUH_HARI_INI.map((l, i) => <li key={l.id} style={{ "--i": i } as React.CSSProperties}><KartuMendesak lowongan={l} /></li>)}</ul>
-      </section>
+      <RakMendesak awal={mendesak.data} />
 
       <DaftarCocok awal={semua.data} />
 

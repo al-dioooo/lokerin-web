@@ -65,7 +65,7 @@ export function AlurVerifikasi() {
     <div className="mx-auto grid max-w-2xl gap-5">
       <div>
         <p className="pil-piksel">Supaya pekerja percaya</p>
-        <h1 className="mt-3 text-[1.9rem] leading-tight">Verifikasi usahamu. <span className="text-jingga">Lencananya muncul di setiap lowongan.</span></h1>
+        <h1 className="mt-3 text-[1.9rem] leading-tight" data-ringkas="Verifikasi usaha">Verifikasi usahamu. <span className="text-jingga">Lencananya muncul di setiap lowongan.</span></h1>
         <p className="mt-2 text-[15px] text-abu">Pekerja melihat apa saja yang sudah dicek dan kapan. Versi lomba hanya menerima dokumen tiruan, dan foto dihapus setelah dicek.</p>
       </div>
 

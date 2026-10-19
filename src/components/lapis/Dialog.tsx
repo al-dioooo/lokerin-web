@@ -59,6 +59,15 @@ export function Dialog({ buka, onTutup, judul, children, labelYa, labelBatal = "
     }
   }, [buka, dikurangi, tampak, tutup]);
 
+  // Next keeps a page alive, hidden, after navigating away. A modal left open there would still block
+  // every tap on the next page, so it closes while hidden and opens again when the page shows.
+  useEffect(() => {
+    const d = dialog.current;
+    return () => {
+      if (d?.open) d.close();
+    };
+  }, []);
+
   useEffect(() => {
     const d = dialog.current;
     if (!d) return;

@@ -81,6 +81,15 @@ export function Laci({ buka, onTutup, judul, label, keterangan, children, aksi }
     }
   }, [buka, dikurangi, geser, tutup, ukur]);
 
+  // Next keeps a page alive, hidden, after navigating away. A modal left open there would still block
+  // every tap on the next page, so it closes while hidden and opens again when the page shows.
+  useEffect(() => {
+    const d = dialog.current;
+    return () => {
+      if (d?.open) d.close();
+    };
+  }, []);
+
   // Esc and the browser back gesture on Android both fire `cancel`; animate out instead of snapping shut.
   useEffect(() => {
     const d = dialog.current;

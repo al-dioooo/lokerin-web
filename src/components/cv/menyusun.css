@@ -1,0 +1,58 @@
+/*
+ * A CV being written: a small sheet whose lines draw in one after another (name, title, a section
+ * heading in orange, then its lines), next to the steps. Reduced motion shows the finished sheet.
+ */
+.menyusun-cv { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px 18px; padding: 16px; border-radius: 22px; background: var(--color-kertas); border: 1px solid var(--color-garis); }
+.menyusun-cv .menyusun-catatan { grid-column: 1 / -1; }
+
+.menyusun-kertas {
+  position: relative; overflow: hidden; display: grid; align-content: start; gap: 5px;
+  width: 104px; aspect-ratio: 210 / 297; padding: 12px 10px; border-radius: 6px; background: white;
+  box-shadow: 0 10px 22px -6px rgb(21 18 16 / .22), 0 0 0 1px rgb(21 18 16 / .06);
+  animation: kertas-masuk .5s cubic-bezier(.2, .9, .3, 1.2) both;
+}
+.menyusun-kertas::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / .75) 50%, transparent 65%);
+  transform: translateX(-100%); animation: kertas-kilau 2.4s ease-in-out infinite;
+}
+.menyusun-kertas i {
+  display: block; height: 3px; border-radius: 2px; background: #DDD8D0; transform-origin: left center;
+  animation: kertas-tulis .45s cubic-bezier(.3, .7, .2, 1) both; animation-delay: calc(var(--i) * 280ms);
+}
+.menyusun-kertas i:nth-child(odd):not(.nama):not(.judul):not(.bagian) { width: 92%; }
+.menyusun-kertas i.nama { justify-self: center; width: 64%; height: 6px; background: var(--color-tinta); transform-origin: center; }
+.menyusun-kertas i.judul { justify-self: center; width: 40%; margin-bottom: 4px; transform-origin: center; }
+.menyusun-kertas i.bagian { width: 46%; height: 3px; margin-top: 5px; background: var(--color-jingga); }
+.menyusun-kertas i.pendek { width: 58%; }
+
+.menyusun-langkah { display: grid; gap: 10px; }
+.menyusun-langkah li { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; line-height: 1.35; color: var(--color-abu); transition: color .3s; }
+.menyusun-langkah li[data-keadaan="aktif"] { color: var(--color-tinta); font-weight: 700; }
+.menyusun-langkah li[data-keadaan="selesai"] { color: var(--color-tinta); }
+.menyusun-tanda {
+  position: relative; display: grid; place-items: center; flex: none; width: 20px; height: 20px; margin-top: 1px;
+  border-radius: 999px; border: 2px solid var(--color-garis); color: white; transition: background-color .3s, border-color .3s;
+}
+.menyusun-langkah li[data-keadaan="selesai"] .menyusun-tanda { background: var(--color-daun); border-color: var(--color-daun); }
+.menyusun-langkah li[data-keadaan="aktif"] .menyusun-tanda { border-color: var(--color-jingga); border-top-color: transparent; animation: putar .9s linear infinite; }
+.menyusun-catatan { font-size: 14px; color: var(--color-abu); }
+
+/* The finished CV arrives where the waiting sheet was. */
+.cv-jadi { animation: kertas-masuk .5s cubic-bezier(.2, .9, .3, 1.2) both; }
+
+/* In the chat thread: one line of status beside a smaller sheet. */
+.menyusun-ringkas { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 14px; border-radius: 20px; background: white; border: 1px solid var(--color-garis); font-size: 16px; }
+.menyusun-ringkas .menyusun-kertas { width: 56px; padding: 7px 6px; gap: 3px; }
+.menyusun-ringkas .menyusun-kertas i { height: 2px; }
+.menyusun-ringkas .menyusun-kertas i.nama { height: 4px; }
+.menyusun-langkah-kini { font-size: 14px; color: var(--color-abu); }
+
+@keyframes kertas-tulis { from { transform: scaleX(0); opacity: .4; } to { transform: scaleX(1); opacity: 1; } }
+@keyframes kertas-kilau { 60%, 100% { transform: translateX(100%); } }
+@keyframes kertas-masuk { from { opacity: 0; transform: translateY(8px) rotate(-3deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .menyusun-kertas, .menyusun-kertas i, .menyusun-kertas::after, .cv-jadi { animation: none; }
+  .menyusun-langkah li[data-keadaan="aktif"] .menyusun-tanda { animation: none; border-top-color: var(--color-jingga); }
+}

@@ -14,7 +14,8 @@ import type { LowonganApi, MeApi } from "@/lib/api/tipe";
 
 const STATUS: Record<LowonganApi["status"], string> = { draf: "Draf", terbit: "Tampil", terisi: "Sudah terisi", disembunyikan: "Disembunyikan" };
 
-export function BerandaPemberi() {
+/** `diLaci`: only the list of jobs, for the drawer that opens from Ngobrol. */
+export function BerandaPemberi({ diLaci = false }: { diLaci?: boolean } = {}) {
   const router = useRouter();
   const { pengguna } = useSesi();
   const me = useApi<MeApi>("/me");
@@ -30,30 +31,34 @@ export function BerandaPemberi() {
 
   return (
     <div className="grid grid-cols-1 gap-7">
-      <section>
-        <p className="text-[15px] text-abu">Halo, {pengguna?.nama?.split(" ")[0] ?? "kamu"}</p>
-        <h1 className="text-[1.9rem] leading-tight">{usaha?.nama_usaha ?? "Usahamu"}</h1>
-        {usaha && (
-          <p className={`mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold ${usaha.terverifikasi ? "bg-daun-muda text-daun" : "bg-[#FFF6DB] text-[#8A5A00]"}`}>
-            <IconShieldCheck size={16} />
-            {usaha.terverifikasi ? `Terverifikasi · ${usaha.yang_dicek.join(" · ")}` : usaha.status_verifikasi === "menunggu" ? "Sedang dicek Lokerin" : "Belum terverifikasi"}
-          </p>
-        )}
-        {usaha && !usaha.terverifikasi && <Link href="/app/verifikasi" className="mt-2 flex w-fit items-center gap-1 text-sm font-bold text-jingga-tua underline-offset-4 hover:underline">Lengkapi verifikasi <IconChevronRight size={16} /></Link>}
-      </section>
+      {!diLaci && (
+        <>
+          <section>
+            <p className="text-[15px] text-abu">Halo, {pengguna?.nama?.split(" ")[0] ?? "kamu"}</p>
+            <h1 className="text-[1.9rem] leading-tight">{usaha?.nama_usaha ?? "Usahamu"}</h1>
+            {usaha && (
+              <p className={`mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold ${usaha.terverifikasi ? "bg-daun-muda text-daun" : "bg-[#FFF6DB] text-[#8A5A00]"}`}>
+                <IconShieldCheck size={16} />
+                {usaha.terverifikasi ? `Terverifikasi · ${usaha.yang_dicek.join(" · ")}` : usaha.status_verifikasi === "menunggu" ? "Sedang dicek Lokerin" : "Belum terverifikasi"}
+              </p>
+            )}
+            {usaha && !usaha.terverifikasi && <Link href="/app/verifikasi" className="mt-2 flex w-fit items-center gap-1 text-sm font-bold text-jingga-tua underline-offset-4 hover:underline">Lengkapi verifikasi <IconChevronRight size={16} /></Link>}
+          </section>
 
-      <Link href="/app/pasang" className="tombol tombol-utama min-h-16 text-lg"><IconPlus size={22} />Pasang lowongan</Link>
+          <Link href="/app/pasang" className="tombol tombol-utama min-h-16 text-lg"><IconPlus size={22} />Pasang lowongan</Link>
 
-      {pelamarBaru > 0 && (
-        <Link href="/app/pelamar" className="flex items-center gap-3 rounded-3xl border border-[#F7C9A0] bg-jingga-muda p-4">
-          <span className="grid size-12 place-items-center rounded-full bg-white text-jingga-tua"><IconUserCheck size={24} /></span>
-          <span className="flex-1"><span className="block text-lg font-extrabold">{pelamarBaru} pelamar</span><span className="text-[15px] text-jingga-tua">Lihat dan pilih yang cocok</span></span>
-          <IconChevronRight size={22} className="text-jingga-tua" />
-        </Link>
+          {pelamarBaru > 0 && (
+            <Link href="/app/pelamar" className="flex items-center gap-3 rounded-3xl border border-[#F7C9A0] bg-jingga-muda p-4">
+              <span className="grid size-12 place-items-center rounded-full bg-white text-jingga-tua"><IconUserCheck size={24} /></span>
+              <span className="flex-1"><span className="block text-lg font-extrabold">{pelamarBaru} pelamar</span><span className="text-[15px] text-jingga-tua">Lihat dan pilih yang cocok</span></span>
+              <IconChevronRight size={22} className="text-jingga-tua" />
+            </Link>
+          )}
+        </>
       )}
 
       <section aria-labelledby="judul-lowonganku">
-        <h2 id="judul-lowonganku" className="mb-3 text-lg">Lowonganmu</h2>
+        <h2 id="judul-lowonganku" className={diLaci ? "sr-only" : "mb-3 text-lg"}>Lowonganmu</h2>
         {daftar.memuat && <p className="text-abu">Memuat...</p>}
         {!daftar.memuat && !lowongan.length && <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-[15px] text-abu">Belum ada lowongan. Pasang yang pertama, cukup beberapa ketukan.</p>}
         <ul className="grid grid-cols-1 gap-2">
@@ -84,7 +89,7 @@ export function BerandaPemberi() {
           <KartuDraf
             lowongan={dipilih}
             onBerubah={() => daftar.muatUlang()}
-            onUbah={() => router.push("/app/pasang")}
+            onUbah={() => router.push(`/app/pasang?draf=${dipilih.id}`)}
           />
         )}
       </Laci>

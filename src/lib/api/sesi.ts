@@ -3,7 +3,8 @@
 // Session store shared by every client component: who is signed in, and how to sign in or out.
 
 import { useSyncExternalStore } from "react";
-import { api, apiAktif, bacaToken, simpanToken } from "./klien";
+import { api, apiAktif, bacaToken, GalatApi, simpanToken } from "./klien";
+import { kosongkan } from "./simpanan";
 import type { MeApi, Peran, Pengguna } from "./tipe";
 
 const KUNCI_PENGGUNA = "lokerin-pengguna";
@@ -47,6 +48,8 @@ export function useSesi() {
 }
 
 function simpan(token: string, pengguna: Pengguna) {
+  // Switching accounts drops what the previous one loaded.
+  if (keadaan.pengguna && keadaan.pengguna.id !== pengguna.id) kosongkan();
   simpanToken(token);
   try {
     localStorage.setItem(KUNCI_PENGGUNA, JSON.stringify(pengguna));
@@ -95,8 +98,10 @@ export async function segarkanSesi() {
     const pengguna: Pengguna = { id: me.id, peran: me.peran, nama: me.nama, kota: me.kota };
     simpan(bacaToken()!, pengguna);
     return me;
-  } catch {
-    keluar();
+  } catch (e) {
+    // Only a rejected token ends the session. A dropped connection or a server hiccup keeps the
+    // person signed in with what we already know about them.
+    if (e instanceof GalatApi && e.status === 401) keluar();
     return null;
   }
 }
@@ -104,6 +109,7 @@ export async function segarkanSesi() {
 export function keluar() {
   void api("/auth/keluar", { method: "POST" }).catch(() => {});
   simpanToken(null);
+  kosongkan();
   try {
     localStorage.removeItem(KUNCI_PENGGUNA);
   } catch {}

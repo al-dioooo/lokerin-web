@@ -21,6 +21,14 @@ export function IconMapPin(props: TablerProps) {
   return <Tabler {...props}><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0" /></Tabler>;
 }
 
+export function IconCurrentLocation(props: TablerProps) {
+  return <Tabler {...props}><path d="M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M4 12a8 8 0 1 0 16 0a8 8 0 1 0 -16 0" /><path d="M12 2l0 2" /><path d="M12 20l0 2" /><path d="M20 12l2 0" /><path d="M2 12l2 0" /></Tabler>;
+}
+
+export function IconLogout(props: TablerProps) {
+  return <Tabler {...props}><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M9 12h12l-3 -3" /><path d="M18 15l3 -3" /></Tabler>;
+}
+
 export function IconMicrophone(props: TablerProps) {
   return <Tabler {...props}><path d="M9 5a3 3 0 0 1 3 -3a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3a3 3 0 0 1 -3 -3l0 -5" /><path d="M5 10a7 7 0 0 0 14 0" /><path d="M8 21l8 0" /><path d="M12 17l0 4" /></Tabler>;
 }
@@ -263,4 +271,16 @@ export function IconMinus(props: TablerProps) {
 
 export function IconCircleDashed(props: TablerProps) {
   return <Tabler {...props}><path d="M8.56 3.69a9 9 0 0 0 -2.92 1.95" /><path d="M3.69 8.56a9 9 0 0 0 -.69 3.44" /><path d="M3.69 15.44a9 9 0 0 0 1.95 2.92" /><path d="M8.56 20.31a9 9 0 0 0 3.44 .69" /><path d="M15.44 20.31a9 9 0 0 0 2.92 -1.95" /><path d="M20.31 15.44a9 9 0 0 0 .69 -3.44" /><path d="M20.31 8.56a9 9 0 0 0 -1.95 -2.92" /><path d="M15.44 3.69a9 9 0 0 0 -3.44 -.69" /></Tabler>;
+}
+
+export function IconHistory(props: TablerProps) {
+  return <Tabler {...props}><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></Tabler>;
+}
+
+export function IconPencilPlus(props: TablerProps) {
+  return <Tabler {...props}><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /><path d="M16 19h6" /><path d="M19 16v6" /></Tabler>;
+}
+
+export function IconArrowDown(props: TablerProps) {
+  return <Tabler {...props}><path d="M12 5l0 14" /><path d="M18 13l-6 6" /><path d="M6 13l6 6" /></Tabler>;
 }

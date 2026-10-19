@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Halaman } from "@/components/app/Halaman";
 import { EditorCv } from "@/components/pencari/EditorCv";
 
-export const metadata = { title: "CV Khusus" };
+export const metadata = { title: "CV lamaran" };
 
 export default function Cv({ params }: { params: Promise<{ id: string }> }) {
   return (

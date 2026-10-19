@@ -11,8 +11,8 @@ export const PESAN_PUSH: Record<Exclude<StatusPush, "aktif" | "mati">, string> =
   server_mati: "Pemberitahuan ke HP belum aktif. Kabar tetap muncul di sini.",
 };
 
-/** The push switch at the bottom of the Kabar drawer. */
-export function PengaturanPush() {
+/** The push switch: a block at the bottom of the Kabar drawer, or one settings row (`baris`) on Profil. */
+export function PengaturanPush({ baris = false }: { baris?: boolean }) {
   const [status, setStatus] = useState<StatusPush | null>(null);
   const [proses, setProses] = useState(false);
 
@@ -37,6 +37,23 @@ export function PengaturanPush() {
   }
 
   if (!status) return null;
+  if (baris) {
+    const bisa = status === "aktif" || status === "mati";
+    return (
+      <div className="baris-atur">
+        <span className="baris-atur-ikon"><IconBell size={20} /></span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-bold">Kabar ke HP</span>
+          <span className="block text-sm text-abu">{bisa ? (status === "aktif" ? "Nyala. Kabar penting tetap sampai walau Lokerin tertutup." : "Mati. Nyalakan supaya tahu saat kamu lolos.") : PESAN_PUSH[status]}</span>
+        </span>
+        {bisa && (
+          <button type="button" role="switch" aria-checked={status === "aktif"} aria-label="Kabar ke HP" className="sakelar shrink-0 border-0 bg-transparent p-0" disabled={proses} onClick={() => void ubah()}>
+            <span className="sakelar-jalur"><span /></span>
+          </button>
+        )}
+      </div>
+    );
+  }
   return (
     <section className="mt-5 grid gap-2 rounded-2xl bg-kabut p-4" aria-labelledby="judul-push">
       <h3 id="judul-push" className="flex items-center gap-2 text-[17px]"><IconBell size={20} />Kabar ke HP</h3>

@@ -137,6 +137,19 @@ export type CvApi = {
   peringatan: string | null;
 };
 
+/** One CV Khusus in the owner's list (GET /cv): which job it was made for and whether it was sent. */
+export type CvRingkasApi = {
+  id: string;
+  template: CvApi["template"];
+  bahasa: CvApi["bahasa"];
+  isi: IsiCv;
+  dibuat: string;
+  diperbarui: string;
+  persona: { id: string; judul: string } | null;
+  lowongan: { id: string; judul: string; usaha: string | null } | null;
+  lamaran: { id: string; status: StatusLamaran } | null;
+};
+
 export type Pengguna = { id: string; peran: Peran; nama: string; kota: string };
 
 export type MeApi = Pengguna & { kecamatan: string | null; pemberi_kerja: PemberiKerjaApi | null };

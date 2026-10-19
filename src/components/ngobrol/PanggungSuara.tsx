@@ -2,8 +2,9 @@
 
 /*
  * The voice side of Ngobrol, on Alice's night town. Only what matters while talking is on screen:
- * the lentera, one line of live caption and what Lokerin is doing. Results stay in the thread;
- * a pill says how many there are and switches to text to read them.
+ * the lentera, one line of live caption, what Lokerin is doing, and the cards of its latest answer
+ * in this call, so a job can be opened or Kirim Lamaran tapped without leaving the call. The whole
+ * thread is one tap away in text mode.
  */
 
 import { m } from "motion/react";
@@ -12,6 +13,8 @@ import { IconKeyboard, IconMicrophone, IconPlayerStop } from "../icons/tabler";
 import { KOTAK_PANDANG, KotaIsometrik, LOKASI_KERJA } from "../kota/KotaIsometrik";
 import { PilihanJawab } from "./PilihanJawab";
 import type { PertanyaanAgen } from "@/lib/api/tipe";
+import type { HasilAlat } from "@/lib/api/obrolan";
+import { KartuHasil } from "./WidgetAgen";
 import { untukDibaca } from "./TeksAgen";
 import type { StatusSuara } from "./useSuara";
 import { RakBenda } from "./RakBenda";
@@ -41,6 +44,7 @@ export function PanggungSuara({
   kalimat,
   nyala,
   jumlahHasil,
+  kartu,
   pertanyaan,
   sapaan,
   onLentera,
@@ -60,6 +64,8 @@ export function PanggungSuara({
   kalimat: { siapa: "kamu" | "ai"; teks: string } | null;
   nyala: Tempat[];
   jumlahHasil: number;
+  /** Cards from the agent's latest answer in this call (not questions; those show as PilihanJawab). */
+  kartu: HasilAlat[];
   pertanyaan: PertanyaanAgen | null;
   sapaan: string;
   onLentera: () => void;
@@ -78,7 +84,7 @@ export function PanggungSuara({
   const keadaan =
     status === "menyambung" ? "Menyambungkan..." : status === "hidup" ? (tugas ? `${tugas}…` : "Lokerin mendengarkan") : "Ketuk lentera untuk bicara";
   return (
-    <div className="panggung-suara" data-status={status === "hidup" ? "jalan" : "siap"} data-tanya={pertanyaan ? "" : undefined}>
+    <div className="panggung-suara" data-status={status === "hidup" ? "jalan" : "siap"} data-tanya={pertanyaan || kartu.length ? "" : undefined}>
       <KotaMalam nyalaKunci={nyala.join(",")} />
 
       <div className="panggung-isi">
@@ -106,7 +112,15 @@ export function PanggungSuara({
         <p className="panggung-keadaan" role="status">{keadaan}</p>
         <p className="panggung-kalimat" data-siapa={kalimat?.siapa ?? "ai"}>{kalimat ? untukDibaca(kalimat.teks) : sapaan}</p>
 
-        {pertanyaan ? <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={false} onJawab={onJawab} /> : <RakBenda teks={teksObrolan} pemberi={pemberi} onMulai={onMulai} />}
+        {pertanyaan ? (
+          <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={false} onJawab={onJawab} />
+        ) : kartu.length ? (
+          <div className="panggung-kartu">
+            {kartu.map((h, i) => <KartuHasil key={`${String(h.widget)}:${typeof h.id === "string" ? h.id : i}`} hasil={h} />)}
+          </div>
+        ) : (
+          <RakBenda teks={teksObrolan} pemberi={pemberi} onMulai={onMulai} />
+        )}
         {galat && <p role="alert" className="mx-auto max-w-sm rounded-2xl bg-white/10 px-4 py-2 text-center text-[15px] text-white">{galat}</p>}
       </div>
 

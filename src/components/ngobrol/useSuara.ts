@@ -70,12 +70,17 @@ export function useSuara({
     }
   }
 
-  /** Sends typed or tapped words into the running call. Returns false when there is no call. */
+  /**
+   * Sends typed or tapped words (an answer to a question card, the composer) into the running call.
+   * The browser data channel may not send session events, so the backend runs them through the
+   * same agent and hands the answer to the voice to say. Returns false when there is no call.
+   */
   function kirimTeks(teks: string) {
-    const dc = panggilan.current?.dc;
-    if (dc?.readyState !== "open") return false;
-    dc.send(JSON.stringify({ type: "conversation.item.create", item: { type: "message", role: "user", content: [{ type: "input_text", text: teks }] } }));
-    dc.send(JSON.stringify({ type: "response.create" }));
+    const p = panggilan.current;
+    if (!p) return false;
+    void api(`/suara/sesi/${encodeURIComponent(p.id)}/teks`, { method: "POST", body: { teks } }).catch(() =>
+      setGalat("Pilihanmu belum terkirim. Ketuk lagi atau ucapkan saja."),
+    );
     return true;
   }
 

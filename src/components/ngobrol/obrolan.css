@@ -59,6 +59,15 @@
 .panggung-suara[data-tanya] .lentera { transform: scale(.7); margin-block: -20px; }
 .panggung-suara[data-tanya] .gelombang-malam { display: none; }
 .panggung-suara[data-tanya] .panggung-kalimat { font-size: 1.15rem; max-height: 22dvh; }
+/* Cards from the latest answer in a call: light cards on the night stage, readable and tappable mid-call. */
+/* The cards scroll on their own so the lentera (the hang-up button) and the caption stay in view. */
+.panggung-kartu {
+  width: 100%; max-width: 30rem; max-height: 46dvh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
+  display: grid; align-content: start; gap: 10px; flex: none; border-radius: 22px; text-align: left; color: var(--color-tinta);
+  animation: kartu-naik .35s cubic-bezier(.2, .9, .3, 1) both;
+}
+@keyframes kartu-naik { from { opacity: 0; transform: translateY(12px); } }
+@media (prefers-reduced-motion: reduce) { .panggung-kartu { animation: none; } }
 .panggung-suara:not([data-status="jalan"]) .lentera-cincin { animation-duration: 4s; opacity: .5; }
 .panggung-suara[data-status="jalan"] .gelombang-malam i { opacity: 1; animation: gelombang 1s ease-in-out infinite; animation-delay: calc(var(--i) * -90ms); }
 .panggung-kendali { position: relative; z-index: 3; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px 16px calc(16px + env(safe-area-inset-bottom)); }

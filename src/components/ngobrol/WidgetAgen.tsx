@@ -124,6 +124,17 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
   return <Isi hasil={hasil} />;
 }
 
+/** A result as a titled card, the same in the thread and on the voice stage. */
+export function KartuHasil({ hasil }: { hasil: Hasil }) {
+  const judul = JUDUL_WIDGET[String(hasil.widget)] ?? "Hasil";
+  return (
+    <section className="kartu-alat" aria-label={judul}>
+      <h3>{judul}</h3>
+      <WidgetAgen hasil={hasil} />
+    </section>
+  );
+}
+
 function Isi({ hasil }: { hasil: Hasil }) {
   const klik = useKlikLaci();
   switch (hasil.widget) {

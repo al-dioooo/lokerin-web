@@ -1,5 +1,6 @@
 // Server-side reads of public data. Falls back to the sample data when the API is not configured or unreachable.
 
+import { cacheLife, cacheTag } from "next/cache";
 import { connection } from "next/server";
 import { BUTUH_HARI_INI, LOWONGAN, LOWONGAN_TAYANG, cariLowongan, type Lowongan } from "@/lib/data";
 import { API_URL, apiAktif } from "./klien";
@@ -10,14 +11,32 @@ export type Sumber<T> = { data: T; dariServer: boolean; putus?: boolean };
 
 type Hasil<T> = { ok: true; data: T } | { ok: false; tidakAda: boolean };
 
+const TIDAK_ADA = { tidak_ada: true } as const;
+
+/**
+ * Public listings, cached on the Next server for a few seconds, so a crowd opening Beranda at once
+ * costs the API one request. Only the raw JSON is cached: the "x minutes ago" labels are worked out
+ * per request from it, and new or closed jobs still arrive live over the event stream. A failed
+ * request throws, and a throw is never stored, so an outage is not remembered after it ends.
+ */
+async function ambilPublik(path: string): Promise<unknown> {
+  "use cache";
+  cacheLife({ stale: 30, revalidate: 15, expire: 120 });
+  cacheTag("lowongan");
+  const res = await fetch(`${API_URL}${path}`, { signal: AbortSignal.timeout(5000) });
+  if (res.status === 404) return TIDAK_ADA;
+  if (!res.ok) throw new Error(`API menjawab ${res.status}`);
+  return res.json();
+}
+
 async function ambilHasil<T>(path: string): Promise<Hasil<T>> {
   if (!apiAktif) return { ok: false, tidakAda: false };
   // Live listings and their "x minutes ago" labels belong to the request, not the build.
   await connection();
   try {
-    const res = await fetch(`${API_URL}${path}`, { cache: "no-store", signal: AbortSignal.timeout(5000) });
-    if (!res.ok) return { ok: false, tidakAda: res.status === 404 };
-    return { ok: true, data: (await res.json()) as T };
+    const isi = await ambilPublik(path);
+    if (isi && typeof isi === "object" && "tidak_ada" in isi) return { ok: false, tidakAda: true };
+    return { ok: true, data: isi as T };
   } catch {
     return { ok: false, tidakAda: false };
   }

@@ -5,7 +5,7 @@ import { getKategori } from "../icons/categories";
 import { IconAlertTriangle, IconCircleCheck, IconInfoCircle } from "../icons/tabler";
 import { Dialog } from "../lapis/Dialog";
 import { TawaranKabar } from "../app/TawaranKabar";
-import { kategoriDari } from "@/lib/api/adaptor";
+import { kategoriDari, tanggalMulai } from "@/lib/api/adaptor";
 import { api } from "@/lib/api/klien";
 import type { LowonganApi } from "@/lib/api/tipe";
 
@@ -57,7 +57,7 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
         <div className="fakta"><dt>Upah</dt><dd className="font-bold tabular-nums">{l.upah.label}</dd></div>
         <div className="fakta"><dt>Jam kerja</dt><dd>{l.jam_kerja ?? "Belum diisi"}</dd></div>
         <div className="fakta"><dt>Jenis</dt><dd>{l.jenis_kerja ? (LABEL_JENIS[l.jenis_kerja] ?? l.jenis_kerja) : "Belum diisi"}</dd></div>
-        <div className="fakta"><dt>Mulai</dt><dd>{l.mulai ?? "Belum diisi"}</dd></div>
+        <div className="fakta"><dt>Mulai</dt><dd>{tanggalMulai(l.mulai) ?? "Belum diisi"}</dd></div>
       </dl>
       {l.deskripsi && <p className="mt-3 text-[15px]">{l.deskripsi}</p>}
 

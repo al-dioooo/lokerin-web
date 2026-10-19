@@ -67,15 +67,20 @@ function pertanyaanTerbuka(pesan: Pesan[]): PertanyaanAgen | null {
  * The cards of the agent's latest answer that had any, newest version of each (a CV revised twice
  * shows once). On the voice stage these sit under the caption, so the buttons the voice talks about
  * (Kirim Lamaran, Simpan, Terbitkan) are there to tap during the call.
+ * `kunci` is the tool call's own id, so a revised draft mounts a fresh card instead of keeping the
+ * old one's state.
  */
-function kartuTerbaru(pesan: Pesan[]): HasilAlat[] {
+function kartuTerbaru(pesan: Pesan[]): { kunci: string; hasil: HasilAlat }[] {
   for (let i = pesan.length - 1; i >= 0; i--) {
     const p = pesan[i]!;
     if (p.peran !== "ai") continue;
-    const hasil = p.bagian.flatMap((b) => (b.jenis === "alat" && b.status === "selesai" && b.hasil?.widget && b.hasil.widget !== "pertanyaan" ? [b.hasil] : []));
+    const hasil = p.bagian.flatMap((b) => (b.jenis === "alat" && b.status === "selesai" && b.hasil?.widget && b.hasil.widget !== "pertanyaan" ? [{ kunci: b.id, hasil: b.hasil }] : []));
     if (!hasil.length) continue;
-    const terakhir = new Map<string, HasilAlat>();
-    hasil.forEach((h, n) => terakhir.set(typeof h.id === "string" ? `${h.widget}:${h.id}` : `${h.widget}:${n}`, h));
+    const terakhir = new Map<string, { kunci: string; hasil: HasilAlat }>();
+    hasil.forEach((k, n) => {
+      const id = k.hasil.id ?? (k.hasil.lowongan as { id?: unknown } | undefined)?.id;
+      terakhir.set(typeof id === "string" ? `${k.hasil.widget}:${id}` : `${k.hasil.widget}:${n}`, k);
+    });
     return [...terakhir.values()];
   }
   return [];
@@ -104,6 +109,8 @@ export function Ngobrol() {
   const [galat, setGalat] = useState("");
   const [riwayat, setRiwayat] = useState(false);
   const [tanyaMic, setTanyaMic] = useState(false);
+  // The Dialog calls onTutup after "Izinkan mikrofon" too; only "Ketik saja" should switch to text.
+  const micDiizinkan = useRef(false);
   // Where the thread stood when the current call began: the voice stage shows cards from then on.
   const [awalKartu, setAwalKartu] = useState<number | null>(null);
   const [fokus, setFokus] = useState(0);
@@ -241,7 +248,10 @@ export function Ngobrol() {
 
   function tekanLentera() {
     if (suara.status === "hidup") void suara.akhiri();
-    else setTanyaMic(true);
+    else {
+      micDiizinkan.current = false;
+      setTanyaMic(true);
+    }
   }
 
   function tutup() {
@@ -372,12 +382,13 @@ export function Ngobrol() {
         buka={tanyaMic}
         onTutup={() => {
           setTanyaMic(false);
-          gantiMode("teks");
+          if (!micDiizinkan.current) gantiMode("teks");
         }}
         judul="Ngobrol pakai suara?"
         labelYa="Izinkan mikrofon"
         labelBatal="Ketik saja"
         onYa={async () => {
+          micDiizinkan.current = true;
           setTanyaMic(false);
           setAwalKartu(pesan.length);
           const ok = await suara.mulai();

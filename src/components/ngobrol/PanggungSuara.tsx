@@ -65,7 +65,7 @@ export function PanggungSuara({
   nyala: Tempat[];
   jumlahHasil: number;
   /** Cards from the agent's latest answer in this call (not questions; those show as PilihanJawab). */
-  kartu: HasilAlat[];
+  kartu: { kunci: string; hasil: HasilAlat }[];
   pertanyaan: PertanyaanAgen | null;
   sapaan: string;
   onLentera: () => void;
@@ -116,7 +116,7 @@ export function PanggungSuara({
           <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={false} onJawab={onJawab} />
         ) : kartu.length ? (
           <div className="panggung-kartu">
-            {kartu.map((h, i) => <KartuHasil key={`${String(h.widget)}:${typeof h.id === "string" ? h.id : i}`} hasil={h} />)}
+            {kartu.map((k) => <KartuHasil key={k.kunci} hasil={k.hasil} />)}
           </div>
         ) : (
           <RakBenda teks={teksObrolan} pemberi={pemberi} onMulai={onMulai} />

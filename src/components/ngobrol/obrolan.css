@@ -46,8 +46,8 @@
   display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 2vh 20px 12px; text-align: center;
 }
 .panggung-waktu { font-size: 11px; color: rgb(255 255 255 / .6); }
-/* The lentera arrives by moving (shared layout with the composer's mic), so its CSS entrance
-   animation would fight Motion over transform. Alice's night curtain covers the first entry. */
+/* The lentera arrives by moving (shared layout with the mic), so its CSS entrance
+   animation would fight Motion over transform. The night curtain from Alice covers the first entry. */
 .panggung-suara .lentera { animation: none; }
 .panggung-keadaan { font-size: 15px; font-weight: 600; color: #F9C08F; }
 .panggung-kalimat {

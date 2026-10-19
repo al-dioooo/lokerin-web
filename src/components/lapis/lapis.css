@@ -12,7 +12,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  /* clip, not hidden: the sheet's under-extension must never let the dialog scroll */
+  /* clip, not hidden: the under-extension of the sheet must never let the dialog scroll */
   overflow: clip;
   color: var(--color-tinta);
 }

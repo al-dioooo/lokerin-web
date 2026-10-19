@@ -37,7 +37,7 @@
 .grup-fakta li { padding: 10px 16px; border-top: 1px solid var(--color-garis); }
 .grup-fakta li:first-child { border-top: 0; }
 
-/* Settings, like a phone's settings list: one rounded group, rows split by hairlines. */
+/* Settings, like the settings list on a phone: one rounded group, rows split by hairlines. */
 .atur-grup { overflow: hidden; border-radius: 20px; background: white; border: 1px solid var(--color-garis); }
 .atur-grup > * + * { border-top: 1px solid var(--color-garis); }
 .baris-atur { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 10px 16px; text-align: left; }

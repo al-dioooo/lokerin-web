@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { IconCheck, IconKeyboard } from "../icons/tabler";
 import type { PertanyaanAgen } from "@/lib/api/tipe";
 
-export function PilihanJawab({ tanya, onJawab, onKetik, sibuk }: { tanya: PertanyaanAgen; onJawab: (teks: string) => void; onKetik: () => void; sibuk: boolean }) {
+export function PilihanJawab({ tanya, onJawab, onKetik, sibuk, tema = "gelap" }: { tanya: PertanyaanAgen; onJawab: (teks: string) => void; onKetik: () => void; sibuk: boolean; tema?: "gelap" | "terang" }) {
   const [dipilih, setDipilih] = useState<string[]>([]);
   const kotak = useRef<HTMLDivElement>(null);
   // Bring the answers up once the question lands, without moving focus away from the reader.
@@ -23,7 +23,7 @@ export function PilihanJawab({ tanya, onJawab, onKetik, sibuk }: { tanya: Pertan
     setDipilih((d) => (d.includes(label) ? d.filter((x) => x !== label) : [...d, label]));
   }
   return (
-    <div ref={kotak} className="pilihan-jawab" role="group" aria-label={tanya.pertanyaan}>
+    <div ref={kotak} className="pilihan-jawab" data-tema={tema} role="group" aria-label={tanya.pertanyaan}>
       <ul className={tanya.pilihan.length > 3 ? "grid grid-cols-2 gap-2" : "grid gap-2"}>
         {tanya.pilihan.map((p) => {
           const aktif = dipilih.includes(p.label);

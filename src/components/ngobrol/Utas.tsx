@@ -20,8 +20,19 @@ export function OrbKecil() {
   return <span className="orb-kecil" aria-hidden="true" />;
 }
 
+/** Index of the last card per thing (a CV revised three times in one reply shows once, as it is now). */
+function kartuTerakhir(p: Pesan) {
+  const terakhir = new Map<string, number>();
+  p.bagian.forEach((b, i) => {
+    const id = b.jenis === "alat" ? b.hasil?.id : undefined;
+    if (b.jenis === "alat" && b.hasil?.widget && typeof id === "string") terakhir.set(`${b.hasil.widget}:${id}`, i);
+  });
+  return terakhir;
+}
+
 function PesanAi({ p, awalRangkaian, sedangMengalir }: { p: Pesan; awalRangkaian: boolean; sedangMengalir: boolean }) {
   const teks = p.bagian.flatMap((b) => (b.jenis === "teks" ? [b.teks] : [])).join("\n\n");
+  const terakhir = kartuTerakhir(p);
   return (
     <div className="pesan-ai">
       {awalRangkaian && <p className="pesan-ai-nama"><OrbKecil />Lokerin</p>}
@@ -30,6 +41,7 @@ function PesanAi({ p, awalRangkaian, sedangMengalir }: { p: Pesan; awalRangkaian
         if (b.status === "jalan") return <p key={b.id} className="alat-jalan" role="status">{LABEL_ALAT[b.nama] ?? "Lokerin sedang bekerja"}…</p>;
         if (b.status === "galat") return <p key={b.id} className="text-[15px] text-merah">Ada yang belum berhasil. Coba ulangi.</p>;
         if (!b.hasil?.widget || b.hasil.widget === "pertanyaan") return null;
+        if (typeof b.hasil.id === "string" && terakhir.get(`${b.hasil.widget}:${b.hasil.id}`) !== i) return null;
         return (
           <section key={b.id} className="kartu-alat" aria-label={JUDUL_WIDGET[b.hasil.widget] ?? "Hasil"}>
             <h3>{JUDUL_WIDGET[b.hasil.widget] ?? "Hasil"}</h3>

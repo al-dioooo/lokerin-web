@@ -25,8 +25,13 @@ export function masukNgobrol(dari: Element | null, pergi: () => void) {
   window.setTimeout(() => tirai.remove(), 4000); // never leave the curtain behind
 }
 
-/** Called by the Ngobrol screen once it is on screen, so the curtain can fade away. */
-export function ngobrolSiap() {
+/**
+ * Called by the Ngobrol screen each time it is on screen, so the curtain can fade away. Next keeps
+ * the screen alive after you leave and shows it again on the way back; the closing animation holds
+ * its last frame (the screen shrunk to a small circle), so that is dropped here too.
+ */
+export function ngobrolSiap(layar?: HTMLElement | null) {
+  layar?.getAnimations().forEach((a) => a.cancel());
   window.dispatchEvent(new Event("ngobrol-siap"));
 }
 

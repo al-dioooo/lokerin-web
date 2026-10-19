@@ -46,8 +46,8 @@
   display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 2vh 20px 12px; text-align: center;
 }
 .panggung-waktu { font-size: 11px; color: rgb(255 255 255 / .6); }
-/* The lentera arrives by moving (shared layout with the composer's mic), so its CSS entrance
-   animation would fight Motion over transform. Alice's night curtain covers the first entry. */
+/* The lentera arrives by moving (shared layout with the mic), so its CSS entrance
+   animation would fight Motion over transform. The night curtain from Alice covers the first entry. */
 .panggung-suara .lentera { animation: none; }
 .panggung-keadaan { font-size: 15px; font-weight: 600; color: #F9C08F; }
 .panggung-kalimat {
@@ -117,6 +117,11 @@
   position: sticky; bottom: 12px; display: grid; place-items: center; width: 48px; height: 48px; margin: -60px 16px 12px auto;
   border-radius: 999px; background: white; border: 1px solid var(--color-garis); box-shadow: 0 8px 20px rgb(21 18 16 / .14);
 }
+.ngobrol-catatan {
+  position: relative; z-index: 3; margin: 0 16px 8px; padding: 10px 14px; border-radius: 14px;
+  background: var(--color-kabut); color: var(--color-tinta); font-size: 15px; line-height: 1.4;
+}
+.ngobrol-akar[data-mode="suara"] .ngobrol-catatan { background: rgb(255 255 255 / .1); color: white; }
 .ngobrol-galat { margin: 0 16px 8px; padding: 10px 14px; border-radius: 14px; background: var(--color-merah-muda); color: var(--color-merah); font-size: 15px; }
 .pita-suara {
   align-self: center; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-bottom: 8px; padding: 0 16px;
@@ -149,6 +154,14 @@
 .pilihan-jawab[data-tema="terang"] .pilihan-jawab-tombol { background: white; box-shadow: none; border: 1.5px solid var(--color-garis); }
 .pilihan-jawab[data-tema="terang"] .pilihan-jawab-tombol[aria-pressed="true"] { border-color: var(--color-jingga); background: var(--color-jingga-muda); outline: none; }
 .pilihan-jawab[data-tema="terang"] .pilihan-jawab-ketik { color: var(--color-abu); }
+.pilihan-jawab[data-tema="terang"] { padding: 14px; border-radius: 22px; background: white; border: 1px solid var(--color-garis); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-tombol { background: var(--color-kertas); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-soal { color: var(--color-tinta); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-petunjuk { color: var(--color-abu); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-kembali, .pilihan-jawab[data-tema="terang"] .pilihan-jawab-lewati { color: var(--color-abu); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-langkah { color: var(--color-jingga-tua); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-ringkas > li { background: var(--color-kertas); border: 1px solid var(--color-garis); color: var(--color-tinta); }
+.pilihan-jawab[data-tema="terang"] .pilihan-jawab-ubah { background: white; border: 1px solid var(--color-garis); color: var(--color-tinta); }
 
 @media (prefers-reduced-motion: reduce) {
   .ngobrol-malam, .ngobrol-tombol-kepala { transition: none; }

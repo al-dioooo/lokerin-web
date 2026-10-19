@@ -56,7 +56,7 @@ export function IntipCv({ id }: { id: string }) {
   );
 }
 
-export function PratinjauCv({ id, judul = "CV Khusus" }: { id: string; judul?: string }) {
+export function PratinjauCv({ id, judul = "CV lamaran" }: { id: string; judul?: string }) {
   const cv = useApi<CvApi>(`/cv/${id}`);
   const [buka, setBuka] = useState(false);
   const [penuh, setPenuh] = useState(false);
@@ -77,7 +77,7 @@ export function PratinjauCv({ id, judul = "CV Khusus" }: { id: string; judul?: s
           {kontak_disembunyikan && <p className="rounded-2xl bg-kabut p-3 text-[15px] text-abu">Nomor HP dan email terlihat setelah kamu meloloskan pelamar ini.</p>}
           <SkalaKertas penuh={penuh}><KertasCv isi={isi} template={template} bahasa={bahasa} kontakTersembunyi={kontak_disembunyikan} /></SkalaKertas>
           {/* At phone width the page is about half size; real size scrolls sideways for easy reading. */}
-          <button type="button" className="tombol tombol-halus min-h-11 w-fit justify-self-center md:hidden" onClick={() => setPenuh((p) => !p)}>{penuh ? "Kecilkan" : "Lihat ukuran asli"}</button>
+          <button type="button" className="tombol tombol-halus min-h-11 w-fit justify-self-center @2xl:hidden" onClick={() => setPenuh((p) => !p)}>{penuh ? "Kecilkan" : "Lihat ukuran asli"}</button>
         </div>
       </Laci>
     </>

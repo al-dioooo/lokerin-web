@@ -97,7 +97,7 @@ export function PanggungSuara({
         <p className="panggung-keadaan" role="status">{keadaan}</p>
         <p className="panggung-kalimat" data-siapa={kalimat?.siapa ?? "ai"}>{kalimat ? untukDibaca(kalimat.teks) : sapaan}</p>
 
-        {pertanyaan && <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={false} onJawab={onJawab} onKetik={onKetik} />}
+        {pertanyaan && <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={false} onJawab={onJawab} />}
         {galat && <p role="alert" className="mx-auto max-w-sm rounded-2xl bg-white/10 px-4 py-2 text-center text-[15px] text-white">{galat}</p>}
       </div>
 

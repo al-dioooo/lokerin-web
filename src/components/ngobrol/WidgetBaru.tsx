@@ -5,7 +5,6 @@
  * passing an applicant) only happens when the person taps the button on the card.
  */
 
-import Link from "next/link";
 import { useState } from "react";
 import { IconBrandWhatsapp, IconCircleCheck, IconFlag, IconShare, IconUserCheck } from "../icons/tabler";
 import { Dialog } from "../lapis/Dialog";
@@ -13,6 +12,7 @@ import { IkonKabar } from "../app/IkonKabar";
 import { waktuLalu } from "@/lib/api/adaptor";
 import { api, GalatApi } from "@/lib/api/klien";
 import type { DaftarKabarApi, KartuKerjaApi, LamaranApi, TahapApi } from "@/lib/api/tipe";
+import { laciDariTautan, TautanLaci } from "../lapis/konteksLaci";
 
 export function KartuKerjaWidget({ kartu }: { kartu: KartuKerjaApi }) {
   const [disalin, setDisalin] = useState(false);
@@ -78,14 +78,14 @@ export function DaftarKabarWidget({ daftar }: { daftar: DaftarKabarApi }) {
     <ul className="grid gap-2">
       {daftar.kabar.slice(0, 5).map((k) => (
         <li key={k.id}>
-          <Link href={k.tautan} className="flex items-start gap-3 rounded-2xl border border-garis bg-white p-3">
+          <TautanLaci isi={laciDariTautan(k.tautan)} href={k.tautan} className="flex items-start gap-3 rounded-2xl border border-garis bg-white p-3">
             <IkonKabar jenis={k.jenis} />
             <span className="min-w-0 flex-1">
               <span className="block font-bold leading-snug">{k.judul}</span>
               <span className="block text-[15px] leading-snug text-abu">{k.isi}</span>
               <span className="mt-0.5 block text-sm text-abu">{waktuLalu(k.dibuat_pada)}</span>
             </span>
-          </Link>
+          </TautanLaci>
         </li>
       ))}
     </ul>
@@ -97,12 +97,12 @@ export function PelamarWidget({ lamaran }: { lamaran: LamaranApi }) {
     <div className="grid gap-2">
       <div className="rounded-2xl border border-garis bg-white p-3">
         <p className="font-bold">{lamaran.pencari.nama}</p>
-        <p className="text-sm text-abu">CV {lamaran.persona.judul} · untuk {lamaran.lowongan.judul}</p>
+        <p className="text-sm text-abu">Sebagai {lamaran.persona.judul} · untuk {lamaran.lowongan.judul}</p>
         {lamaran.persona.ringkasan && <p className="mt-2 text-[15px]">{lamaran.persona.ringkasan}</p>}
         {lamaran.pesan && <p className="mt-2 rounded-xl bg-kabut p-2 text-[15px]">&ldquo;{lamaran.pesan}&rdquo;</p>}
         <p className="mt-2 text-sm text-abu">{lamaran.pencari.kontak_disembunyikan ? "Kontak terlihat setelah kamu meloloskannya." : [lamaran.pencari.telepon, lamaran.pencari.email].filter(Boolean).join(" · ")}</p>
       </div>
-      <Link href={`/app/pelamar?lamaran=${lamaran.id}`} className="tombol tombol-utama min-h-14 text-lg"><IconUserCheck size={20} />Buka untuk memutuskan</Link>
+      <TautanLaci isi={{ jenis: "pelamar", id: lamaran.id }} href={`/app/pelamar?lamaran=${lamaran.id}`} className="tombol tombol-utama min-h-14 text-lg"><IconUserCheck size={20} />Buka untuk memutuskan</TautanLaci>
     </div>
   );
 }

@@ -1,16 +1,17 @@
+import type { MouseEvent } from "react";
 import { getKategori } from "../icons/categories";
-import { IconChevronRight, IconMapPin, IconShieldCheck } from "../icons/tabler";
+import { IconChevronRight, IconMapPin, IconShieldCheck, IconSparkles } from "../icons/tabler";
 import { CekUpah } from "../ui/CekUpah";
 import { upahTeks, type Lowongan, type PersonaId } from "@/lib/data";
 import { TautanArah } from "./TautanArah";
 import { SisaWaktu } from "./SisaWaktu";
 
-/** Compact job row for lists. */
-export function BarisLowongan({ lowongan: l, persona, skor: skorServer, baru }: { lowongan: Lowongan; persona?: PersonaId; skor?: number; baru?: boolean }) {
+/** Compact job row for lists. `alasan` is the short "why it fits" line from matching, shown inside the card. */
+export function BarisLowongan({ lowongan: l, persona, skor: skorServer, baru, alasan, onClick }: { lowongan: Lowongan; persona?: PersonaId; skor?: number; baru?: boolean; alasan?: string; onClick?: (e: MouseEvent<HTMLAnchorElement>) => void }) {
   const { Icon } = getKategori(l.kategori);
   const skor = skorServer ?? (persona ? l.cocok?.[persona] : undefined);
   return (
-    <TautanArah arah="maju" href={`/app/lowongan/${l.id}`} className="baris-lowongan" data-baru={baru || undefined}>
+    <TautanArah arah="maju" href={`/app/lowongan/${l.id}`} className="baris-lowongan" data-baru={baru || undefined} onClick={onClick}>
       <span className="ubin-ikon"><Icon size={32} /></span>
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -26,6 +27,7 @@ export function BarisLowongan({ lowongan: l, persona, skor: skorServer, baru }: 
           {l.verifikasi.ktp && <span className="inline-flex items-center gap-1 font-bold text-daun"><IconShieldCheck size={14} />Terverifikasi</span>}
           {l.cekUpah !== "wajar" && <CekUpah status={l.cekUpah} />}
         </span>
+        {alasan && <span className="mt-2 flex items-start gap-1.5 text-[13px] leading-snug text-daun"><IconSparkles size={15} className="mt-px shrink-0" />{alasan}</span>}
       </span>
       <span className="flex flex-col items-end gap-2 self-stretch justify-between">
         {skor !== undefined ? <span className="skor-cocok">Cocok {skor}%</span> : <span />}

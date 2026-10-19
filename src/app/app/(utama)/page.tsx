@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { DaftarCocok } from "@/components/app/DaftarCocok";
 import { Halaman } from "@/components/app/Halaman";
-import { TautanNgobrol } from "@/components/app/TautanNgobrol";
+import { CariBeranda } from "@/components/app/CariBeranda";
 import { RakMendesak } from "@/components/app/RakMendesak";
-import { IconMicrophone, IconSearch, IconShieldCheck } from "@/components/icons/tabler";
+import { IconShieldCheck } from "@/components/icons/tabler";
 import { BerandaSesuaiPeran } from "@/components/app/BerandaSesuaiPeran";
 import { SapaNama } from "@/components/app/SapaNama";
 import { daftarLowongan, jumlahDitahan, lowonganMendesak } from "@/lib/api/sumber";
@@ -28,12 +28,8 @@ async function IsiBeranda() {
     <div className="grid gap-8">
       <section>
         <p className="text-sm text-abu">Halo,</p>
-        <h1 className="text-[1.75rem] leading-tight"><SapaNama />. <span className="text-jingga">Mau kerja apa hari ini?</span></h1>
-        <TautanNgobrol className="kolom-cari mt-4">
-          <IconSearch size={20} className="text-abu" />
-          <span className="flex-1 text-sm text-abu">Cari kerja, misalnya &ldquo;las pagar di Sokaraja&rdquo;</span>
-          <span className="tombol tombol-utama min-h-9 px-3 text-sm"><IconMicrophone size={16} />Ngobrol</span>
-        </TautanNgobrol>
+        <h1 className="text-[1.75rem] leading-tight" data-ringkas="Beranda"><SapaNama />. <span className="text-jingga">Mau kerja apa hari ini?</span></h1>
+        <CariBeranda />
       </section>
 
       <RakMendesak awal={mendesak.data} />

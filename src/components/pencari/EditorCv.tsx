@@ -114,7 +114,7 @@ function FormEntri({ entri, onSimpan, onHapus }: { entri: EntriCv; onSimpan: (e:
       <button type="submit" className="tombol tombol-utama min-h-14 text-lg">Simpan</button>
       <button type="button" className="tombol tombol-halus min-h-12 text-merah" onClick={() => setTanyaHapus(true)}><IconTrash size={18} />Hapus dari CV</button>
       <Dialog buka={tanyaHapus} onTutup={() => setTanyaHapus(false)} bahaya judul="Hapus dari CV ini?" labelYa="Ya, hapus" onYa={() => { setTanyaHapus(false); onHapus(); }}>
-        Hanya hilang dari CV Khusus ini. Fakta di profilmu tetap ada.
+        Hanya hilang dari CV ini. Bahan CV-mu tetap ada.
       </Dialog>
     </form>
   );
@@ -146,7 +146,8 @@ function KartuSunting({ judul, children, onClick, lencana }: { judul: React.Reac
   );
 }
 
-export function EditorCv({ id: cvId }: { id: string }) {
+/** `diLaci`: shown in a drawer from Ngobrol, so no back button or page title, and always the phone layout. */
+export function EditorCv({ id: cvId, diLaci = false }: { id: string; diLaci?: boolean }) {
   const router = useRouter();
   const cv = useApi<CvApi>(`/cv/${cvId}`);
   const [isiEdit, setIsiEdit] = useState<IsiCv | null>(null);
@@ -229,7 +230,7 @@ export function EditorCv({ id: cvId }: { id: string }) {
               key={e.id}
               judul={e.judul || "Tanpa judul"}
               onClick={() => setSunting({ jenis: "entri", bagianId: b.id, entri: e, baru: false })}
-              lencana={e.fakta_ids.length && !e.diedit_pengguna ? "Dari Fakta-mu" : undefined}
+              lencana={e.fakta_ids.length && !e.diedit_pengguna ? "Dari bahan CV-mu" : undefined}
             >
               {[e.tempat, e.periode].filter(Boolean).join(" · ")}
               {e.poin.length > 0 && <span className="block">{e.poin.length} poin</span>}
@@ -251,20 +252,26 @@ export function EditorCv({ id: cvId }: { id: string }) {
   const kertas = (
     <div className="grid gap-3">
       <SkalaKertas penuh={penuh}><KertasCv isi={isi} template={template} bahasa={cv.data.bahasa} /></SkalaKertas>
-      <button type="button" className="tombol tombol-halus min-h-11 w-fit justify-self-center lg:hidden" onClick={() => setPenuh((p) => !p)}>{penuh ? "Kecilkan" : "Lihat ukuran asli"}</button>
+      <button type="button" className={`tombol tombol-halus min-h-11 w-fit justify-self-center ${diLaci ? "" : "lg:hidden"}`} onClick={() => setPenuh((p) => !p)}>{penuh ? "Kecilkan" : "Lihat ukuran asli"}</button>
     </div>
   );
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-4 pb-44">
-      <button type="button" onClick={() => (history.length > 1 ? router.back() : router.push("/app/lamaran"))} className="inline-flex min-h-11 w-fit items-center gap-1.5 text-[15px] font-semibold text-abu"><IconArrowLeft size={18} />Kembali</button>
-      <div>
-        <p className="piksel text-[11px] uppercase text-jingga-tua">CV Khusus</p>
-        <h1 className="text-[1.75rem] leading-tight">CV {isi.judul || isi.nama}</h1>
-        <p className="mt-1 text-[15px] text-abu">Disusun dari Fakta-mu. Perekrut melihat CV persis seperti ini.</p>
-      </div>
+    <div className={`mx-auto grid max-w-6xl gap-4 ${diLaci ? "" : "pb-44"}`}>
+      {diLaci ? (
+        <p className="text-[15px] text-abu">Disusun dari bahan CV-mu untuk satu lowongan. Pemberi kerja melihat CV persis seperti ini.</p>
+      ) : (
+        <>
+          <button type="button" onClick={() => (history.length > 1 ? router.back() : router.push("/app/lamaran"))} className="inline-flex min-h-11 w-fit items-center gap-1.5 text-[15px] font-semibold text-abu"><IconArrowLeft size={18} />Kembali</button>
+          <div>
+            <p className="piksel text-[11px] uppercase text-jingga-tua">CV lamaran</p>
+            <h1 className="text-[1.75rem] leading-tight">CV {isi.judul || isi.nama}</h1>
+            <p className="mt-1 text-[15px] text-abu">Disusun dari bahan CV-mu untuk satu lowongan. Pemberi kerja melihat CV persis seperti ini.</p>
+          </div>
+        </>
+      )}
 
-      <div className="grid grid-cols-2 rounded-full border border-garis bg-white p-1 lg:hidden" role="tablist" aria-label="Tampilan CV">
+      <div className={`grid grid-cols-2 rounded-full border border-garis bg-white p-1 ${diLaci ? "" : "lg:hidden"}`} role="tablist" aria-label="Tampilan CV">
         {(["lihat", "ubah"] as const).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={`min-h-12 rounded-full text-[16px] font-bold ${tab === t ? "bg-tinta text-white" : "text-abu"}`}>
             {t === "lihat" ? "Lihat" : "Ubah isi"}
@@ -272,14 +279,21 @@ export function EditorCv({ id: cvId }: { id: string }) {
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start">
-        <div className={tab === "ubah" ? "" : "hidden lg:block"}>{daftarUbah}</div>
-        <div className={`${tab === "lihat" ? "" : "hidden lg:block"} lg:sticky lg:top-6`}>{kertas}</div>
-      </div>
+      {diLaci ? (
+        <div className="grid gap-6">
+          <div className={tab === "ubah" ? "" : "hidden"}>{daftarUbah}</div>
+          <div className={tab === "lihat" ? "" : "hidden"}>{kertas}</div>
+        </div>
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start">
+          <div className={tab === "ubah" ? "" : "hidden lg:block"}>{daftarUbah}</div>
+          <div className={`${tab === "lihat" ? "" : "hidden lg:block"} lg:sticky lg:top-6`}>{kertas}</div>
+        </div>
+      )}
 
       {galat && <p role="alert" className="rounded-2xl bg-merah-muda p-3 text-sm text-merah">{galat}</p>}
 
-      <div className="alur-lanjut">
+      <div className={diLaci ? "aksi-laci grid" : "alur-lanjut"}>
         <p className="mb-2 flex min-h-5 items-center justify-center gap-1.5 text-sm text-abu" role="status">
           {status === "simpan" ? "Menyimpan..." : status === "tersimpan" ? <><IconCheck size={16} className="text-daun" />Perubahan tersimpan</> : pesanUnduh}
         </p>
@@ -293,7 +307,7 @@ export function EditorCv({ id: cvId }: { id: string }) {
         </div>
       </div>
 
-      <Laci buka={sunting !== null} onTutup={() => setSunting(null)} label="CV Khusus" judul={judulSunting}>
+      <Laci buka={sunting !== null} onTutup={() => setSunting(null)} label="CV lamaran" judul={judulSunting}>
         {sunting?.jenis === "diri" && <FormDiri isi={isi} onSimpan={(x) => void simpan(x)} />}
         {sunting?.jenis === "ringkasan" && <FormRingkasan isi={isi} onSimpan={(x) => void simpan(x)} />}
         {sunting?.jenis === "entri" && (
@@ -304,12 +318,12 @@ export function EditorCv({ id: cvId }: { id: string }) {
         )}
       </Laci>
 
-      <Laci buka={calon.length > 0 && sunting === null} onTutup={() => setCalon([])} label="Kamu menambah hal baru" judul="Simpan juga sebagai Fakta?" keterangan="Fakta yang tersimpan bisa dipakai untuk CV dan lamaran berikutnya.">
+      <Laci buka={calon.length > 0 && sunting === null} onTutup={() => setCalon([])} label="Kamu menambah hal baru" judul="Simpan juga jadi bahan CV?" keterangan="Bahan CV yang tersimpan bisa dipakai lagi untuk lamaran berikutnya.">
         <ul className="grid gap-2.5">
           {calon.map((c) => (
             <li key={c.item_id} className="rounded-2xl border border-garis p-3">
               <p className="text-[17px]">{c.text.replace(/\*\*/g, "")}</p>
-              <button type="button" className="tombol tombol-utama mt-2 w-full" onClick={() => void jadikanFakta(c)}><IconCheck size={18} />Simpan sebagai Fakta</button>
+              <button type="button" className="tombol tombol-utama mt-2 w-full" onClick={() => void jadikanFakta(c)}><IconCheck size={18} />Simpan jadi bahan CV</button>
             </li>
           ))}
         </ul>

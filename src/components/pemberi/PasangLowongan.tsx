@@ -259,7 +259,7 @@ function AlurPasang({ awal }: { awal?: LowonganApi }) {
 
         {ini === "draf" && draf && (
           <div className="grid gap-4">
-            <h1 className="text-[1.75rem] leading-tight">Ini lowonganmu. <span className="text-jingga">Sudah benar?</span></h1>
+            <h1 className="text-[1.75rem] leading-tight" data-ringkas="Cek lowongan">Ini lowonganmu. <span className="text-jingga">Sudah benar?</span></h1>
             <KartuDraf lowongan={draf} onBerubah={setDraf} onUbah={lengkapi} />
             {draf.status === "terbit" && <Link href="/app" className="tombol tombol-garis min-h-14 text-lg">Kembali ke beranda</Link>}
           </div>

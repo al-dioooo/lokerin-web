@@ -60,7 +60,7 @@ export function DaftarObrolan({ buka, onTutup, aktifId, onPilih, onBaru }: { buk
           daftar.muatUlang();
         }}
       >
-        &ldquo;{hapus?.judul}&rdquo; hilang dari daftar. Lamaran, CV, dan Fakta yang sudah tersimpan tidak ikut terhapus.
+        &ldquo;{hapus?.judul}&rdquo; hilang dari daftar. Lamaran, CV, dan bahan CV yang sudah tersimpan tidak ikut terhapus.
       </Dialog>
     </>
   );

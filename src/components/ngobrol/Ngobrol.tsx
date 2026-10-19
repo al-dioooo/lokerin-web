@@ -10,7 +10,7 @@
  */
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { LayoutGroup } from "motion/react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { IconHistory, IconMicrophone, IconPencilPlus, IconX } from "../icons/tabler";
@@ -23,11 +23,12 @@ import { PanggungSuara } from "./PanggungSuara";
 import { Penyusun, Utas } from "./Utas";
 import { BATAS_DETIK, useSuara } from "./useSuara";
 import { kategoriDari } from "@/lib/api/adaptor";
-import { kirimPesan, muatRiwayat, type BagianPesan, type HasilAlat, type Pesan } from "@/lib/api/obrolan";
+import { kirimPesan, muatObrolan, type BagianPesan, type HasilAlat, type Pesan } from "@/lib/api/obrolan";
 import { useSesi } from "@/lib/api/sesi";
-import type { LowonganApi, PertanyaanAgen } from "@/lib/api/tipe";
+import { bacaPertanyaan, type LowonganApi, type PertanyaanAgen } from "@/lib/api/tipe";
 import "./ngobrol.css";
 import "./obrolan.css";
+import { PenyediaLaci } from "./LaciNgobrol";
 
 type Mode = "suara" | "teks";
 type Tempat = keyof typeof LOKASI_KERJA;
@@ -58,7 +59,7 @@ function pertanyaanTerbuka(pesan: Pesan[]): PertanyaanAgen | null {
   const akhir = pesan.at(-1);
   if (akhir?.peran !== "ai") return null;
   const alat = [...akhir.bagian].reverse().find((b) => b.jenis === "alat");
-  return alat?.jenis === "alat" && alat.hasil?.widget === "pertanyaan" ? (alat.hasil as unknown as PertanyaanAgen) : null;
+  return alat?.jenis === "alat" && alat.hasil ? bacaPertanyaan(alat.hasil) : null;
 }
 
 export function Ngobrol() {
@@ -71,7 +72,12 @@ export function Ngobrol() {
   const [mode, setMode] = useState<Mode>("suara");
   const idTersimpan = useSyncExternalStore(tanpaLangganan, () => baca(KUNCI_OBROLAN) ?? "utama", () => "utama");
   const [idPilihan, setIdPilihan] = useState<string | null>(null);
-  const obrolanId = idPilihan ?? idTersimpan;
+  // Each conversation has its own address, /app/ngobrol/<id>. Conversations are stored per account
+  // on the server, so the address only ever opens your own; /app/ngobrol opens the last one.
+  const params = useParams<{ id?: string }>();
+  const idUrl = typeof params?.id === "string" ? decodeURIComponent(params.id) : null;
+  const obrolanId = idPilihan ?? idUrl ?? idTersimpan;
+  const [asing, setAsing] = useState(false);
 
   const [pesan, setPesan] = useState<Pesan[]>([]);
   const [judul, setJudul] = useState("");
@@ -83,7 +89,7 @@ export function Ngobrol() {
   const kendali = useRef<AbortController | null>(null);
 
   useLayoutEffect(() => {
-    ngobrolSiap();
+    ngobrolSiap(layar.current);
   }, []);
 
   // Load the conversation whenever the person or the conversation changes.
@@ -91,11 +97,25 @@ export function Ngobrol() {
   useEffect(() => {
     if (!akun) return;
     const k = new AbortController();
-    muatRiwayat(obrolanId, k.signal)
-      .then((p) => setPesan(p))
+    muatObrolan(obrolanId, k.signal)
+      .then((h) => {
+        setPesan(h.pesan);
+        if (h.judul) setJudul((j) => j || h.judul!);
+        // A link to a conversation that is not in this account says so instead of quietly showing
+        // an empty chat. A new conversation of your own is the one remembered on this phone.
+        const milikSendiri = h.ada || obrolanId === baca(KUNCI_OBROLAN);
+        setAsing(!milikSendiri);
+        if (milikSendiri) simpan(KUNCI_OBROLAN, obrolanId);
+      })
       .catch(() => {});
     return () => k.abort();
   }, [akun, obrolanId]);
+
+  // The address follows the open conversation, without reloading the screen.
+  useEffect(() => {
+    const tujuan = `/app/ngobrol/${encodeURIComponent(obrolanId)}`;
+    if (window.location.pathname !== tujuan) window.history.replaceState(null, "", tujuan);
+  }, [obrolanId]);
 
   function gantiMode(baru: Mode) {
     setMode(baru);
@@ -107,6 +127,7 @@ export function Ngobrol() {
     void suara.akhiri();
     setIdPilihan(id);
     simpan(KUNCI_OBROLAN, id);
+    setAsing(false);
     setPesan([]);
     setJudul(judulBaru);
     setSibuk(false);
@@ -124,6 +145,8 @@ export function Ngobrol() {
     const k = new AbortController();
     kendali.current = k;
     const idAi = `ai-${crypto.randomUUID()}`;
+    setAsing(false);
+    simpan(KUNCI_OBROLAN, obrolanId);
     if (!pesan.length && !judul) setJudul(teks.length > 44 ? `${teks.slice(0, 44).replace(/\s+\S*$/, "")}…` : teks);
     setPesan((p) => [...p, { id: `kamu-${crypto.randomUUID()}`, peran: "kamu", bagian: [{ jenis: "teks", teks }] }]);
     setSibuk(true);
@@ -185,7 +208,6 @@ export function Ngobrol() {
     kirimTerbaru.current = kirim;
   });
   const kirimStabil = useCallback((t: string) => void kirimTerbaru.current(t), []);
-  const fokuskan = useCallback(() => setFokus((f) => f + 1), []);
 
   // --- Derived ---
 
@@ -214,6 +236,7 @@ export function Ngobrol() {
   }
 
   return (
+    <PenyediaLaci>
     <div ref={layar} className="ngobrol-akar" data-mode={mode}>
       <div className="ngobrol-malam" aria-hidden="true" />
       <LayoutGroup id="ngobrol">
@@ -228,6 +251,11 @@ export function Ngobrol() {
 
         {/* Both layers stay mounted so switching is instant (the night town is a large SVG);
             only the lentera moves between them. */}
+        {asing && (
+          <p className="ngobrol-catatan" role="status">
+            Obrolan ini tidak ada di akunmu. Yang kamu tulis di sini jadi obrolan baru milikmu.
+          </p>
+        )}
         <div className="ngobrol-tumpuk">
           <section className="ngobrol-lapis" data-aktif={mode === "suara" || undefined} inert={mode !== "suara"} aria-label="Ngobrol pakai suara">
             <PanggungSuara
@@ -249,7 +277,7 @@ export function Ngobrol() {
             />
           </section>
           <section className="ngobrol-lapis ngobrol-teks" data-aktif={mode === "teks" || undefined} inert={mode !== "teks"} aria-label="Ngobrol pakai teks">
-            <Utas pesan={pesan} sibuk={sibuk} pertanyaan={pertanyaan} saran={SARAN[peran]} onKirim={kirimStabil} onKetik={fokuskan} />
+            <Utas pesan={pesan} sibuk={sibuk} pertanyaan={pertanyaan} saran={SARAN[peran]} onKirim={kirimStabil} />
             {(galat || suara.galat) && <p role="alert" className="ngobrol-galat">{galat || suara.galat}</p>}
             {suara.status === "hidup" && (
               <button type="button" className="pita-suara" onClick={() => gantiMode("suara")}>
@@ -291,5 +319,6 @@ export function Ngobrol() {
         Browser akan meminta izin mikrofon. Suaramu tidak disimpan; yang tersimpan hanya hasilnya, misalnya lowongan yang kamu cari.
       </Dialog>
     </div>
+    </PenyediaLaci>
   );
 }

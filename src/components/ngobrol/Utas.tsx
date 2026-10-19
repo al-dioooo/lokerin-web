@@ -15,21 +15,35 @@ import { Bacakan, TeksAgen } from "./TeksAgen";
 import { PEGAS_LENTERA } from "./PanggungSuara";
 import { LABEL_ALAT, type Pesan } from "@/lib/api/obrolan";
 import type { PertanyaanAgen } from "@/lib/api/tipe";
+import { MenyusunCv } from "../cv/MenyusunCv";
 
 export function OrbKecil() {
   return <span className="orb-kecil" aria-hidden="true" />;
 }
 
+/** Index of the last card per thing (a CV revised three times in one reply shows once, as it is now). */
+function kartuTerakhir(p: Pesan) {
+  const terakhir = new Map<string, number>();
+  p.bagian.forEach((b, i) => {
+    const id = b.jenis === "alat" ? b.hasil?.id : undefined;
+    if (b.jenis === "alat" && b.hasil?.widget && typeof id === "string") terakhir.set(`${b.hasil.widget}:${id}`, i);
+  });
+  return terakhir;
+}
+
 function PesanAi({ p, awalRangkaian, sedangMengalir }: { p: Pesan; awalRangkaian: boolean; sedangMengalir: boolean }) {
   const teks = p.bagian.flatMap((b) => (b.jenis === "teks" ? [b.teks] : [])).join("\n\n");
+  const terakhir = kartuTerakhir(p);
   return (
     <div className="pesan-ai">
       {awalRangkaian && <p className="pesan-ai-nama"><OrbKecil />Lokerin</p>}
       {p.bagian.map((b, i) => {
         if (b.jenis === "teks") return <TeksAgen key={i} teks={b.teks} />;
+        if (b.status === "jalan" && (b.nama === "siapkan_cv_khusus" || b.nama === "ubah_cv_khusus")) return <MenyusunCv key={b.id} ringkas jenis={b.nama === "ubah_cv_khusus" ? "ubah" : "susun"} />;
         if (b.status === "jalan") return <p key={b.id} className="alat-jalan" role="status">{LABEL_ALAT[b.nama] ?? "Lokerin sedang bekerja"}…</p>;
         if (b.status === "galat") return <p key={b.id} className="text-[15px] text-merah">Ada yang belum berhasil. Coba ulangi.</p>;
         if (!b.hasil?.widget || b.hasil.widget === "pertanyaan") return null;
+        if (typeof b.hasil.id === "string" && terakhir.get(`${b.hasil.widget}:${b.hasil.id}`) !== i) return null;
         return (
           <section key={b.id} className="kartu-alat" aria-label={JUDUL_WIDGET[b.hasil.widget] ?? "Hasil"}>
             <h3>{JUDUL_WIDGET[b.hasil.widget] ?? "Hasil"}</h3>
@@ -49,14 +63,12 @@ export const Utas = memo(function Utas({
   pertanyaan,
   saran,
   onKirim,
-  onKetik,
 }: {
   pesan: Pesan[];
   sibuk: boolean;
   pertanyaan: PertanyaanAgen | null;
   saran: string[];
   onKirim: (teks: string) => void;
-  onKetik: () => void;
 }) {
   const gulir = useRef<HTMLDivElement>(null);
   const diBawah = useRef(true);
@@ -110,7 +122,7 @@ export const Utas = memo(function Utas({
         )}
         {pertanyaan && !sibuk && (
           <div className="mt-1">
-            <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={sibuk} onJawab={onKirim} onKetik={onKetik} tema="terang" />
+            <PilihanJawab key={pertanyaan.id} tanya={pertanyaan} sibuk={sibuk} onJawab={onKirim} tema="terang" />
           </div>
         )}
       </div>

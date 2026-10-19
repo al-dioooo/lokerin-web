@@ -31,13 +31,14 @@ function TautanTahap({ tahap }: { tahap: TahapApi }) {
   return null;
 }
 
-export function LamaranSaya() {
+/** `diLaci`: shown in a drawer from Ngobrol (the drawer has the title); `awalId` opens one right away. */
+export function LamaranSaya({ diLaci = false, awalId }: { diLaci?: boolean; awalId?: string } = {}) {
   const daftar = useApi<{ lamaran: LamaranApi[] }>("/pencari/lamaran");
   const [dipilihId, setDipilihId] = useState<string | null>(null);
   useLangsung(null, (p) => {
     if (p.type === "lamaran.status") daftar.muatUlang();
   });
-  useBukaDariTautan(daftar.data?.lamaran, (l) => setDipilihId(l.id));
+  useBukaDariTautan(daftar.data?.lamaran, (l) => setDipilihId(l.id), awalId);
 
   if (!apiAktif) return <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-abu">Daftar lamaran butuh sambungan ke server.</p>;
 
@@ -47,7 +48,7 @@ export function LamaranSaya() {
 
   return (
     <div className="grid grid-cols-1 gap-5">
-      <h1 className="text-[1.9rem] leading-tight">Lamaranku</h1>
+      {!diLaci && <h1 className="text-[1.9rem] leading-tight">Lamaranku</h1>}
       {daftar.memuat && !lamaran.length && <p className="text-abu">Memuat...</p>}
       {!daftar.memuat && !lamaran.length && (
         <div className="grid gap-3 rounded-3xl border border-dashed border-garis p-6 text-center">
@@ -61,7 +62,7 @@ export function LamaranSaya() {
             <button type="button" className="baris-lowongan w-full text-left" onClick={() => setDipilihId(x.id)}>
               <span className="min-w-0 flex-1">
                 <span className="block text-lg font-bold leading-tight">{x.lowongan.judul}</span>
-                <span className="block truncate text-[15px] text-abu">{x.pemberi_kerja.nama_usaha} · CV {x.persona.judul}</span>
+                <span className="block truncate text-[15px] text-abu">{x.pemberi_kerja.nama_usaha} · sebagai {x.persona.judul}</span>
                 <span className="mt-1 block text-sm text-abu">Dikirim {waktuLalu(x.dikirim_pada).toLowerCase()}</span>
               </span>
               <span className={`shrink-0 rounded-full px-3 py-1 text-sm font-bold ${STATUS[x.status].kelas}`}>{STATUS[x.status].teks}</span>

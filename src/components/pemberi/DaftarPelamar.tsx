@@ -32,7 +32,8 @@ const JENIS_TAHAP: { id: TahapApi["jenis"]; label: string; contoh: string }[] = 
   { id: "meet", label: "Wawancara online", contoh: "Tautan Google Meet dan jamnya" },
 ];
 
-export function DaftarPelamar() {
+/** `diLaci`: shown in a drawer from Ngobrol (the drawer has the title); `awalId` opens one right away. */
+export function DaftarPelamar({ diLaci = false, awalId }: { diLaci?: boolean; awalId?: string } = {}) {
   const daftar = useApi<{ lamaran: LamaranApi[] }>("/pemberi/lamaran");
   const [dipilih, setDipilih] = useState<LamaranApi | null>(null);
   const [tahapan, setTahapan] = useState<"lihat" | "jenis" | "detail" | "selesai">("lihat");
@@ -61,7 +62,7 @@ export function DaftarPelamar() {
     }
   }
 
-  useBukaDariTautan(daftar.data?.lamaran, (l) => void buka(l));
+  useBukaDariTautan(daftar.data?.lamaran, (l) => void buka(l), awalId);
 
   async function loloskan() {
     if (!dipilih || !jenis) return;
@@ -114,7 +115,7 @@ export function DaftarPelamar() {
 
   return (
     <div className="grid grid-cols-1 gap-5">
-      <h1 className="text-[1.9rem] leading-tight">Pelamar</h1>
+      {!diLaci && <h1 className="text-[1.9rem] leading-tight">Pelamar</h1>}
       {daftar.memuat && <p className="text-abu">Memuat...</p>}
       {!daftar.memuat && !lamaran.length && <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-[15px] text-abu">Belum ada pelamar. Lamaran baru muncul di sini tanpa perlu dimuat ulang.</p>}
       <ul className="grid grid-cols-1 gap-2">
@@ -144,7 +145,7 @@ export function DaftarPelamar() {
           <div className="grid gap-4">
             <p className={`w-fit rounded-full px-3 py-1 text-sm font-bold ${LABEL_STATUS[l.status].kelas}`}>{LABEL_STATUS[l.status].teks}</p>
             <section className="rounded-2xl bg-kertas p-4">
-              <p className="piksel text-[11px] uppercase text-jingga-tua">CV {l.persona.judul}</p>
+              <p className="piksel text-[11px] uppercase text-jingga-tua">Melamar sebagai {l.persona.judul}</p>
               <p className="mt-1">{l.persona.ringkasan}</p>
               <ul className="mt-3 flex flex-wrap gap-1.5">{l.persona.keahlian.map((k) => <li key={k} className="chip-kategori py-1 pl-3 text-[13px]">{k}</li>)}</ul>
             </section>
@@ -156,9 +157,9 @@ export function DaftarPelamar() {
               <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 text-[15px] font-bold text-daun"><IconPhone size={18} />{l.pencari.telepon ?? l.pencari.email}</p>
             )}
             {l.cv_khusus_id && (
-              <section className="grid gap-2" aria-label="CV Khusus">
-                <h3 className="text-base">CV Khusus untuk lowonganmu</h3>
-                <PratinjauCv key={`${l.cv_khusus_id}-${l.status}`} id={l.cv_khusus_id} />
+              <section className="grid gap-2" aria-label="CV pelamar">
+                <h3 className="text-base">CV untuk lowonganmu</h3>
+                <PratinjauCv key={`${l.cv_khusus_id}-${l.status}`} id={l.cv_khusus_id} judul="CV pelamar" />
               </section>
             )}
             {l.tahap_berikutnya.length > 0 && (

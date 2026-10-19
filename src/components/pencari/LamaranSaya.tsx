@@ -61,7 +61,7 @@ export function LamaranSaya() {
             <button type="button" className="baris-lowongan w-full text-left" onClick={() => setDipilihId(x.id)}>
               <span className="min-w-0 flex-1">
                 <span className="block text-lg font-bold leading-tight">{x.lowongan.judul}</span>
-                <span className="block truncate text-[15px] text-abu">{x.pemberi_kerja.nama_usaha} · CV {x.persona.judul}</span>
+                <span className="block truncate text-[15px] text-abu">{x.pemberi_kerja.nama_usaha} · sebagai {x.persona.judul}</span>
                 <span className="mt-1 block text-sm text-abu">Dikirim {waktuLalu(x.dikirim_pada).toLowerCase()}</span>
               </span>
               <span className={`shrink-0 rounded-full px-3 py-1 text-sm font-bold ${STATUS[x.status].kelas}`}>{STATUS[x.status].teks}</span>

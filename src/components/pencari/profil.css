@@ -45,3 +45,13 @@ a.baris-atur:hover, button.baris-atur:hover { background: var(--color-kertas); }
 .baris-atur-ikon { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 12px; background: var(--color-kabut); color: var(--color-tinta); }
 .baris-atur[data-bahaya] { color: var(--color-merah); }
 .baris-atur[data-bahaya] .baris-atur-ikon { background: var(--color-merah-muda); color: var(--color-merah); }
+
+/* "Begini CV-mu dibuat": the three steps from what you told Lokerin to the CV an employer reads. */
+.cara-cv { padding: 16px; border-radius: 22px; background: white; border: 1px dashed #E8B98F; }
+.cara-cv-langkah { display: flex; align-items: flex-start; gap: 12px; padding: 8px; margin: -8px; border-radius: 14px; }
+.cara-cv-langkah:hover { background: var(--color-kertas); }
+.cara-cv-nomor {
+  display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 999px;
+  font-size: 14px; font-weight: 800; color: white; background: var(--color-jingga);
+}
+.cara-cv li + li .cara-cv-nomor { background: var(--color-jingga-tua); }

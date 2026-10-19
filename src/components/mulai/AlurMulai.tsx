@@ -218,7 +218,7 @@ export function AlurMulai() {
           )}
 
           {ini === "kerja" && (
-            <Pertanyaan atas="CV pertamamu" judul="Kamu bisa kerja apa?" bantu="Pilih satu sampai tiga. Tiap pilihan jadi satu CV.">
+            <Pertanyaan atas="Kerjamu" judul="Kamu bisa kerja apa?" bantu="Pilih satu sampai tiga. Lowongan dicocokkan untuk tiap kerja yang kamu pilih.">
               <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
                 {KATEGORI.map(({ slug, label, Icon }) => {
                   const urut = kerja.indexOf(slug);
@@ -339,7 +339,7 @@ export function AlurMulai() {
             <Pertanyaan
               atas={simpan === "beres" ? "Selesai" : "Sebentar"}
               judul={simpan === "gagal" ? "Belum berhasil disimpan." : peran === "pemberi" ? "Usahamu sedang dicek." : `Siap kerja, ${nama.split(" ")[0] || "kamu"}.`}
-              bantu={simpan === "gagal" ? pesanGagal : simpan === "proses" ? "Menyimpan jawabanmu..." : peran === "pemberi" ? "Sambil menunggu, kamu sudah bisa menyiapkan lowongan pertama." : "CV-mu sudah jadi dari jawaban tadi. Lowongan yang cocok sudah menunggu."}
+              bantu={simpan === "gagal" ? pesanGagal : simpan === "proses" ? "Menyimpan jawabanmu..." : peran === "pemberi" ? "Sambil menunggu, kamu sudah bisa menyiapkan lowongan pertama." : "Jawabanmu sudah tersimpan. Lowongan yang cocok sudah menunggu."}
             >
               {peran === "pencari" && simpan !== "gagal" && <KartuKerja nama={nama || "Kamu"} personas={labelKerja} kota={area ?? "Banyumas"} className="alur-kartu" />}
               {simpan === "gagal" ? (

@@ -49,7 +49,7 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
       setCv(await api<CvSiap>("/cv", { method: "POST", body: { lowongan_id: lowonganId, persona_id: persona.id } }));
       setLangkah("kirim");
     } catch (e) {
-      setGalat(e instanceof GalatApi ? e.message : "CV Khusus belum jadi. Coba lagi atau kirim tanpa CV.");
+      setGalat(e instanceof GalatApi ? e.message : "CV lamaran belum jadi. Coba lagi atau kirim tanpa CV.");
     } finally {
       setProses("");
     }
@@ -79,7 +79,7 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
       <button type="button" className="tombol tombol-utama" disabled={proses !== ""} onClick={() => void kirim()}>{proses === "kirim" ? "Mengirim..." : "Kirim Lamaran"}</button>
     ) : langkah === "cv" ? (
       <>
-        <button type="button" className="tombol tombol-utama" disabled={proses !== ""} onClick={() => void siapkanCv()}><IconFileCv size={20} />{proses === "cv" ? "Menyusun CV dari Fakta-mu..." : "Siapkan CV Khusus"}</button>
+        <button type="button" className="tombol tombol-utama" disabled={proses !== ""} onClick={() => void siapkanCv()}><IconFileCv size={20} />{proses === "cv" ? "Menyusun CV lamaran..." : "Susun CV lamaran"}</button>
         <button type="button" className="tombol tombol-garis" disabled={proses !== ""} onClick={() => setLangkah("kirim")}>Kirim tanpa CV</button>
       </>
     ) : langkah === "selesai" ? (
@@ -104,16 +104,16 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
         buka={buka}
         onTutup={() => setBuka(false)}
         label={`Lamar · ${usaha}`}
-        judul={langkah === "persona" ? "Lamar dengan CV yang mana?" : langkah === "cv" ? "Tambahkan CV Khusus?" : langkah === "kirim" ? `Kirim lamaran ke ${usaha}?` : "Lamaranmu sudah terkirim"}
+        judul={langkah === "persona" ? "Lamar sebagai apa?" : langkah === "cv" ? "Lampirkan CV lamaran?" : langkah === "kirim" ? `Kirim lamaran ke ${usaha}?` : "Lamaranmu sudah terkirim"}
         aksi={aksi}
       >
         {langkah === "persona" && (
           <div className="grid gap-2.5">
-            {profil.memuat && <p className="py-4 text-center text-abu">Memuat CV-mu...</p>}
-            {!profil.memuat && !personas.length && <p className="rounded-2xl bg-kabut p-4 text-[15px]">Kamu belum punya CV. Ceritakan pengalamanmu di Ngobrol, atau isi profil dulu.</p>}
+            {profil.memuat && <p className="py-4 text-center text-abu">Memuat kerja yang kamu bisa...</p>}
+            {!profil.memuat && !personas.length && <p className="rounded-2xl bg-kabut p-4 text-[15px]">Lokerin belum tahu kamu bisa kerja apa. Ceritakan pengalamanmu di Ngobrol, atau isi profil dulu.</p>}
             {personas.map((p) => (
               <button key={p.id} type="button" className="alur-pilihan" aria-pressed={persona?.id === p.id} onClick={() => { setPersona(p); window.setTimeout(() => setLangkah("cv"), 200); }}>
-                <span className="min-w-0"><span className="block">CV {p.judul}</span><span className="block text-sm font-semibold text-abu">{p.ringkasan}</span></span>
+                <span className="min-w-0"><span className="block">{p.judul}</span><span className="line-clamp-2 text-sm font-semibold text-abu">{p.ringkasan}</span></span>
                 {persona?.id === p.id && <IconCheck size={22} />}
               </button>
             ))}
@@ -122,8 +122,8 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
 
         {langkah === "cv" && (
           <div className="grid gap-3 text-[17px]">
-            <p>Lokerin bisa menyusun CV khusus untuk lowongan ini dari pengalaman yang sudah kamu konfirmasi. Tidak ada yang ditambah-tambahkan, dan kamu bisa mengeditnya.</p>
-            {magang && <p className="flex items-start gap-2 rounded-2xl bg-[#FFF6DB] p-3 text-[15px] text-[#8A5A00]"><IconInfoCircle size={20} className="mt-0.5 shrink-0" />Lowongan magang biasanya membaca CV. Lamaranmu lebih kuat dengan CV Khusus.</p>}
+            <p>Lokerin menyusun CV khusus untuk lowongan ini, hanya dari bahan CV yang sudah kamu simpan. Tidak ada yang dikarang, dan kamu bisa mengubahnya sebelum mengirim.</p>
+            {magang && <p className="flex items-start gap-2 rounded-2xl bg-[#FFF6DB] p-3 text-[15px] text-[#8A5A00]"><IconInfoCircle size={20} className="mt-0.5 shrink-0" />Lowongan magang biasanya membaca CV. Lamaranmu lebih kuat dengan CV lamaran.</p>}
             {galat && <p role="alert" className="rounded-2xl bg-merah-muda p-3 text-sm text-merah">{galat}</p>}
           </div>
         )}
@@ -132,11 +132,11 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
           <div className="grid gap-4">
             <dl className="grid gap-2 rounded-2xl bg-kertas p-4 text-[17px]">
               <div className="flex justify-between gap-3"><dt className="text-abu">Lowongan</dt><dd className="text-right font-bold">{judul}</dd></div>
-              <div className="flex justify-between gap-3"><dt className="text-abu">CV</dt><dd className="text-right font-bold">{persona.judul}</dd></div>
-              <div className="flex justify-between gap-3"><dt className="text-abu">CV Khusus</dt><dd className="text-right font-bold">{cv ? "Terlampir" : "Tidak"}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-abu">Sebagai</dt><dd className="text-right font-bold">{persona.judul}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-abu">CV lamaran</dt><dd className="text-right font-bold">{cv ? "Terlampir" : "Tidak"}</dd></div>
             </dl>
             {cv && (
-              <Link href={`/app/cv/${cv.id}`} className="grid gap-2" aria-label="Lihat dan ubah CV Khusus">
+              <Link href={`/app/cv/${cv.id}`} className="grid gap-2" aria-label="Lihat dan ubah CV lamaran">
                 <IntipCv id={cv.id} />
                 <span className="tombol tombol-garis min-h-12"><IconFileCv size={18} />Lihat dan ubah CV</span>
               </Link>
@@ -153,7 +153,7 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
         {langkah === "selesai" && (
           <p className="flex items-start gap-2 rounded-2xl bg-daun-muda p-4 text-[17px] text-daun">
             <IconCircleCheck size={22} className="mt-0.5 shrink-0" />
-            {usaha} akan melihat CV {persona?.judul}. Kamu dapat kabar di sini begitu lamaranmu dilihat atau lolos.
+            {usaha} akan melihat lamaranmu sebagai {persona?.judul}{cv ? ", lengkap dengan CV lamaran" : ""}. Kamu dapat kabar di sini begitu lamaranmu dilihat atau lolos.
           </p>
         )}
       </Laci>

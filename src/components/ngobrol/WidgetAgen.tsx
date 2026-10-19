@@ -32,7 +32,7 @@ function FaktaUsulan({ usulan }: { usulan: FaktaApi[] }) {
   }
   return (
     <div className="grid gap-2">
-      <p className="text-[15px] text-abu">Benar begitu? Simpan yang tepat supaya masuk CV-mu.</p>
+      <p className="text-[15px] text-abu">Benar begitu? Yang kamu simpan jadi bahan CV-mu.</p>
       {usulan.map((f) => (
         <div key={f.id} className="rounded-2xl border border-garis bg-white p-3">
           <p className="font-bold">{f.judul}</p>
@@ -72,10 +72,10 @@ function ProfilInduk({ profil }: { profil: ProfilApi }) {
             ))}
           </ul>
         ) : (
-          <p className="mt-3 text-[15px] text-abu">Belum ada Fakta tersimpan. Ceritakan kerja yang pernah kamu lakukan.</p>
+          <p className="mt-3 text-[15px] text-abu">Belum ada bahan CV. Ceritakan kerja yang pernah kamu lakukan.</p>
         )}
-        {tersimpan.length > 4 && <p className="mt-1.5 text-sm text-abu">dan {tersimpan.length - 4} Fakta lain</p>}
-        {persona.length > 0 && <ul className="mt-3 flex flex-wrap gap-1.5">{persona.map((p) => <li key={p.id} className="rounded-full bg-kabut px-3 py-1 text-xs font-bold">CV {p.judul}</li>)}</ul>}
+        {tersimpan.length > 4 && <p className="mt-1.5 text-sm text-abu">dan {tersimpan.length - 4} bahan CV lain</p>}
+        {persona.length > 0 && <ul className="mt-3 flex flex-wrap gap-1.5">{persona.map((p) => <li key={p.id} className="rounded-full bg-kabut px-3 py-1 text-xs font-bold">{p.judul}</li>)}</ul>}
       </div>
       {usulan.length > 0 && <FaktaUsulan usulan={usulan} />}
       <Link href="/app/profil" className="tombol tombol-garis min-h-14">Buka profil</Link>
@@ -105,7 +105,7 @@ function LamaranSiap({ hasil }: { hasil: Hasil }) {
   return (
     <div className="grid gap-2">
       <BarisLowongan lowongan={keLowongan(lowongan)} />
-      <p className="text-[15px]">Dengan CV <strong>{persona.judul}</strong>{hasil.cv_khusus_id ? " dan CV Khusus" : ""}.</p>
+      <p className="text-[15px]">Sebagai <strong>{persona.judul}</strong>{hasil.cv_khusus_id ? ", dengan CV lamaran" : ""}.</p>
       {typeof hasil.peringatan === "string" && <p className="rounded-2xl bg-[#FFF6DB] p-3 text-sm text-[#8A5A00]">{hasil.peringatan}</p>}
       {status === "beres" ? (
         <Link href="/app/lamaran" className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 font-bold text-daun"><IconCircleCheck size={18} />Lamaran terkirim. Lihat statusnya</Link>
@@ -141,8 +141,8 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
       const p = hasil.persona as PersonaApi;
       return (
         <div className="rounded-2xl border border-garis bg-white p-3">
-          <p className="piksel text-[10px] uppercase text-jingga-tua">CV baru</p>
-          <p className="font-bold">CV {p.judul}</p>
+          <p className="piksel text-[10px] uppercase text-jingga-tua">Kerja baru tersimpan</p>
+          <p className="font-bold">{p.judul}</p>
           <p className="text-sm text-abu">{p.ringkasan}</p>
         </div>
       );
@@ -150,8 +150,8 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
     case "cv_khusus":
       return (
         <div className="grid gap-2">
-          <p className="text-[15px]">CV Khusus <strong>{(hasil.isi as { judul: string }).judul}</strong> sudah jadi dari {String(hasil.fakta_dipakai)} Fakta-mu.</p>
-          <Link href={`/app/cv/${String(hasil.id)}`} className="grid gap-2" aria-label="Lihat dan ubah CV Khusus">
+          <p className="text-[15px]">CV lamaran <strong>{(hasil.isi as { judul: string }).judul}</strong> sudah jadi dari {String(hasil.fakta_dipakai)} bahan CV-mu.</p>
+          <Link href={`/app/cv/${String(hasil.id)}`} className="grid gap-2" aria-label="Lihat dan ubah CV lamaran">
             <IntipCv id={String(hasil.id)} />
             <span className="tombol tombol-utama min-h-12"><IconFileCv size={18} />Lihat dan ubah CV</span>
           </Link>
@@ -197,10 +197,10 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
 export const JUDUL_WIDGET: Record<string, string> = {
   daftar_lowongan: "Lowongan yang cocok",
   detail_lowongan: "Lowongan",
-  konfirmasi_fakta: "Fakta baru untuk profilmu",
+  konfirmasi_fakta: "Bahan CV baru",
   profil_induk: "Profilmu",
-  persona: "CV",
-  cv_khusus: "CV Khusus",
+  persona: "Kerja yang kamu bisa",
+  cv_khusus: "CV lamaran",
   lamaran_siap: "Lamaran siap dikirim",
   daftar_lamaran: "Lamaranmu",
   draf_lowongan: "Draf lowongan",

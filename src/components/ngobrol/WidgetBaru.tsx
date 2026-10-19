@@ -97,7 +97,7 @@ export function PelamarWidget({ lamaran }: { lamaran: LamaranApi }) {
     <div className="grid gap-2">
       <div className="rounded-2xl border border-garis bg-white p-3">
         <p className="font-bold">{lamaran.pencari.nama}</p>
-        <p className="text-sm text-abu">CV {lamaran.persona.judul} · untuk {lamaran.lowongan.judul}</p>
+        <p className="text-sm text-abu">Sebagai {lamaran.persona.judul} · untuk {lamaran.lowongan.judul}</p>
         {lamaran.persona.ringkasan && <p className="mt-2 text-[15px]">{lamaran.persona.ringkasan}</p>}
         {lamaran.pesan && <p className="mt-2 rounded-xl bg-kabut p-2 text-[15px]">&ldquo;{lamaran.pesan}&rdquo;</p>}
         <p className="mt-2 text-sm text-abu">{lamaran.pencari.kontak_disembunyikan ? "Kontak terlihat setelah kamu meloloskannya." : [lamaran.pencari.telepon, lamaran.pencari.email].filter(Boolean).join(" · ")}</p>

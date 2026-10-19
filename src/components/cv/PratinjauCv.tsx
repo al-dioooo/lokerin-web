@@ -56,7 +56,7 @@ export function IntipCv({ id }: { id: string }) {
   );
 }
 
-export function PratinjauCv({ id, judul = "CV Khusus" }: { id: string; judul?: string }) {
+export function PratinjauCv({ id, judul = "CV lamaran" }: { id: string; judul?: string }) {
   const cv = useApi<CvApi>(`/cv/${id}`);
   const [buka, setBuka] = useState(false);
   const [penuh, setPenuh] = useState(false);

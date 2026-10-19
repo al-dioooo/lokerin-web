@@ -144,7 +144,7 @@ export function DaftarPelamar() {
           <div className="grid gap-4">
             <p className={`w-fit rounded-full px-3 py-1 text-sm font-bold ${LABEL_STATUS[l.status].kelas}`}>{LABEL_STATUS[l.status].teks}</p>
             <section className="rounded-2xl bg-kertas p-4">
-              <p className="piksel text-[11px] uppercase text-jingga-tua">CV {l.persona.judul}</p>
+              <p className="piksel text-[11px] uppercase text-jingga-tua">Melamar sebagai {l.persona.judul}</p>
               <p className="mt-1">{l.persona.ringkasan}</p>
               <ul className="mt-3 flex flex-wrap gap-1.5">{l.persona.keahlian.map((k) => <li key={k} className="chip-kategori py-1 pl-3 text-[13px]">{k}</li>)}</ul>
             </section>
@@ -156,9 +156,9 @@ export function DaftarPelamar() {
               <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 text-[15px] font-bold text-daun"><IconPhone size={18} />{l.pencari.telepon ?? l.pencari.email}</p>
             )}
             {l.cv_khusus_id && (
-              <section className="grid gap-2" aria-label="CV Khusus">
-                <h3 className="text-base">CV Khusus untuk lowonganmu</h3>
-                <PratinjauCv key={`${l.cv_khusus_id}-${l.status}`} id={l.cv_khusus_id} />
+              <section className="grid gap-2" aria-label="CV pelamar">
+                <h3 className="text-base">CV untuk lowonganmu</h3>
+                <PratinjauCv key={`${l.cv_khusus_id}-${l.status}`} id={l.cv_khusus_id} judul="CV pelamar" />
               </section>
             )}
             {l.tahap_berikutnya.length > 0 && (

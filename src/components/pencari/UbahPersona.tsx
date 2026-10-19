@@ -14,7 +14,7 @@ import type { PersonaApi } from "@/lib/api/tipe";
 
 export function UbahPersona({ persona, onTutup, onTersimpan }: { persona: PersonaApi | null; onTutup: () => void; onTersimpan: () => void }) {
   return (
-    <Laci buka={persona !== null} onTutup={onTutup} label="CV-mu" judul={persona ? `Ubah CV ${persona.judul}` : ""}>
+    <Laci buka={persona !== null} onTutup={onTutup} label="Kerja yang kamu bisa" judul={persona ? `Ubah ${persona.judul}` : ""}>
       {persona && <Isian key={persona.id} persona={persona} onTersimpan={onTersimpan} />}
     </Laci>
   );
@@ -60,7 +60,7 @@ function Isian({ persona, onTersimpan }: { persona: PersonaApi; onTersimpan: () 
   return (
     <div className="grid gap-5">
       <label className="grid gap-1.5 text-[15px] font-semibold text-abu">
-        Nama CV
+        Nama kerja
         <input value={judul} onChange={(e) => setJudul(e.target.value)} className="input-mulai min-h-14 text-lg text-tinta" maxLength={80} />
       </label>
       <label className="grid gap-1.5 text-[15px] font-semibold text-abu">

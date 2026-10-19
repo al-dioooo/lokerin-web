@@ -114,7 +114,7 @@ function FormEntri({ entri, onSimpan, onHapus }: { entri: EntriCv; onSimpan: (e:
       <button type="submit" className="tombol tombol-utama min-h-14 text-lg">Simpan</button>
       <button type="button" className="tombol tombol-halus min-h-12 text-merah" onClick={() => setTanyaHapus(true)}><IconTrash size={18} />Hapus dari CV</button>
       <Dialog buka={tanyaHapus} onTutup={() => setTanyaHapus(false)} bahaya judul="Hapus dari CV ini?" labelYa="Ya, hapus" onYa={() => { setTanyaHapus(false); onHapus(); }}>
-        Hanya hilang dari CV Khusus ini. Fakta di profilmu tetap ada.
+        Hanya hilang dari CV ini. Bahan CV-mu tetap ada.
       </Dialog>
     </form>
   );
@@ -229,7 +229,7 @@ export function EditorCv({ id: cvId }: { id: string }) {
               key={e.id}
               judul={e.judul || "Tanpa judul"}
               onClick={() => setSunting({ jenis: "entri", bagianId: b.id, entri: e, baru: false })}
-              lencana={e.fakta_ids.length && !e.diedit_pengguna ? "Dari Fakta-mu" : undefined}
+              lencana={e.fakta_ids.length && !e.diedit_pengguna ? "Dari bahan CV-mu" : undefined}
             >
               {[e.tempat, e.periode].filter(Boolean).join(" · ")}
               {e.poin.length > 0 && <span className="block">{e.poin.length} poin</span>}
@@ -259,9 +259,9 @@ export function EditorCv({ id: cvId }: { id: string }) {
     <div className="mx-auto grid max-w-6xl gap-4 pb-44">
       <button type="button" onClick={() => (history.length > 1 ? router.back() : router.push("/app/lamaran"))} className="inline-flex min-h-11 w-fit items-center gap-1.5 text-[15px] font-semibold text-abu"><IconArrowLeft size={18} />Kembali</button>
       <div>
-        <p className="piksel text-[11px] uppercase text-jingga-tua">CV Khusus</p>
+        <p className="piksel text-[11px] uppercase text-jingga-tua">CV lamaran</p>
         <h1 className="text-[1.75rem] leading-tight">CV {isi.judul || isi.nama}</h1>
-        <p className="mt-1 text-[15px] text-abu">Disusun dari Fakta-mu. Perekrut melihat CV persis seperti ini.</p>
+        <p className="mt-1 text-[15px] text-abu">Disusun dari bahan CV-mu untuk satu lowongan. Pemberi kerja melihat CV persis seperti ini.</p>
       </div>
 
       <div className="grid grid-cols-2 rounded-full border border-garis bg-white p-1 lg:hidden" role="tablist" aria-label="Tampilan CV">
@@ -293,7 +293,7 @@ export function EditorCv({ id: cvId }: { id: string }) {
         </div>
       </div>
 
-      <Laci buka={sunting !== null} onTutup={() => setSunting(null)} label="CV Khusus" judul={judulSunting}>
+      <Laci buka={sunting !== null} onTutup={() => setSunting(null)} label="CV lamaran" judul={judulSunting}>
         {sunting?.jenis === "diri" && <FormDiri isi={isi} onSimpan={(x) => void simpan(x)} />}
         {sunting?.jenis === "ringkasan" && <FormRingkasan isi={isi} onSimpan={(x) => void simpan(x)} />}
         {sunting?.jenis === "entri" && (
@@ -304,12 +304,12 @@ export function EditorCv({ id: cvId }: { id: string }) {
         )}
       </Laci>
 
-      <Laci buka={calon.length > 0 && sunting === null} onTutup={() => setCalon([])} label="Kamu menambah hal baru" judul="Simpan juga sebagai Fakta?" keterangan="Fakta yang tersimpan bisa dipakai untuk CV dan lamaran berikutnya.">
+      <Laci buka={calon.length > 0 && sunting === null} onTutup={() => setCalon([])} label="Kamu menambah hal baru" judul="Simpan juga jadi bahan CV?" keterangan="Bahan CV yang tersimpan bisa dipakai lagi untuk lamaran berikutnya.">
         <ul className="grid gap-2.5">
           {calon.map((c) => (
             <li key={c.item_id} className="rounded-2xl border border-garis p-3">
               <p className="text-[17px]">{c.text.replace(/\*\*/g, "")}</p>
-              <button type="button" className="tombol tombol-utama mt-2 w-full" onClick={() => void jadikanFakta(c)}><IconCheck size={18} />Simpan sebagai Fakta</button>
+              <button type="button" className="tombol tombol-utama mt-2 w-full" onClick={() => void jadikanFakta(c)}><IconCheck size={18} />Simpan jadi bahan CV</button>
             </li>
           ))}
         </ul>

@@ -38,7 +38,7 @@ export function KartuPersona() {
     return (
       <div className="grid max-w-md gap-4">
         <h1 className="text-[1.75rem] leading-tight" data-ringkas="Kartu Kerja">Kartu Kerja <span className="text-jingga">untuk status WhatsApp.</span></h1>
-        <p className="text-[15px] text-abu">Kartu dibuat dari Persona-mu. Ceritakan dulu kerja yang pernah kamu lakukan, nanti kartunya jadi sendiri.</p>
+        <p className="text-[15px] text-abu">Kartu dibuat dari kerja yang kamu bisa. Ceritakan dulu kerja yang pernah kamu lakukan, nanti kartunya jadi sendiri.</p>
         <TautanNgobrol className="tombol tombol-utama min-h-14 text-lg"><IconMicrophone size={20} />Ceritakan di Ngobrol</TautanNgobrol>
       </div>
     );
@@ -48,8 +48,8 @@ export function KartuPersona() {
     <div className="grid items-start gap-6 lg:grid-cols-[1fr_340px]">
       <div>
         <h1 className="text-[1.75rem] leading-tight" data-ringkas="Kartu Kerja">Kartu Kerja <span className="text-jingga">untuk status WhatsApp.</span></h1>
-        <p className="mt-1 max-w-md text-sm text-abu">Satu kartu untuk satu Persona. Orang yang membuka tautannya melihat ringkasan kerjamu tanpa nomor HP.</p>
-        {kartu.length > 1 && <TabPil className="mt-5 w-fit" label="Pilih Persona" nilai={k.id} onUbah={setPilih} pilihan={kartu.map((x) => ({ id: x.id, label: x.judul }))} />}
+        <p className="mt-1 max-w-md text-sm text-abu">Satu kartu untuk tiap kerja yang kamu bisa. Orang yang membuka tautannya melihat ringkasan kerjamu tanpa nomor HP.</p>
+        {kartu.length > 1 && <TabPil className="mt-5 w-fit" label="Pilih kerja" nilai={k.id} onUbah={setPilih} pilihan={kartu.map((x) => ({ id: x.id, label: x.judul }))} />}
         <div className="mt-5 flex flex-wrap gap-2 print:hidden">
           <a href={`https://wa.me/?text=${pesan}`} target="_blank" rel="noopener noreferrer" className="tombol tombol-utama"><IconBrandWhatsapp size={18} />Bagikan ke WhatsApp</a>
           <button type="button" className="tombol tombol-garis" onClick={() => window.print()}><IconPrinter size={18} />Cetak atau simpan PDF</button>

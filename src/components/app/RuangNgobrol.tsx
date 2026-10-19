@@ -47,7 +47,7 @@ export function RuangNgobrol() {
   const [cvTerbuka, setCvTerbuka] = useState(false);
 
   useLayoutEffect(() => {
-    ngobrolSiap();
+    ngobrolSiap(layar.current);
   }, []);
 
   useEffect(() => {

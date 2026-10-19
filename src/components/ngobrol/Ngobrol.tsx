@@ -84,7 +84,7 @@ export function Ngobrol() {
   const kendali = useRef<AbortController | null>(null);
 
   useLayoutEffect(() => {
-    ngobrolSiap();
+    ngobrolSiap(layar.current);
   }, []);
 
   // Load the conversation whenever the person or the conversation changes.

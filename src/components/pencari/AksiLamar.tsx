@@ -10,6 +10,7 @@ import { useState } from "react";
 import { IconCheck, IconCircleCheck, IconFileCv, IconInfoCircle } from "../icons/tabler";
 import { LaporkanLowongan } from "../app/LaporkanLowongan";
 import { Laci } from "../lapis/Laci";
+import { TawaranKabar } from "../app/TawaranKabar";
 import { Bacakan } from "../ui/Bacakan";
 import { api, GalatApi, urlBertoken } from "@/lib/api/klien";
 import { useApi } from "@/lib/api/hooks";
@@ -155,6 +156,7 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
           </p>
         )}
       </Laci>
+      <TawaranKabar picu={langkah === "selesai"} alasan="Kami kabari begitu usaha membuka atau membalas lamaranmu, walau Lokerin sedang tertutup." />
     </>
   );
 }

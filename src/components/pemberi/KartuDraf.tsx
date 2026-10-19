@@ -4,6 +4,7 @@ import { useState } from "react";
 import { getKategori } from "../icons/categories";
 import { IconAlertTriangle, IconCircleCheck, IconInfoCircle } from "../icons/tabler";
 import { Dialog } from "../lapis/Dialog";
+import { TawaranKabar } from "../app/TawaranKabar";
 import { kategoriDari } from "@/lib/api/adaptor";
 import { api, GalatApi } from "@/lib/api/klien";
 import type { LowonganApi } from "@/lib/api/tipe";
@@ -20,6 +21,7 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
   const [tanyaTutup, setTanyaTutup] = useState(false);
   const [galat, setGalat] = useState("");
   const [l, setL] = useState(lowongan);
+  const [baruTerbit, setBaruTerbit] = useState(false);
   const { Icon } = getKategori(kategoriDari(l));
   const masalah = l.pemeriksaan?.masalah ?? [];
   const tahan = masalah.filter((m) => m.tingkat === "tahan");
@@ -33,6 +35,7 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
     try {
       const hasil = await api<LowonganApi>(`/pemberi/lowongan/${l.id}/terbit`, { method: "POST" });
       setL(hasil);
+      setBaruTerbit(true);
       onBerubah?.(hasil);
     } catch (e) {
       setGalat(e instanceof GalatApi ? e.message : "Belum bisa terbit. Coba lagi.");
@@ -107,6 +110,7 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
       <Dialog buka={tanyaTutup} onTutup={() => setTanyaTutup(false)} bahaya judul="Tutup lowongan ini?" labelYa="Ya, sudah terisi" onYa={tutup}>
         Lowongan ditandai sudah terisi dan langsung hilang dari beranda dan peta pencari kerja. Pelamar yang sudah masuk tetap ada di daftar pelamarmu. Lowongan yang ditutup tidak bisa dibuka lagi.
       </Dialog>
+      <TawaranKabar picu={baruTerbit} alasan="Kami kabari begitu ada pelamar yang masuk, walau Lokerin sedang tertutup." />
     </article>
   );
 }

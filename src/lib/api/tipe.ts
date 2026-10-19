@@ -101,14 +101,30 @@ export type LamaranApi = {
   tahap_berikutnya: TahapApi[];
 };
 
-export type ItemCv = { id: string; text: string; fakta_ids: string[]; diedit_pengguna?: boolean };
+/** CV Khusus versi 2 (ADR 0009): bagian berisi Entri dengan judul, tempat, periode, dan poin. */
+export type PoinCv = { id: string; text: string; fakta_ids: string[]; diedit_pengguna?: boolean };
+export type EntriCv = {
+  id: string;
+  judul: string;
+  tempat?: string;
+  keterangan?: string;
+  periode?: string;
+  lokasi?: string;
+  poin: PoinCv[];
+  fakta_ids: string[];
+  diedit_pengguna?: boolean;
+};
+export type JenisBagianCv = "pengalaman" | "pendidikan" | "proyek" | "prestasi" | "lainnya";
+export type BagianCv = { id: string; judul: string; jenis: JenisBagianCv; entri: EntriCv[] };
+export type KelompokKeahlian = { id: string; label: string; isi: string[] };
 export type IsiCv = {
+  versi: 2;
   nama: string;
   judul: string;
-  kontak: { telepon?: string; email?: string; kota?: string };
+  kontak: { telepon?: string; email?: string; kota?: string; tautan?: string[] };
   ringkasan: string;
-  keahlian: string[];
-  bagian: { id: string; judul: string; items: ItemCv[] }[];
+  keahlian: KelompokKeahlian[];
+  bagian: BagianCv[];
 };
 
 export type CvApi = {

@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 // Isometric projection: world x runs to the lower right, y to the lower left,
 // z straight up. One world unit is roughly one metre.
 export const SKALA = 12;
@@ -166,8 +164,4 @@ export function Motor({ x, y, warna = "#FFFFFF" }: { x: number; y: number; warna
       <path d="M-5 -10h7l1 2h-9Z" fill={warna} />
     </g>
   );
-}
-
-export function Grup({ children }: { children: ReactNode }) {
-  return <g>{children}</g>;
 }

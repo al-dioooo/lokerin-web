@@ -86,7 +86,7 @@ export default function Home() {
         </section>
       </main>
       <footer className="border-t border-garis">
-        <div className="shell flex flex-wrap items-center justify-between gap-4 py-8 text-sm text-abu"><Logo size={22} /><span>Banyumas, Jawa Tengah · Lokerin © 2026</span><Link href="/desain" className="font-semibold text-tinta underline underline-offset-4">Sistem desain</Link></div>
+        <div className="shell flex flex-wrap items-center justify-between gap-4 py-8 text-sm text-abu"><Logo size={22} /><span>Banyumas, Jawa Tengah · Lokerin © 2026</span><span className="flex flex-wrap gap-4"><Link href="/privasi" className="font-semibold text-tinta underline underline-offset-4">Privasi</Link><Link href="/ketentuan" className="font-semibold text-tinta underline underline-offset-4">Ketentuan</Link><Link href="/desain" className="font-semibold text-tinta underline underline-offset-4">Sistem desain</Link></span></div>
       </footer>
     </Gerak>
     </GulirHalus>

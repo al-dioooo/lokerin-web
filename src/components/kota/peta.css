@@ -1,35 +1,92 @@
-/* Peta Kerja Sekitar on Mapbox (ADR 0009): a map card with chips on top and a card strip at the bottom. */
-.peta-kartu-wadah {
-  display: flex; flex-direction: column; overflow: hidden; border-radius: 26px; border: 1px solid var(--color-garis); background: white;
-  height: max(500px, calc(100dvh - 250px));
+/*
+ * Peta Kerja Sekitar on Mapbox (ADR 0009). On a phone the map fills the screen under the header
+ * and the jobs live in a sheet that you drag between three heights; on a wide screen the list is
+ * a side panel. Anything that floats over the map (Lokasiku, the Mapbox logo and attribution)
+ * rides on top of the sheet through --lembar, so it is never covered.
+ */
+.peta-layar {
+  --atas: 60px;
+  --nav: 96px;
+  --lembar: 0px;
+  position: fixed; inset: 0; z-index: 10; overflow: hidden; background: #EEF0EC;
+  animation: pudar .35s ease-out both;
 }
-/* The map keeps its own area so the Mapbox logo and attribution are never covered. */
-.peta-gl-wadah { position: relative; flex: 1; min-height: 0; background: #EEF0EC; }
+.peta-gl-wadah { position: absolute; inset: 0; }
 .peta-gl { position: absolute; inset: 0; }
 .peta-memuat { position: absolute; inset: 0; display: grid; place-items: center; color: var(--color-abu); font-weight: 600; }
-.peta-atas { position: absolute; inset: 12px 12px auto; display: flex; gap: 8px; align-items: flex-start; pointer-events: none; }
-.peta-chip-baris { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; pointer-events: auto; padding-bottom: 2px; }
+
+.peta-atas { position: absolute; inset: calc(var(--atas) + 10px) 0 auto; display: grid; justify-items: center; gap: 10px; pointer-events: none; }
+.peta-chip-baris {
+  width: 100%; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; pointer-events: auto;
+  padding: 2px 12px 6px; scroll-padding-inline: 12px;
+}
+.peta-chip-baris::-webkit-scrollbar { display: none; }
 .peta-chip {
-  flex: none; min-height: 44px; padding: 0 16px; border-radius: 999px; background: rgb(255 255 255 / .95); border: 1px solid var(--color-garis);
-  font-size: 15px; font-weight: 700; color: var(--color-tinta); box-shadow: 0 4px 12px rgb(21 18 16 / .08);
+  flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 999px;
+  background: rgb(255 255 255 / .96); border: 1px solid var(--color-garis); font-size: 15px; font-weight: 700; color: var(--color-tinta);
+  box-shadow: 0 4px 12px rgb(21 18 16 / .1); transition: background-color .2s, color .2s, border-color .2s;
 }
 .peta-chip[aria-pressed="true"] { background: var(--color-tinta); border-color: var(--color-tinta); color: white; }
-.peta-lokasiku {
-  pointer-events: auto; flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px;
-  background: white; border: 1px solid var(--color-garis); color: #2563EB; box-shadow: 0 4px 12px rgb(21 18 16 / .1);
+.peta-chip-pemisah { flex: none; align-self: center; width: 1px; height: 24px; background: rgb(21 18 16 / .14); }
+.peta-cari-sini {
+  pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px;
+  background: var(--color-tinta); color: white; font-size: 15px; font-weight: 700; box-shadow: 0 8px 20px rgb(21 18 16 / .25);
 }
 .peta-pesan {
-  position: absolute; left: 50%; top: 66px; translate: -50% 0; max-width: calc(100% - 24px); padding: 8px 14px; border-radius: 999px;
-  background: var(--color-tinta); color: white; font-size: 14px; font-weight: 600; text-align: center;
+  pointer-events: auto; max-width: calc(100% - 24px); padding: 8px 14px; border-radius: 999px;
+  background: white; color: var(--color-tinta); font-size: 14px; font-weight: 600; text-align: center; box-shadow: 0 4px 12px rgb(21 18 16 / .12);
 }
-.peta-bawah { flex: none; padding: 12px 0; border-top: 1px solid var(--color-garis); }
-.peta-strip {
-  display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-  padding: 0 12px; scroll-padding: 0 12px;
+.peta-lokasiku {
+  position: absolute; right: 12px; bottom: calc(var(--lembar) + 40px); z-index: 2;
+  display: grid; place-items: center; width: 48px; height: 48px; border-radius: 999px;
+  background: white; border: 1px solid var(--color-garis); color: #2563EB; box-shadow: 0 4px 14px rgb(21 18 16 / .14);
+  transition: opacity .2s;
 }
-.peta-strip > li { flex: none; width: min(86%, 360px); scroll-snap-align: center; }
-.peta-strip > li .baris-lowongan { height: 100%; transition: border-color .2s, box-shadow .2s; }
-.peta-strip > li[data-terpilih] .baris-lowongan { border-color: var(--color-jingga); box-shadow: 0 0 0 2px var(--color-jingga); }
-.peta-kosong { margin: 0 12px; padding: 14px 16px; border-radius: 18px; background: white; border: 1px solid var(--color-garis); font-size: 15px; color: var(--color-abu); }
-.peta-kartu-wadah .mapboxgl-ctrl-attrib { font-size: 10px; }
-@media (min-width: 1024px) { .peta-kartu-wadah { height: calc(100dvh - 220px); } }
+.peta-lokasiku[aria-pressed="true"] { background: #2563EB; border-color: #2563EB; color: white; }
+.peta-layar .mapboxgl-ctrl-bottom-left, .peta-layar .mapboxgl-ctrl-bottom-right { bottom: var(--lembar); }
+.peta-layar .mapboxgl-ctrl-attrib { font-size: 10px; }
+.peta-layar[data-snap="penuh"] .peta-lokasiku { opacity: 0; pointer-events: none; }
+
+/* The sheet. Its height is set by the drag (a Motion value); the list inside scrolls on its own. */
+.peta-lembar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; flex-direction: column;
+  border-radius: 24px 24px 0 0; background: var(--color-kertas); box-shadow: 0 -10px 30px rgb(21 18 16 / .14), 0 -1px 0 rgb(21 18 16 / .06);
+  will-change: height;
+}
+.peta-lembar-kepala { flex: none; padding: 8px 16px 10px; touch-action: none; cursor: grab; user-select: none; }
+.peta-lembar-kepala:active { cursor: grabbing; }
+.peta-pegangan { display: block; width: 40px; height: 5px; margin: 0 auto 10px; border-radius: 999px; background: var(--color-garis); }
+.peta-lembar-isi { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px calc(var(--nav) + env(safe-area-inset-bottom)); }
+.peta-layar:not([data-snap="penuh"]) .peta-lembar-isi { scrollbar-width: none; }
+.peta-lembar-isi li[data-sorot] .baris-lowongan { border-color: var(--color-jingga); }
+
+.peta-pilihan { padding: 4px 0 0; animation: naik .35s cubic-bezier(.2, .8, .2, 1) both; }
+.peta-tutup { display: grid; place-items: center; width: 40px; height: 40px; flex: none; border-radius: 999px; background: var(--color-kabut); color: var(--color-tinta); }
+.peta-angka { display: grid; gap: 2px; padding: 10px 12px; border-radius: 14px; background: white; border: 1px solid var(--color-garis); }
+.peta-angka dt { font-size: 12px; color: var(--color-abu); }
+.peta-angka dd { font-weight: 800; }
+
+.peta-kerangka { position: fixed; inset: 0; z-index: 10; background: #EEF0EC; }
+.peta-kerangka::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; border-radius: 24px 24px 0 0; background: var(--color-kertas);
+  box-shadow: 0 -10px 30px rgb(21 18 16 / .1);
+}
+
+@media (min-width: 1024px) {
+  /* Wide screens: list on the left, map on the right, nothing on top of the map but its controls. */
+  .peta-layar { top: var(--atas); --lembar: 0px; display: grid; grid-template-columns: 400px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+  .peta-gl-wadah { position: relative; inset: auto; grid-column: 2; }
+  .peta-atas { inset: 12px 0 auto; }
+  .peta-lembar { position: relative; grid-column: 1; grid-row: 1; min-height: 0; height: auto !important; border-radius: 0; box-shadow: 1px 0 0 var(--color-garis); }
+  .peta-lembar-kepala { padding-top: 20px; cursor: auto; touch-action: auto; }
+  .peta-pegangan { display: none; }
+  .peta-lokasiku { bottom: 40px; }
+  .peta-layar .mapboxgl-ctrl-bottom-right { bottom: 0; }
+  /* The pill nav floats over the bottom middle of the screen; the Mapbox logo sits just above it. */
+  .peta-layar .mapboxgl-ctrl-bottom-left { bottom: 84px; }
+  .peta-kerangka { top: var(--atas); }
+  .peta-kerangka::after { inset: 0 auto 0 0; width: 400px; height: auto; border-radius: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .peta-layar, .peta-pilihan { animation: none; }
+}

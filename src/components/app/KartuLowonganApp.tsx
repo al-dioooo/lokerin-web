@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import { getKategori } from "../icons/categories";
 import { IconChevronRight, IconMapPin, IconShieldCheck, IconSparkles } from "../icons/tabler";
 import { CekUpah } from "../ui/CekUpah";
@@ -6,11 +7,11 @@ import { TautanArah } from "./TautanArah";
 import { SisaWaktu } from "./SisaWaktu";
 
 /** Compact job row for lists. `alasan` is the short "why it fits" line from matching, shown inside the card. */
-export function BarisLowongan({ lowongan: l, persona, skor: skorServer, baru, alasan }: { lowongan: Lowongan; persona?: PersonaId; skor?: number; baru?: boolean; alasan?: string }) {
+export function BarisLowongan({ lowongan: l, persona, skor: skorServer, baru, alasan, onClick }: { lowongan: Lowongan; persona?: PersonaId; skor?: number; baru?: boolean; alasan?: string; onClick?: (e: MouseEvent<HTMLAnchorElement>) => void }) {
   const { Icon } = getKategori(l.kategori);
   const skor = skorServer ?? (persona ? l.cocok?.[persona] : undefined);
   return (
-    <TautanArah arah="maju" href={`/app/lowongan/${l.id}`} className="baris-lowongan" data-baru={baru || undefined}>
+    <TautanArah arah="maju" href={`/app/lowongan/${l.id}`} className="baris-lowongan" data-baru={baru || undefined} onClick={onClick}>
       <span className="ubin-ikon"><Icon size={32} /></span>
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-x-2 gap-y-1">

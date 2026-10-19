@@ -5,7 +5,6 @@
  * (ADR 0004): those happen here, when the person taps the button on the card.
  */
 
-import Link from "next/link";
 import { useState } from "react";
 import { IconCheck, IconCircleCheck, IconFileCv, IconX } from "../icons/tabler";
 import { BarisLowongan } from "../app/KartuLowonganApp";
@@ -15,6 +14,7 @@ import { api, GalatApi } from "@/lib/api/klien";
 import type { DaftarKabarApi, FaktaApi, KartuKerjaApi, LamaranApi, LowonganApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
 import { IntipCv } from "../cv/PratinjauCv";
 import { DaftarKabarWidget, KartuKerjaWidget, LaporanSiap, PelamarWidget, TahapSiap } from "./WidgetBaru";
+import { TautanLaci, useKlikLaci } from "../lapis/konteksLaci";
 
 type Hasil = { widget?: string } & Record<string, unknown>;
 
@@ -78,7 +78,7 @@ function ProfilInduk({ profil }: { profil: ProfilApi }) {
         {persona.length > 0 && <ul className="mt-3 flex flex-wrap gap-1.5">{persona.map((p) => <li key={p.id} className="rounded-full bg-kabut px-3 py-1 text-xs font-bold">{p.judul}</li>)}</ul>}
       </div>
       {usulan.length > 0 && <FaktaUsulan usulan={usulan} />}
-      <Link href="/app/profil" className="tombol tombol-garis min-h-14">Buka profil</Link>
+      <TautanLaci isi={{ jenis: "profil" }} href="/app/profil" className="tombol tombol-garis min-h-14">Buka profil</TautanLaci>
     </div>
   );
 }
@@ -88,6 +88,7 @@ function LamaranSiap({ hasil }: { hasil: Hasil }) {
   const persona = hasil.persona as { id: string; judul: string };
   const [status, setStatus] = useState<"siap" | "kirim" | "beres">(hasil.sudah_melamar ? "beres" : "siap");
   const [galat, setGalat] = useState("");
+  const klik = useKlikLaci();
   async function kirim() {
     setStatus("kirim");
     setGalat("");
@@ -104,11 +105,11 @@ function LamaranSiap({ hasil }: { hasil: Hasil }) {
   }
   return (
     <div className="grid gap-2">
-      <BarisLowongan lowongan={keLowongan(lowongan)} />
+      <BarisLowongan lowongan={keLowongan(lowongan)} onClick={klik({ jenis: "lowongan", id: lowongan.id })} />
       <p className="text-[15px]">Sebagai <strong>{persona.judul}</strong>{hasil.cv_khusus_id ? ", dengan CV lamaran" : ""}.</p>
       {typeof hasil.peringatan === "string" && <p className="rounded-2xl bg-[#FFF6DB] p-3 text-sm text-[#8A5A00]">{hasil.peringatan}</p>}
       {status === "beres" ? (
-        <Link href="/app/lamaran" className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 font-bold text-daun"><IconCircleCheck size={18} />Lamaran terkirim. Lihat statusnya</Link>
+        <TautanLaci isi={{ jenis: "lamaran" }} href="/app/lamaran" className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 font-bold text-daun"><IconCircleCheck size={18} />Lamaran terkirim. Lihat statusnya</TautanLaci>
       ) : (
         <button type="button" className="tombol tombol-utama min-h-14 text-lg" disabled={status === "kirim"} onClick={() => void kirim()}>{status === "kirim" ? "Mengirim..." : "Kirim Lamaran"}</button>
       )}
@@ -118,6 +119,11 @@ function LamaranSiap({ hasil }: { hasil: Hasil }) {
 }
 
 export function WidgetAgen({ hasil }: { hasil: Hasil }) {
+  return <Isi hasil={hasil} />;
+}
+
+function Isi({ hasil }: { hasil: Hasil }) {
+  const klik = useKlikLaci();
   switch (hasil.widget) {
     case "daftar_lowongan": {
       const daftar = (hasil.hasil as LowonganApi[]) ?? [];
@@ -126,13 +132,15 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
       return (
         <ul className="grid gap-2">
           {daftar.slice(0, 4).map((l) => (
-            <li key={l.id}><BarisLowongan lowongan={keLowongan(l)} skor={l.kemiripan ?? undefined} /></li>
+            <li key={l.id}><BarisLowongan lowongan={keLowongan(l)} skor={l.kemiripan ?? undefined} onClick={klik({ jenis: "lowongan", id: l.id })} /></li>
           ))}
         </ul>
       );
     }
-    case "detail_lowongan":
-      return <BarisLowongan lowongan={keLowongan(hasil.lowongan as LowonganApi)} />;
+    case "detail_lowongan": {
+      const l = hasil.lowongan as LowonganApi;
+      return <BarisLowongan lowongan={keLowongan(l)} onClick={klik({ jenis: "lowongan", id: l.id })} />;
+    }
     case "konfirmasi_fakta":
       return <FaktaUsulan usulan={(hasil.usulan as FaktaApi[]) ?? []} />;
     case "profil_induk":
@@ -151,10 +159,10 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
       return (
         <div className="grid gap-2">
           <p className="text-[15px]">CV lamaran <strong>{(hasil.isi as { judul: string }).judul}</strong> sudah jadi dari {String(hasil.fakta_dipakai)} bahan CV-mu.</p>
-          <Link href={`/app/cv/${String(hasil.id)}`} className="grid gap-2" aria-label="Lihat dan ubah CV lamaran">
+          <TautanLaci isi={{ jenis: "cv", id: String(hasil.id) }} href={`/app/cv/${String(hasil.id)}`} className="grid gap-2" label="Lihat dan ubah CV lamaran">
             <IntipCv id={String(hasil.id)} />
             <span className="tombol tombol-utama min-h-12"><IconFileCv size={18} />Lihat dan ubah CV</span>
-          </Link>
+          </TautanLaci>
         </div>
       );
     case "lamaran_siap":
@@ -162,20 +170,20 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
     case "daftar_lamaran": {
       const daftar = (hasil.lamaran as LamaranApi[]) ?? [];
       return (
-        <Link href="/app/lamaran" className="block rounded-2xl border border-garis bg-white p-3 text-[15px]">
+        <TautanLaci isi={{ jenis: "lamaran" }} href="/app/lamaran" className="block rounded-2xl border border-garis bg-white p-3 text-[15px]">
           {daftar.length ? `${daftar.length} lamaran · ${daftar.filter((l) => l.status === "lolos").length} lolos` : "Belum ada lamaran."} <span className="font-bold text-jingga-tua">Lihat</span>
-        </Link>
+        </TautanLaci>
       );
     }
     case "draf_lowongan":
       return <KartuDraf lowongan={hasil.lowongan as LowonganApi} />;
     case "lowongan_saya": {
       const daftar = (hasil.lowongan as LowonganApi[]) ?? [];
-      return <Link href="/app" className="block rounded-2xl border border-garis bg-white p-3 text-[15px]">{daftar.length} lowongan · {daftar.reduce((n, l) => n + (l.jumlah_lamaran ?? 0), 0)} pelamar <span className="font-bold text-jingga-tua">Lihat</span></Link>;
+      return <TautanLaci isi={{ jenis: "lowongan_saya" }} href="/app" className="block rounded-2xl border border-garis bg-white p-3 text-[15px]">{daftar.length} lowongan · {daftar.reduce((n, l) => n + (l.jumlah_lamaran ?? 0), 0)} pelamar <span className="font-bold text-jingga-tua">Lihat</span></TautanLaci>;
     }
     case "lamaran_masuk": {
       const daftar = (hasil.lamaran as LamaranApi[]) ?? [];
-      return <Link href="/app/pelamar" className="block rounded-2xl border border-garis bg-white p-3 text-[15px]">{daftar.length} pelamar masuk <span className="font-bold text-jingga-tua">Buka daftar pelamar</span></Link>;
+      return <TautanLaci isi={{ jenis: "pelamar" }} href="/app/pelamar" className="block rounded-2xl border border-garis bg-white p-3 text-[15px]">{daftar.length} pelamar masuk <span className="font-bold text-jingga-tua">Buka daftar pelamar</span></TautanLaci>;
     }
     case "kartu_kerja":
       return <KartuKerjaWidget kartu={hasil.kartu as KartuKerjaApi} />;

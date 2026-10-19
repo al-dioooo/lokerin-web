@@ -32,7 +32,8 @@ const JENIS_TAHAP: { id: TahapApi["jenis"]; label: string; contoh: string }[] = 
   { id: "meet", label: "Wawancara online", contoh: "Tautan Google Meet dan jamnya" },
 ];
 
-export function DaftarPelamar() {
+/** `diLaci`: shown in a drawer from Ngobrol (the drawer has the title); `awalId` opens one right away. */
+export function DaftarPelamar({ diLaci = false, awalId }: { diLaci?: boolean; awalId?: string } = {}) {
   const daftar = useApi<{ lamaran: LamaranApi[] }>("/pemberi/lamaran");
   const [dipilih, setDipilih] = useState<LamaranApi | null>(null);
   const [tahapan, setTahapan] = useState<"lihat" | "jenis" | "detail" | "selesai">("lihat");
@@ -61,7 +62,7 @@ export function DaftarPelamar() {
     }
   }
 
-  useBukaDariTautan(daftar.data?.lamaran, (l) => void buka(l));
+  useBukaDariTautan(daftar.data?.lamaran, (l) => void buka(l), awalId);
 
   async function loloskan() {
     if (!dipilih || !jenis) return;
@@ -114,7 +115,7 @@ export function DaftarPelamar() {
 
   return (
     <div className="grid grid-cols-1 gap-5">
-      <h1 className="text-[1.9rem] leading-tight">Pelamar</h1>
+      {!diLaci && <h1 className="text-[1.9rem] leading-tight">Pelamar</h1>}
       {daftar.memuat && <p className="text-abu">Memuat...</p>}
       {!daftar.memuat && !lamaran.length && <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-[15px] text-abu">Belum ada pelamar. Lamaran baru muncul di sini tanpa perlu dimuat ulang.</p>}
       <ul className="grid grid-cols-1 gap-2">

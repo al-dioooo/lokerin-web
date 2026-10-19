@@ -140,7 +140,7 @@
     font-size: 15px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .2s, translate .3s cubic-bezier(.2, .8, .2, 1);
   }
   .app-atas-judul[data-tampil] { opacity: 1; translate: -50% -50%; }
-  /* Beranda's search bar docked in the header: the logo folds away to give it the room. */
+  /* The Beranda search bar docked in the header: the logo folds away to give it the room. */
   .app-atas-kiri { max-width: 240px; transition: max-width .35s cubic-bezier(.2, .8, .2, 1), opacity .2s; }
   .app-atas[data-dok] .app-atas-kiri { max-width: 0; opacity: 0; overflow: hidden; pointer-events: none; }
   .app-atas[data-dok] { gap: 10px; }
@@ -171,6 +171,8 @@
   .fakta { display: grid; gap: 4px; justify-items: start; padding: 12px; border-radius: 14px; background: white; border: 1px solid var(--color-garis); }
   .fakta dt { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-abu); }
   .fakta dd { font-weight: 700; }
+  /* The same actions inside a drawer: pinned to the bottom of the drawer scroll, not above the nav. */
+  .aksi-laci { position: sticky; bottom: 0; z-index: 5; display: flex; gap: 8px; margin-inline: -4px; padding: 12px 4px calc(4px + env(safe-area-inset-bottom)); background: linear-gradient(to bottom, rgb(255 255 255 / 0), white 30%); }
   .aksi-lengket { position: sticky; bottom: 104px; z-index: 5; display: flex; gap: 8px; padding: 8px; border-radius: 999px; background: rgb(255 255 255 / .9); backdrop-filter: blur(10px); border: 1px solid var(--color-garis); box-shadow: 0 16px 40px -12px rgb(21 18 16 / .16); }
   .pilih-cv { display: grid; gap: 2px; text-align: left; padding: 12px; border-radius: 14px; border: 1px solid var(--color-garis); background: white; }
   .pilih-cv[aria-checked="true"] { border-color: var(--color-jingga); background: var(--color-jingga-muda); box-shadow: 0 0 0 3px rgb(242 119 25 / .15); }

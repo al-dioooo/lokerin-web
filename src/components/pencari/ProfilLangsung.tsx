@@ -18,6 +18,7 @@ import type { CvRingkasApi, FaktaApi, LamaranApi, LowonganApi, MeApi, PersonaApi
 import { UbahPersona } from "./UbahPersona";
 import "../cv/cv.css";
 import "./profil.css";
+import { TautanLaci, useBukaLaci, type IsiLaci } from "../lapis/konteksLaci";
 
 const JENIS: Record<FaktaApi["jenis"], string> = { pengalaman: "Pengalaman", keahlian: "Keahlian", pendidikan: "Pendidikan", prestasi: "Prestasi", lainnya: "Lainnya" };
 const URUTAN_JENIS: FaktaApi["jenis"][] = ["pengalaman", "keahlian", "pendidikan", "prestasi", "lainnya"];
@@ -42,26 +43,28 @@ function BarisKeluar() {
   );
 }
 
-function BarisTautan({ href, ikon, judul, keterangan }: { href: string; ikon: ReactNode; judul: string; keterangan?: string }) {
+function BarisTautan({ href, ikon, judul, keterangan, isi = null }: { href: string; ikon: ReactNode; judul: string; keterangan?: string; isi?: IsiLaci | null }) {
   return (
-    <Link href={href} className="baris-atur">
+    <TautanLaci isi={isi} href={href} className="baris-atur">
       <span className="baris-atur-ikon">{ikon}</span>
       <span className="min-w-0 flex-1">
         <span className="block font-bold">{judul}</span>
         {keterangan && <span className="block text-sm text-abu">{keterangan}</span>}
       </span>
       <IconChevronRight size={18} className="shrink-0 text-abu" />
-    </Link>
+    </TautanLaci>
   );
 }
 
-function Angka({ nilai, label, href }: { nilai: number | null; label: string; href: string }) {
-  return (
-    <a href={href}>
+function Angka({ nilai, label, href, isi = null }: { nilai: number | null; label: string; href: string; isi?: IsiLaci | null }) {
+  const isiTautan = (
+    <>
       <b>{nilai ?? "–"}</b>
       <span>{label}</span>
-    </a>
+    </>
   );
+  // In-page anchors stay plain links; places with a drawer view open there when possible.
+  return href.startsWith("#") ? <a href={href}>{isiTautan}</a> : <TautanLaci isi={isi} href={href}>{isiTautan}</TautanLaci>;
 }
 
 const STATUS_CV: Record<string, string> = { terkirim: "Terkirim", dilihat: "Sudah dilihat", lolos: "Lolos", tidak_lolos: "Belum lolos" };
@@ -132,15 +135,15 @@ function RakCvKhusus({ daftar }: { daftar: CvRingkasApi[] | null }) {
       {daftar.map((cv) => (
         <li key={cv.id}>
           <article className="kartu-cv-khusus">
-            <Link href={`/app/cv/${cv.id}`} className="kertas-intip block" aria-hidden="true" tabIndex={-1}>
+            <TautanLaci isi={{ jenis: "cv", id: cv.id }} href={`/app/cv/${cv.id}`} className="kertas-intip block" aria-hidden="true" tabIndex={-1}>
               <SkalaKertas><KertasCv isi={cv.isi} template={cv.template} bahasa={cv.bahasa} kontakTersembunyi={false} statis /></SkalaKertas>
-            </Link>
+            </TautanLaci>
             <div className="kartu-cv-isi">
               <span className="status-cv" data-status={cv.lamaran?.status ?? "draf"}>{cv.lamaran ? STATUS_CV[cv.lamaran.status] : "Belum dikirim"}</span>
               <h3 className="text-[16px] leading-snug">{cv.lowongan?.judul ?? cv.isi.judul}</h3>
               <p className="truncate text-sm text-abu">{[cv.lowongan?.usaha, `diubah ${waktuLalu(cv.diperbarui).toLowerCase()}`].filter(Boolean).join(" · ")}</p>
               <div className="mt-1 flex gap-2">
-                <Link href={`/app/cv/${cv.id}`} className="tombol tombol-utama min-h-11 flex-1 px-4 text-sm"><IconPencil size={16} />Buka</Link>
+                <TautanLaci isi={{ jenis: "cv", id: cv.id }} href={`/app/cv/${cv.id}`} className="tombol tombol-utama min-h-11 flex-1 px-4 text-sm"><IconPencil size={16} />Buka</TautanLaci>
                 <UnduhKecil id={cv.id} />
               </div>
             </div>
@@ -151,8 +154,10 @@ function RakCvKhusus({ daftar }: { daftar: CvRingkasApi[] | null }) {
   );
 }
 
-function ProfilPencari() {
+export function ProfilPencari() {
   const { pengguna } = useSesi();
+  // Shown in the Ngobrol drawer: you are already in Ngobrol, so no link back to it.
+  const diLaci = useBukaLaci() !== null;
   const profil = useApi<ProfilApi>("/profil");
   const cvKhusus = useApi<{ cv: CvRingkasApi[] }>("/cv");
   const lamaran = useApi<{ lamaran: LamaranApi[] }>("/pencari/lamaran");
@@ -221,7 +226,7 @@ function ProfilPencari() {
         <nav className="profil-angka" aria-label="Ringkasan">
           <Angka nilai={p ? p.persona.length : null} label="Jenis kerja" href="#kerja" />
           <Angka nilai={p ? fakta.length : null} label="Bahan CV" href="#bahan-cv" />
-          <Angka nilai={lamaran.data ? lamaran.data.lamaran.length : null} label="Lamaran" href="/app/lamaran" />
+          <Angka nilai={lamaran.data ? lamaran.data.lamaran.length : null} label="Lamaran" href="/app/lamaran" isi={{ jenis: "lamaran" }} />
         </nav>
       </section>
 
@@ -316,8 +321,8 @@ function ProfilPencari() {
       <section aria-labelledby="judul-atur">
         <h2 id="judul-atur" className="mb-2 text-lg">Lainnya</h2>
         <div className="atur-grup">
-          <BarisTautan href="/app/ngobrol" ikon={<IconMicrophone size={20} />} judul="Ceritakan lewat Ngobrol" keterangan="Tambah bahan CV dengan bicara" />
-          <BarisTautan href="/app/lamaran" ikon={<IconBriefcase size={20} />} judul="Lamaranku" keterangan="Status tiap lamaran" />
+          {!diLaci && <BarisTautan href="/app/ngobrol" ikon={<IconMicrophone size={20} />} judul="Ceritakan lewat Ngobrol" keterangan="Tambah bahan CV dengan bicara" />}
+          <BarisTautan href="/app/lamaran" ikon={<IconBriefcase size={20} />} judul="Lamaranku" keterangan="Status tiap lamaran" isi={{ jenis: "lamaran" }} />
           <PengaturanPush baris />
           <BarisKeluar />
         </div>

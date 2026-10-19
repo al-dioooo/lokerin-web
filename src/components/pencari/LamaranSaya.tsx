@@ -31,13 +31,14 @@ function TautanTahap({ tahap }: { tahap: TahapApi }) {
   return null;
 }
 
-export function LamaranSaya() {
+/** `diLaci`: shown in a drawer from Ngobrol (the drawer has the title); `awalId` opens one right away. */
+export function LamaranSaya({ diLaci = false, awalId }: { diLaci?: boolean; awalId?: string } = {}) {
   const daftar = useApi<{ lamaran: LamaranApi[] }>("/pencari/lamaran");
   const [dipilihId, setDipilihId] = useState<string | null>(null);
   useLangsung(null, (p) => {
     if (p.type === "lamaran.status") daftar.muatUlang();
   });
-  useBukaDariTautan(daftar.data?.lamaran, (l) => setDipilihId(l.id));
+  useBukaDariTautan(daftar.data?.lamaran, (l) => setDipilihId(l.id), awalId);
 
   if (!apiAktif) return <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-abu">Daftar lamaran butuh sambungan ke server.</p>;
 
@@ -47,7 +48,7 @@ export function LamaranSaya() {
 
   return (
     <div className="grid grid-cols-1 gap-5">
-      <h1 className="text-[1.9rem] leading-tight">Lamaranku</h1>
+      {!diLaci && <h1 className="text-[1.9rem] leading-tight">Lamaranku</h1>}
       {daftar.memuat && !lamaran.length && <p className="text-abu">Memuat...</p>}
       {!daftar.memuat && !lamaran.length && (
         <div className="grid gap-3 rounded-3xl border border-dashed border-garis p-6 text-center">

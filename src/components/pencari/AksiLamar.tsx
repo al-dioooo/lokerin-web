@@ -21,7 +21,11 @@ import type { LamaranApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
 type Langkah = "persona" | "cv" | "kirim" | "selesai";
 type CvSiap = { id: string; isi: { judul: string } };
 
-export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowonganId: string; judul: string; usaha: string; magang: boolean; bacaan: string }) {
+/**
+ * `diLaci`: inside a drawer (from Ngobrol) the Lamar button is a plain full-width button instead of
+ * the page's floating bar, and "Lihat lamaranku" calls `onLihatLamaran` instead of leaving the screen.
+ */
+export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan, diLaci = false, onLihatLamaran }: { lowonganId: string; judul: string; usaha: string; magang: boolean; bacaan: string; diLaci?: boolean; onLihatLamaran?: () => void }) {
   const { pengguna, siap } = useSesi();
   const [buka, setBuka] = useState(false);
   const [langkah, setLangkah] = useState<Langkah>("persona");
@@ -83,15 +87,23 @@ export function AksiLamar({ lowonganId, judul, usaha, magang, bacaan }: { lowong
         <button type="button" className="tombol tombol-garis" disabled={proses !== ""} onClick={() => setLangkah("kirim")}>Kirim tanpa CV</button>
       </>
     ) : langkah === "selesai" ? (
-      <Link href="/app/lamaran" className="tombol tombol-utama">Lihat lamaranku</Link>
+      onLihatLamaran ? (
+        <button type="button" className="tombol tombol-utama" onClick={() => { setBuka(false); onLihatLamaran(); }}>Lihat lamaranku</button>
+      ) : (
+        <Link href="/app/lamaran" className="tombol tombol-utama">Lihat lamaranku</Link>
+      )
     ) : undefined;
 
   return (
     <>
-      <div className="aksi-lengket">
+      <div className={diLaci ? "aksi-laci" : "aksi-lengket"}>
         <Bacakan teks={bacaan} label={`Bacakan lowongan ${judul}`} ringkas className="border border-garis bg-white" />
         {terkirim ? (
-          <Link href="/app/lamaran" className="tombol tombol-utama flex-1"><IconCircleCheck size={18} />Lamaran terkirim</Link>
+          onLihatLamaran ? (
+            <button type="button" className="tombol tombol-utama flex-1" onClick={onLihatLamaran}><IconCircleCheck size={18} />Lamaran terkirim</button>
+          ) : (
+            <Link href="/app/lamaran" className="tombol tombol-utama flex-1"><IconCircleCheck size={18} />Lamaran terkirim</Link>
+          )
         ) : siap && !pengguna ? (
           <Link href="/masuk" className="tombol tombol-utama flex-1">Masuk untuk melamar</Link>
         ) : (

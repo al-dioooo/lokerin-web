@@ -28,6 +28,7 @@ import { useSesi } from "@/lib/api/sesi";
 import type { LowonganApi, PertanyaanAgen } from "@/lib/api/tipe";
 import "./ngobrol.css";
 import "./obrolan.css";
+import { PenyediaLaci } from "./LaciNgobrol";
 
 type Mode = "suara" | "teks";
 type Tempat = keyof typeof LOKASI_KERJA;
@@ -214,6 +215,7 @@ export function Ngobrol() {
   }
 
   return (
+    <PenyediaLaci>
     <div ref={layar} className="ngobrol-akar" data-mode={mode}>
       <div className="ngobrol-malam" aria-hidden="true" />
       <LayoutGroup id="ngobrol">
@@ -291,5 +293,6 @@ export function Ngobrol() {
         Browser akan meminta izin mikrofon. Suaramu tidak disimpan; yang tersimpan hanya hasilnya, misalnya lowongan yang kamu cari.
       </Dialog>
     </div>
+    </PenyediaLaci>
   );
 }

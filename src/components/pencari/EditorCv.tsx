@@ -146,7 +146,8 @@ function KartuSunting({ judul, children, onClick, lencana }: { judul: React.Reac
   );
 }
 
-export function EditorCv({ id: cvId }: { id: string }) {
+/** `diLaci`: shown in a drawer from Ngobrol, so no back button or page title, and always the phone layout. */
+export function EditorCv({ id: cvId, diLaci = false }: { id: string; diLaci?: boolean }) {
   const router = useRouter();
   const cv = useApi<CvApi>(`/cv/${cvId}`);
   const [isiEdit, setIsiEdit] = useState<IsiCv | null>(null);
@@ -251,20 +252,26 @@ export function EditorCv({ id: cvId }: { id: string }) {
   const kertas = (
     <div className="grid gap-3">
       <SkalaKertas penuh={penuh}><KertasCv isi={isi} template={template} bahasa={cv.data.bahasa} /></SkalaKertas>
-      <button type="button" className="tombol tombol-halus min-h-11 w-fit justify-self-center lg:hidden" onClick={() => setPenuh((p) => !p)}>{penuh ? "Kecilkan" : "Lihat ukuran asli"}</button>
+      <button type="button" className={`tombol tombol-halus min-h-11 w-fit justify-self-center ${diLaci ? "" : "lg:hidden"}`} onClick={() => setPenuh((p) => !p)}>{penuh ? "Kecilkan" : "Lihat ukuran asli"}</button>
     </div>
   );
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-4 pb-44">
-      <button type="button" onClick={() => (history.length > 1 ? router.back() : router.push("/app/lamaran"))} className="inline-flex min-h-11 w-fit items-center gap-1.5 text-[15px] font-semibold text-abu"><IconArrowLeft size={18} />Kembali</button>
-      <div>
-        <p className="piksel text-[11px] uppercase text-jingga-tua">CV lamaran</p>
-        <h1 className="text-[1.75rem] leading-tight">CV {isi.judul || isi.nama}</h1>
-        <p className="mt-1 text-[15px] text-abu">Disusun dari bahan CV-mu untuk satu lowongan. Pemberi kerja melihat CV persis seperti ini.</p>
-      </div>
+    <div className={`mx-auto grid max-w-6xl gap-4 ${diLaci ? "" : "pb-44"}`}>
+      {diLaci ? (
+        <p className="text-[15px] text-abu">Disusun dari bahan CV-mu untuk satu lowongan. Pemberi kerja melihat CV persis seperti ini.</p>
+      ) : (
+        <>
+          <button type="button" onClick={() => (history.length > 1 ? router.back() : router.push("/app/lamaran"))} className="inline-flex min-h-11 w-fit items-center gap-1.5 text-[15px] font-semibold text-abu"><IconArrowLeft size={18} />Kembali</button>
+          <div>
+            <p className="piksel text-[11px] uppercase text-jingga-tua">CV lamaran</p>
+            <h1 className="text-[1.75rem] leading-tight">CV {isi.judul || isi.nama}</h1>
+            <p className="mt-1 text-[15px] text-abu">Disusun dari bahan CV-mu untuk satu lowongan. Pemberi kerja melihat CV persis seperti ini.</p>
+          </div>
+        </>
+      )}
 
-      <div className="grid grid-cols-2 rounded-full border border-garis bg-white p-1 lg:hidden" role="tablist" aria-label="Tampilan CV">
+      <div className={`grid grid-cols-2 rounded-full border border-garis bg-white p-1 ${diLaci ? "" : "lg:hidden"}`} role="tablist" aria-label="Tampilan CV">
         {(["lihat", "ubah"] as const).map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={`min-h-12 rounded-full text-[16px] font-bold ${tab === t ? "bg-tinta text-white" : "text-abu"}`}>
             {t === "lihat" ? "Lihat" : "Ubah isi"}
@@ -272,14 +279,21 @@ export function EditorCv({ id: cvId }: { id: string }) {
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start">
-        <div className={tab === "ubah" ? "" : "hidden lg:block"}>{daftarUbah}</div>
-        <div className={`${tab === "lihat" ? "" : "hidden lg:block"} lg:sticky lg:top-6`}>{kertas}</div>
-      </div>
+      {diLaci ? (
+        <div className="grid gap-6">
+          <div className={tab === "ubah" ? "" : "hidden"}>{daftarUbah}</div>
+          <div className={tab === "lihat" ? "" : "hidden"}>{kertas}</div>
+        </div>
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start">
+          <div className={tab === "ubah" ? "" : "hidden lg:block"}>{daftarUbah}</div>
+          <div className={`${tab === "lihat" ? "" : "hidden lg:block"} lg:sticky lg:top-6`}>{kertas}</div>
+        </div>
+      )}
 
       {galat && <p role="alert" className="rounded-2xl bg-merah-muda p-3 text-sm text-merah">{galat}</p>}
 
-      <div className="alur-lanjut">
+      <div className={diLaci ? "aksi-laci grid" : "alur-lanjut"}>
         <p className="mb-2 flex min-h-5 items-center justify-center gap-1.5 text-sm text-abu" role="status">
           {status === "simpan" ? "Menyimpan..." : status === "tersimpan" ? <><IconCheck size={16} className="text-daun" />Perubahan tersimpan</> : pesanUnduh}
         </p>

@@ -63,6 +63,24 @@ function pertanyaanTerbuka(pesan: Pesan[]): PertanyaanAgen | null {
   return alat?.jenis === "alat" && alat.hasil ? bacaPertanyaan(alat.hasil) : null;
 }
 
+/**
+ * The cards of the agent's latest answer that had any, newest version of each (a CV revised twice
+ * shows once). On the voice stage these sit under the caption, so the buttons the voice talks about
+ * (Kirim Lamaran, Simpan, Terbitkan) are there to tap during the call.
+ */
+function kartuTerbaru(pesan: Pesan[]): HasilAlat[] {
+  for (let i = pesan.length - 1; i >= 0; i--) {
+    const p = pesan[i]!;
+    if (p.peran !== "ai") continue;
+    const hasil = p.bagian.flatMap((b) => (b.jenis === "alat" && b.status === "selesai" && b.hasil?.widget && b.hasil.widget !== "pertanyaan" ? [b.hasil] : []));
+    if (!hasil.length) continue;
+    const terakhir = new Map<string, HasilAlat>();
+    hasil.forEach((h, n) => terakhir.set(typeof h.id === "string" ? `${h.widget}:${h.id}` : `${h.widget}:${n}`, h));
+    return [...terakhir.values()];
+  }
+  return [];
+}
+
 export function Ngobrol() {
   const router = useRouter();
   const { pengguna, siap } = useSesi();
@@ -86,6 +104,8 @@ export function Ngobrol() {
   const [galat, setGalat] = useState("");
   const [riwayat, setRiwayat] = useState(false);
   const [tanyaMic, setTanyaMic] = useState(false);
+  // Where the thread stood when the current call began: the voice stage shows cards from then on.
+  const [awalKartu, setAwalKartu] = useState<number | null>(null);
   const [fokus, setFokus] = useState(0);
   const kendali = useRef<AbortController | null>(null);
   // A message handed over from another screen (lib/titipNgobrol) waits here until the conversation
@@ -137,6 +157,7 @@ export function Ngobrol() {
     simpan(KUNCI_OBROLAN, id);
     setAsing(false);
     setPesan([]);
+    setAwalKartu(null);
     setJudul(judulBaru);
     setSibuk(false);
     setRiwayat(false);
@@ -251,6 +272,7 @@ export function Ngobrol() {
   // --- Derived ---
 
   const pertanyaan = pertanyaanTerbuka(pesan);
+  const kartuPanggung = awalKartu === null ? [] : kartuTerbaru(pesan.slice(awalKartu));
   const hasilSemua = pesan.flatMap((p) => p.bagian.flatMap((b) => (b.jenis === "alat" && b.status === "selesai" && b.hasil?.widget && b.hasil.widget !== "pertanyaan" ? [b.hasil] : [])));
   const daftarTerakhir = [...hasilSemua].reverse().find((h) => h.widget === "daftar_lowongan");
   const nyala = [
@@ -306,6 +328,7 @@ export function Ngobrol() {
               kalimat={kalimat}
               nyala={nyala}
               jumlahHasil={hasilSemua.length}
+              kartu={kartuPanggung}
               pertanyaan={pertanyaan}
               sapaan={sapaan}
               onLentera={tekanLentera}
@@ -356,6 +379,7 @@ export function Ngobrol() {
         labelBatal="Ketik saja"
         onYa={async () => {
           setTanyaMic(false);
+          setAwalKartu(pesan.length);
           const ok = await suara.mulai();
           if (!ok) gantiMode("teks");
         }}

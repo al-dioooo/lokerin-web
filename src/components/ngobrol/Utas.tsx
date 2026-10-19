@@ -9,7 +9,7 @@
 import { m } from "motion/react";
 import { memo, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { IconArrowDown, IconMicrophone, IconSend } from "../icons/tabler";
-import { JUDUL_WIDGET, WidgetAgen } from "./WidgetAgen";
+import { KartuHasil } from "./WidgetAgen";
 import { PilihanJawab } from "./PilihanJawab";
 import { Bacakan, TeksAgen } from "./TeksAgen";
 import { PEGAS_LENTERA } from "./PanggungSuara";
@@ -44,12 +44,7 @@ function PesanAi({ p, awalRangkaian, sedangMengalir }: { p: Pesan; awalRangkaian
         if (b.status === "galat") return <p key={b.id} className="text-[15px] text-merah">Ada yang belum berhasil. Coba ulangi.</p>;
         if (!b.hasil?.widget || b.hasil.widget === "pertanyaan") return null;
         if (typeof b.hasil.id === "string" && terakhir.get(`${b.hasil.widget}:${b.hasil.id}`) !== i) return null;
-        return (
-          <section key={b.id} className="kartu-alat" aria-label={JUDUL_WIDGET[b.hasil.widget] ?? "Hasil"}>
-            <h3>{JUDUL_WIDGET[b.hasil.widget] ?? "Hasil"}</h3>
-            <WidgetAgen hasil={b.hasil} />
-          </section>
-        );
+        return <KartuHasil key={b.id} hasil={b.hasil} />;
       })}
       {teks && !sedangMengalir && <Bacakan id={p.id} teks={teks} />}
     </div>

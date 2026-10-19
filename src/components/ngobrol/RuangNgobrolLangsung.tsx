@@ -14,11 +14,12 @@ import { aturArah } from "../app/Halaman";
 import { keluarNgobrol, ngobrolSiap } from "../app/transisiNgobrol";
 import { Dialog } from "../lapis/Dialog";
 import { JUDUL_WIDGET, WidgetAgen } from "./WidgetAgen";
+import { PilihanJawab } from "./PilihanJawab";
 import { kategoriDari } from "@/lib/api/adaptor";
 import { api, API_URL, bacaToken, GalatApi } from "@/lib/api/klien";
 import { useLangsung } from "@/lib/api/hooks";
 import { useSesi } from "@/lib/api/sesi";
-import type { LowonganApi } from "@/lib/api/tipe";
+import type { LowonganApi, PertanyaanAgen } from "@/lib/api/tipe";
 import "./ngobrol.css";
 
 type Tempat = keyof typeof LOKASI_KERJA;
@@ -45,13 +46,15 @@ export function RuangNgobrolLangsung() {
   const [ketik, setKetik] = useState(false);
   const [teks, setTeks] = useState("");
   const [sibuk, setSibuk] = useState(false);
+  // The question tanya_pengguna is waiting on, shown as answer buttons until someone answers.
+  const [pertanyaan, setPertanyaan] = useState<PertanyaanAgen | null>(null);
   const [panelBuka, setPanelBuka] = useState(false);
   const [belumDilihat, setBelumDilihat] = useState(0);
   const [tanyaMic, setTanyaMic] = useState(false);
   const [suara, setSuara] = useState<"mati" | "menyambung" | "hidup">("mati");
   const [detik, setDetik] = useState(0);
   const [galat, setGalat] = useState("");
-  const panggilan = useRef<{ pc: RTCPeerConnection; mic: MediaStream; id: string; audio: HTMLAudioElement } | null>(null);
+  const panggilan = useRef<{ pc: RTCPeerConnection; mic: MediaStream; id: string; audio: HTMLAudioElement; dc: RTCDataChannel } | null>(null);
 
   useLayoutEffect(() => {
     ngobrolSiap();
@@ -75,6 +78,10 @@ export function RuangNgobrolLangsung() {
 
   function tambahKartu(hasil: Kartu["hasil"]) {
     if (!hasil?.widget) return;
+    if (hasil.widget === "pertanyaan") {
+      setPertanyaan(hasil as unknown as PertanyaanAgen);
+      return;
+    }
     setKartu((k) => [{ kunci: `${Date.now()}-${k.length}`, hasil }, ...k].slice(0, 12));
     // On a phone the open panel would cover the conversation, so new results only announce themselves.
     setBelumDilihat((n) => n + 1);
@@ -90,15 +97,21 @@ export function RuangNgobrolLangsung() {
       .then(({ messages }) => {
         const lama: Kalimat[] = [];
         const hasilLama: Kartu[] = [];
-        for (const m of messages) {
+        let tanyaTerakhir: { hasil: Kartu["hasil"]; pesanKe: number } | null = null;
+        for (const [pesanKe, m] of messages.entries()) {
           if (m.role === "system") continue;
           const teks = m.parts.filter((p) => p.type === "text" && p.text).map((p) => p.text).join("\n\n").trim();
           if (teks) lama.push({ siapa: m.role === "user" ? "kamu" : "ai", teks, kunci: `riwayat-${m.id}` });
           m.parts.forEach((p, i) => {
             const hasil = p.output as Kartu["hasil"] | undefined;
-            if (p.type.startsWith("tool-") && p.state === "output-available" && hasil?.widget) hasilLama.push({ kunci: `riwayat-${m.id}-${i}`, hasil });
+            if (!p.type.startsWith("tool-") || p.state !== "output-available" || !hasil?.widget) return;
+            if (hasil.widget === "pertanyaan") tanyaTerakhir = { hasil, pesanKe };
+            else hasilLama.push({ kunci: `riwayat-${m.id}-${i}`, hasil });
           });
         }
+        // A question still counts only if nobody has replied to it yet.
+        const tanya = tanyaTerakhir as { hasil: Kartu["hasil"]; pesanKe: number } | null;
+        if (tanya && tanya.pesanKe === messages.length - 1) setPertanyaan(tanya.hasil as unknown as PertanyaanAgen);
         if (!lama.length && !hasilLama.length) return;
         // Anything said since the page opened stays after the history.
         setKalimat((k) => [...lama, ...k].slice(-30));
@@ -138,11 +151,11 @@ export function RuangNgobrolLangsung() {
         audio.srcObject = e.streams[0] ?? null;
       };
       mic.getTracks().forEach((t) => pc.addTrack(t, mic));
-      pc.createDataChannel("oai-events");
+      const dc = pc.createDataChannel("oai-events");
       await pc.setLocalDescription(await pc.createOffer());
       const jawab = await api<{ session_id: string; sdp: string }>("/suara/sesi", { method: "POST", body: { sdp: pc.localDescription!.sdp, thread_id: "utama" } });
       await pc.setRemoteDescription({ type: "answer", sdp: jawab.sdp });
-      panggilan.current = { pc, mic, id: jawab.session_id, audio };
+      panggilan.current = { pc, mic, id: jawab.session_id, audio, dc };
       setDetik(0);
       setSuara("hidup");
     } catch (e) {
@@ -172,6 +185,24 @@ export function RuangNgobrolLangsung() {
     const isi = teks.trim();
     if (!isi || sibuk) return;
     setTeks("");
+    await kirim(isi);
+  }
+
+  /** An answer from the buttons. In a voice call it goes to the call; otherwise it is a chat message. */
+  function jawab(isi: string) {
+    const dc = panggilan.current?.dc;
+    if (dc?.readyState === "open") {
+      setPertanyaan(null);
+      tambahKalimat("kamu", isi, true);
+      dc.send(JSON.stringify({ type: "conversation.item.create", item: { type: "message", role: "user", content: [{ type: "input_text", text: isi }] } }));
+      dc.send(JSON.stringify({ type: "response.create" }));
+      return;
+    }
+    void kirim(isi);
+  }
+
+  async function kirim(isi: string) {
+    setPertanyaan(null);
     setGalat("");
     setSibuk(true);
     tambahKalimat("kamu", isi, true);
@@ -243,7 +274,7 @@ export function RuangNgobrolLangsung() {
   }
 
   return (
-    <div ref={layar} className="ngobrol-layar" data-status={status} data-langsung="">
+    <div ref={layar} className="ngobrol-layar" data-status={status} data-langsung="" data-tanya={pertanyaan ? "" : undefined}>
       <div className="ngobrol-kota" aria-hidden="true">
         <div className="ngobrol-kota-isi" style={{ aspectRatio: `${KOTAK_PANDANG.w} / ${KOTAK_PANDANG.h}` }}>
           <KotaIsometrik className="kota-malam absolute inset-0 h-full w-full" nyala={nyala} judul="" />
@@ -281,6 +312,19 @@ export function RuangNgobrolLangsung() {
         <ol className="sr-only" aria-live="polite" aria-label="Isi obrolan">
           {kalimat.map((p) => <li key={p.kunci}>{p.siapa === "ai" ? "Lokerin" : "Kamu"}: {polos(p.teks)}</li>)}
         </ol>
+
+        {pertanyaan && (
+          <PilihanJawab
+            key={pertanyaan.id}
+            tanya={pertanyaan}
+            sibuk={sibuk}
+            onJawab={jawab}
+            onKetik={() => {
+              setKetik(true);
+              setPanelBuka(false);
+            }}
+          />
+        )}
 
         {galat && <p role="alert" className="mx-auto max-w-sm rounded-2xl bg-white/10 px-4 py-2 text-center text-sm text-white">{galat}</p>}
 

@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
       { source: "/:path*", has: [{ type: "host", value: "www\\.lokerin\\.site" }], destination: "https://lokerin.site/:path*", permanent: true },
     ];
   },
+  // Dev server dibuka lewat tunnel Cloudflare; tanpa ini aset dev dan HMR diblokir.
+  allowedDevOrigins: ["lokerin.yorhagarden.xyz"],
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

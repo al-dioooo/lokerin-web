@@ -6,7 +6,7 @@ import { IconAlertTriangle, IconCircleCheck, IconInfoCircle } from "../icons/tab
 import { Dialog } from "../lapis/Dialog";
 import { TawaranKabar } from "../app/TawaranKabar";
 import { kategoriDari, tanggalMulai } from "@/lib/api/adaptor";
-import { api, GalatApi } from "@/lib/api/klien";
+import { api } from "@/lib/api/klien";
 import type { LowonganApi } from "@/lib/api/tipe";
 
 const LABEL_JENIS: Record<string, string> = { harian: "Harian", paruh_waktu: "Paruh waktu", kontrak: "Kontrak", tetap: "Tetap", magang: "Magang" };
@@ -19,7 +19,6 @@ const LABEL_JENIS: Record<string, string> = { harian: "Harian", paruh_waktu: "Pa
 export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganApi; onBerubah?: (l: LowonganApi) => void; onUbah?: () => void }) {
   const [tanya, setTanya] = useState(false);
   const [tanyaTutup, setTanyaTutup] = useState(false);
-  const [galat, setGalat] = useState("");
   const [l, setL] = useState(lowongan);
   const [baruTerbit, setBaruTerbit] = useState(false);
   const { Icon } = getKategori(kategoriDari(l));
@@ -30,29 +29,18 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
   const terbit = l.status === "terbit";
   const terisi = l.status === "terisi";
 
+  // A failed request throws, and the Dialog stays open with the error.
   async function terbitkan() {
-    setGalat("");
-    try {
-      const hasil = await api<LowonganApi>(`/pemberi/lowongan/${l.id}/terbit`, { method: "POST" });
-      setL(hasil);
-      setBaruTerbit(true);
-      onBerubah?.(hasil);
-    } catch (e) {
-      setGalat(e instanceof GalatApi ? e.message : "Belum bisa terbit. Coba lagi.");
-      throw e;
-    }
+    const hasil = await api<LowonganApi>(`/pemberi/lowongan/${l.id}/terbit`, { method: "POST" });
+    setL(hasil);
+    setBaruTerbit(true);
+    onBerubah?.(hasil);
   }
 
   async function tutup() {
-    setGalat("");
-    try {
-      const hasil = await api<LowonganApi>(`/pemberi/lowongan/${l.id}/tutup`, { method: "POST" });
-      setL(hasil);
-      onBerubah?.(hasil);
-    } catch (e) {
-      setGalat(e instanceof GalatApi ? e.message : "Belum bisa ditutup. Coba lagi.");
-      throw e;
-    }
+    const hasil = await api<LowonganApi>(`/pemberi/lowongan/${l.id}/tutup`, { method: "POST" });
+    setL(hasil);
+    onBerubah?.(hasil);
   }
 
   return (
@@ -84,7 +72,6 @@ export function KartuDraf({ lowongan, onBerubah, onUbah }: { lowongan: LowonganA
           {!masalah.length && <p className="flex items-center gap-2 rounded-2xl bg-daun-muda p-3 text-[15px] text-daun"><IconCircleCheck size={20} />Pemeriksaan lolos. Siap diterbitkan.</p>}
         </div>
       )}
-      {galat && <p role="alert" className="mt-3 rounded-2xl bg-merah-muda p-3 text-sm text-merah">{galat}</p>}
 
       <div className="mt-5 grid gap-2">
         {terbit ? (

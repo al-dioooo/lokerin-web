@@ -11,8 +11,10 @@ import { IconArrowLeft } from "@/components/icons/tabler";
 import { GagalMuat } from "@/components/ui/GagalMuat";
 import { LOWONGAN } from "@/lib/data";
 
+// Sample jobs only exist without the API. Cache Components still needs one id to check the route at
+// build time, so with the API one is enough.
 export function generateStaticParams() {
-  return LOWONGAN.map((l) => ({ id: l.id }));
+  return (apiAktif ? LOWONGAN.slice(0, 1) : LOWONGAN).map((l) => ({ id: l.id }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/app/lowongan/[id]">) {

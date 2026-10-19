@@ -414,66 +414,6 @@ export const PEKERJA = {
   },
 } as const;
 
-export const RAKA = {
-  nama: "Raka Aditya",
-  kota: "Purwokerto, Banyumas",
-  umur: 20,
-  persona: {
-    uiux: {
-      judul: "Desainer UI/UX",
-      ringkas: "Mahasiswa informatika semester 5. Membuat purwarupa aplikasi kampus dan pernah menjadi finalis lomba UI/UX.",
-      keahlian: ["Figma", "Alur pengguna", "Purwarupa interaktif", "Wawancara pengguna", "Uji kegunaan"],
-      waktu: "Senin–Jumat, 08.00–16.00 · masa magang semester depan",
-      pengalaman: [
-        { peran: "Desainer UI/UX tim lomba", tempat: "Lomba desain aplikasi mahasiswa", lama: "2 bulan", sumber: "suara" as const },
-        { peran: "Desainer aplikasi peminjaman ruang", tempat: "Proyek mata kuliah interaksi manusia dan komputer", lama: "1 semester", sumber: "formulir" as const },
-        { peran: "Staf desain dan publikasi", tempat: "Himpunan mahasiswa informatika", lama: "1 tahun", sumber: "formulir" as const },
-      ],
-    },
-    frontend: {
-      judul: "Frontend Developer",
-      ringkas: "Membuat situs kegiatan mahasiswa dengan React. Terbiasa menerapkan desain Figma dan bekerja bersama tim lewat Git.",
-      keahlian: ["HTML", "CSS", "JavaScript", "React", "Git", "Tampilan responsif"],
-      waktu: "Senin–Jumat, 08.00–16.00 · masa magang semester depan",
-      pengalaman: [
-        { peran: "Pengembang frontend", tempat: "Proyek situs pendaftaran kegiatan kampus", lama: "1 semester", sumber: "suara" as const },
-        { peran: "Pengelola situs kegiatan", tempat: "Himpunan mahasiswa informatika", lama: "6 bulan", sumber: "formulir" as const },
-      ],
-    },
-  },
-} as const;
-
-export type Fakta = {
-  id: string;
-  pemilik: "darto" | "raka";
-  jenis: "pengalaman" | "keahlian" | "pendidikan" | "prestasi" | "lainnya";
-  teks: string;
-  status: "terkonfirmasi" | "usulan";
-  sumber: "obrolan" | "suara" | "formulir";
-  persona: string[];
-};
-
-export const FAKTA: Fakta[] = [
-  { id: "darto-las-bengkel", pemilik: "darto", jenis: "pengalaman", teks: "Bekerja sebagai tukang las di bengkel Sokaraja selama 5 tahun.", status: "terkonfirmasi", sumber: "suara", persona: ["las"] },
-  { id: "darto-kenek-ruko", pemilik: "darto", jenis: "pengalaman", teks: "Pernah menjadi kenek las pada proyek ruko di Purwokerto selama 1 tahun.", status: "terkonfirmasi", sumber: "formulir", persona: ["las"] },
-  { id: "darto-las-listrik", pemilik: "darto", jenis: "keahlian", teks: "Bisa las listrik untuk pagar, teralis, dan kanopi serta membaca ukuran.", status: "terkonfirmasi", sumber: "suara", persona: ["las"] },
-  { id: "darto-ojek-pengalaman", pemilik: "darto", jenis: "pengalaman", teks: "Mengantar penumpang dan makanan sebagai pengemudi ojek online selama 3 tahun di Purwokerto.", status: "terkonfirmasi", sumber: "suara", persona: ["ojek"] },
-  { id: "darto-motor-sim", pemilik: "darto", jenis: "keahlian", teks: "Punya motor sendiri, SIM C, dan hafal jalan Purwokerto.", status: "terkonfirmasi", sumber: "formulir", persona: ["ojek"] },
-  { id: "darto-jadwal", pemilik: "darto", jenis: "lainnya", teks: "Bisa kerja las Senin–Sabtu pukul 08.00–16.00 dan mengantar pesanan setiap hari pukul 18.00–22.00.", status: "terkonfirmasi", sumber: "obrolan", persona: ["las", "ojek"] },
-  { id: "darto-usulan-alat-las", pemilik: "darto", jenis: "keahlian", teks: "Mungkin punya alat las sendiri untuk pekerjaan borongan; perlu ditanyakan ke Pak Darto.", status: "usulan", sumber: "obrolan", persona: ["las"] },
-  { id: "darto-usulan-rute", pemilik: "darto", jenis: "keahlian", teks: "Mungkin mengenal rute pengantaran Ajibarang; perlu dikonfirmasi ke Pak Darto.", status: "usulan", sumber: "obrolan", persona: ["ojek"] },
-  { id: "raka-pendidikan", pemilik: "raka", jenis: "pendidikan", teks: "Mahasiswa informatika semester 5, berusia 20 tahun, dan tinggal di Purwokerto.", status: "terkonfirmasi", sumber: "formulir", persona: ["uiux", "frontend"] },
-  { id: "raka-lomba-uiux", pemilik: "raka", jenis: "prestasi", teks: "Menjadi finalis lomba UI/UX mahasiswa bersama tim setelah mengerjakan desain selama 2 bulan.", status: "terkonfirmasi", sumber: "suara", persona: ["uiux"] },
-  { id: "raka-proyek-ruang", pemilik: "raka", jenis: "pengalaman", teks: "Mendesain aplikasi peminjaman ruang selama satu semester untuk tugas interaksi manusia dan komputer.", status: "terkonfirmasi", sumber: "formulir", persona: ["uiux"] },
-  { id: "raka-riset-figma", pemilik: "raka", jenis: "keahlian", teks: "Bisa membuat alur dan purwarupa interaktif di Figma serta melakukan wawancara dan uji kegunaan.", status: "terkonfirmasi", sumber: "suara", persona: ["uiux"] },
-  { id: "raka-proyek-web", pemilik: "raka", jenis: "pengalaman", teks: "Membuat frontend situs pendaftaran kegiatan kampus dengan React selama satu semester.", status: "terkonfirmasi", sumber: "suara", persona: ["frontend"] },
-  { id: "raka-keahlian-web", pemilik: "raka", jenis: "keahlian", teks: "Bisa memakai HTML, CSS, JavaScript, React, dan Git untuk membuat tampilan web responsif.", status: "terkonfirmasi", sumber: "formulir", persona: ["frontend"] },
-  { id: "raka-organisasi", pemilik: "raka", jenis: "pengalaman", teks: "Menjadi staf desain dan publikasi himpunan selama 1 tahun serta mengelola situs kegiatan selama 6 bulan.", status: "terkonfirmasi", sumber: "formulir", persona: ["uiux", "frontend"] },
-  { id: "raka-jadwal", pemilik: "raka", jenis: "lainnya", teks: "Bisa magang Senin–Jumat pukul 08.00–16.00 pada masa magang semester depan.", status: "terkonfirmasi", sumber: "obrolan", persona: ["uiux", "frontend"] },
-  { id: "raka-usulan-sistem-desain", pemilik: "raka", jenis: "keahlian", teks: "Mungkin pernah menyusun pustaka komponen Figma; perlu contoh proyek dari Raka.", status: "usulan", sumber: "obrolan", persona: ["uiux"] },
-  { id: "raka-usulan-typescript", pemilik: "raka", jenis: "keahlian", teks: "Mungkin sudah memakai TypeScript dalam proyek kampus; perlu dikonfirmasi ke Raka.", status: "usulan", sumber: "obrolan", persona: ["frontend"] },
-];
-
 export const JENIS_UPAH_LABEL: Record<JenisUpah, string> = { harian: "/hari", mingguan: "/minggu", bulanan: "/bulan", borongan: " borongan" };
 
 export function rupiah(n: number) {
@@ -490,5 +430,3 @@ export function cariLowongan(id: string) {
 
 export const LOWONGAN_TAYANG = LOWONGAN.filter((l) => l.cekUpah !== "curiga");
 export const BUTUH_HARI_INI = LOWONGAN_TAYANG.filter((l) => l.mendesakMenit);
-export const LOWONGAN_INFORMAL = LOWONGAN.filter((l) => l.segmen === "informal");
-export const LOWONGAN_MAGANG = LOWONGAN.filter((l) => l.segmen === "magang");

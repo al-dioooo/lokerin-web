@@ -13,7 +13,7 @@ import { IconArrowLeft, IconCheck, IconCircleCheck, IconDownload, IconPencil, Ic
 import { Dialog } from "../lapis/Dialog";
 import { Laci } from "../lapis/Laci";
 import { bagianTerurut, KertasCv, SkalaKertas } from "../cv/KertasCv";
-import { api, GalatApi } from "@/lib/api/klien";
+import { api, apiAktif, GalatApi } from "@/lib/api/klien";
 import { useApi } from "@/lib/api/hooks";
 import type { BagianCv, CvApi, EntriCv, IsiCv, KelompokKeahlian } from "@/lib/api/tipe";
 import { bagikanCv, bisaBagikanBerkas, unduhCv } from "@/lib/cv";
@@ -162,6 +162,7 @@ export function EditorCv({ id: cvId, diLaci = false }: { id: string; diLaci?: bo
   const [pesanUnduh, setPesanUnduh] = useState("");
   const bisaBagikan = useSyncExternalStore(() => () => {}, bisaBagikanBerkas, () => false);
 
+  if (!apiAktif) return <p className="rounded-2xl border border-dashed border-garis p-6 text-center text-abu">CV lamaran butuh sambungan ke server.</p>;
   if (cv.galat) return <p className="rounded-2xl bg-merah-muda p-4 text-merah">{cv.galat.message}</p>;
   if (!isi || !cv.data) return <p className="py-10 text-center text-abu" role="status">Memuat CV...</p>;
   const template = cv.data.template;

@@ -24,7 +24,8 @@ async function ambilPublik(path: string): Promise<unknown> {
   cacheLife({ stale: 30, revalidate: 15, expire: 120 });
   cacheTag("lowongan");
   const res = await fetch(`${API_URL}${path}`, { signal: AbortSignal.timeout(5000) });
-  if (res.status === 404) return TIDAK_ADA;
+  // 400 is an id that is not even well-formed, such as an old sample slug: also nothing to show.
+  if (res.status === 404 || res.status === 400) return TIDAK_ADA;
   if (!res.ok) throw new Error(`API menjawab ${res.status}`);
   return res.json();
 }
@@ -59,9 +60,12 @@ export async function lowonganMendesak(): Promise<Sumber<Lowongan[]>> {
   return { data: hasil.lowongan.map((l) => keLowongan(l)), dariServer: true };
 }
 
+/** With the API configured, a sample id is not a real job: it is looked up like any other and not found. */
 export async function satuLowongan(id: string): Promise<Sumber<{ lowongan: Lowongan; api: LowonganApi | null } | null>> {
-  const contoh = cariLowongan(id);
-  if (contoh || !apiAktif) return { data: contoh ? { lowongan: contoh, api: null } : null, dariServer: false };
+  if (!apiAktif) {
+    const contoh = cariLowongan(id);
+    return { data: contoh ? { lowongan: contoh, api: null } : null, dariServer: false };
+  }
   const hasil = await ambilHasil<LowonganApi>(`/lowongan/${encodeURIComponent(id)}`);
   if (!hasil.ok) return { data: null, dariServer: true, putus: !hasil.tidakAda };
   return { data: { lowongan: keLowongan(hasil.data), api: hasil.data }, dariServer: true };

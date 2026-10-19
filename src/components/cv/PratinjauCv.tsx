@@ -59,6 +59,7 @@ export function IntipCv({ id }: { id: string }) {
 export function PratinjauCv({ id, judul = "CV Khusus" }: { id: string; judul?: string }) {
   const cv = useApi<CvApi>(`/cv/${id}`);
   const [buka, setBuka] = useState(false);
+  const [penuh, setPenuh] = useState(false);
   if (cv.galat) return <p className="text-sm text-abu">CV belum bisa dibuka.</p>;
   if (!cv.data) return <div className="h-40 animate-pulse rounded-2xl bg-kabut" role="status" aria-label="Memuat CV" />;
   const { isi, template, bahasa, kontak_disembunyikan } = cv.data;
@@ -74,7 +75,9 @@ export function PratinjauCv({ id, judul = "CV Khusus" }: { id: string; judul?: s
       <Laci buka={buka} onTutup={() => setBuka(false)} label={judul} judul={`CV ${isi.nama}`} aksi={<TombolUnduhCv id={id} />}>
         <div className="grid gap-3">
           {kontak_disembunyikan && <p className="rounded-2xl bg-kabut p-3 text-[15px] text-abu">Nomor HP dan email terlihat setelah kamu meloloskan pelamar ini.</p>}
-          <SkalaKertas><KertasCv isi={isi} template={template} bahasa={bahasa} kontakTersembunyi={kontak_disembunyikan} /></SkalaKertas>
+          <SkalaKertas penuh={penuh}><KertasCv isi={isi} template={template} bahasa={bahasa} kontakTersembunyi={kontak_disembunyikan} /></SkalaKertas>
+          {/* At phone width the page is about half size; real size scrolls sideways for easy reading. */}
+          <button type="button" className="tombol tombol-halus min-h-11 w-fit justify-self-center md:hidden" onClick={() => setPenuh((p) => !p)}>{penuh ? "Kecilkan" : "Lihat ukuran asli"}</button>
         </div>
       </Laci>
     </>

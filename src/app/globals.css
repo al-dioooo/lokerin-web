@@ -273,9 +273,11 @@
   .masuk-layar { display: grid; min-height: 100dvh; overflow-x: clip; background: var(--color-kertas); }
   .masuk-kota { position: relative; display: flex; flex-direction: column; overflow: hidden; height: 46dvh; min-height: 300px; background: radial-gradient(90% 70% at 50% 100%, #FFF1E5 0%, var(--color-kertas) 70%); }
   .masuk-kota-teks { position: relative; z-index: 2; padding: 22px 20px 28px; background: linear-gradient(var(--color-kertas) 70%, transparent); }
-  .masuk-kota-peta { position: absolute; inset: auto -48% -26% -48%; animation: kota-naik .9s cubic-bezier(.2, .9, .3, 1) backwards; }
-  .pin-siang { position: absolute; translate: -50% -100%; padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; white-space: nowrap; color: var(--color-jingga-tua); background: white; border: 1px solid #F7C9A0; box-shadow: 0 6px 16px rgb(242 119 25 / .22); animation: pin-jatuh .7s cubic-bezier(.3, 1.6, .5, 1) backwards; animation-delay: calc(var(--i) * 220ms + 500ms); }
-  .pin-siang[data-mendesak] { color: white; border-color: #CF5C08; background: linear-gradient(#FF9A4D, #F27719 55%, #E0660D); }
+  .masuk-tiang { position: absolute; left: calc(50% - 210px); bottom: -37px; width: 420px; aspect-ratio: 800 / 760; animation: kota-naik .9s cubic-bezier(.2, .9, .3, 1) backwards; }
+  .tiang text { font-family: var(--font-sans); }
+  .tiang .tiang-mono { font-family: var(--font-mono); }
+  .tiang-kertas { transform-box: fill-box; transform-origin: 50% 0; animation: kertas-tempel .6s cubic-bezier(.3, 1.4, .5, 1) backwards; animation-delay: calc(var(--i) * 140ms + 350ms); }
+  .tiang-cap { transform-box: fill-box; transform-origin: center; animation: stempel .5s cubic-bezier(.3, 1.6, .5, 1) backwards; animation-delay: calc(var(--i) * 160ms + 1100ms); }
   .masuk-kartu { position: relative; z-index: 3; display: flex; flex-direction: column; margin-top: -28px; padding: 28px 22px calc(28px + env(safe-area-inset-bottom)); border-radius: 28px 28px 0 0; background: white; box-shadow: 0 -12px 40px rgb(21 18 16 / .08); animation: kartu-masuk .7s cubic-bezier(.2, .9, .3, 1) .15s backwards; }
   .tombol-google { display: flex; width: 100%; align-items: center; justify-content: center; gap: 12px; min-height: 52px; padding: 0 20px; border-radius: 999px; font-size: 15px; font-weight: 700; color: #1F1F1F; background: white; border: 1px solid #DADCE0; box-shadow: 0 1px 2px rgb(60 64 67 / .12), 0 3px 10px rgb(33 29 26 / .08); transition: background-color .2s, box-shadow .2s, transform .15s; }
   .tombol-google:hover:not(:disabled) { background: #F8FAFF; box-shadow: 0 1px 3px rgb(60 64 67 / .2), 0 6px 16px rgb(33 29 26 / .1); }
@@ -382,6 +384,7 @@
 @keyframes kota-naik { from { opacity: 0; translate: 0 60px; } }
 @keyframes pin-turun { from { opacity: 0; translate: 0 -48px; } }
 @keyframes pin-jatuh { from { opacity: 0; translate: -50% -160%; } }
+@keyframes kertas-tempel { from { opacity: 0; translate: 0 -18px; rotate: -4deg; } }
 @keyframes lentera-masuk { from { opacity: 0; scale: .5; } }
 @keyframes cincin { 0% { scale: .8; opacity: .8; } 100% { scale: 1.9; opacity: 0; } }
 @keyframes teks-naik { from { opacity: 0; translate: 0 14px; } }
@@ -431,7 +434,7 @@
   .masuk-layar { grid-template-columns: minmax(0, 1.25fr) minmax(400px, 1fr); }
   .masuk-kota { height: 100dvh; }
   .masuk-kota-teks { padding: 48px 48px 0; background: none; }
-  .masuk-kota-peta { inset: auto -34% -10% -30%; }
+  .masuk-tiang { left: 0; right: 0; bottom: 0; width: min(100%, calc((100dvh - 170px) * 800 / 760)); margin-inline: auto; }
   .masuk-kartu { justify-content: center; margin: 0; padding: 56px max(40px, 6vw); border-radius: 0; box-shadow: -1px 0 0 var(--color-garis); }
   .mulai-grid { grid-template-columns: minmax(0, 1fr) 360px; gap: 48px; margin-top: 24px; }
   .mulai-pratinjau { position: sticky; top: 88px; align-self: start; }

@@ -1,20 +1,12 @@
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { IconArrowRight, IconKey, IconPhoneOff, IconTrash } from "@/components/icons/tabler";
-import { KOTAK_PANDANG, KotaIsometrik, LOKASI_KERJA } from "@/components/kota/KotaIsometrik";
+import { TiangLowongan } from "@/components/masuk/TiangLowongan";
 import { TombolGoogle } from "@/components/masuk/TombolGoogle";
 import { PilihAkunContoh } from "@/components/masuk/PilihAkunContoh";
 import { AUTH_DEMO } from "@/lib/auth";
 
 export const metadata = { title: "Masuk · Lokerin" };
-
-const PIN: { di: keyof typeof LOKASI_KERJA; teks: string; mendesak?: boolean }[] = [
-  { di: "warung", teks: "Butuh hari ini · cuci piring", mendesak: true },
-  { di: "bengkel", teks: "Tukang las · Rp150.000/hari" },
-  { di: "laundry", teks: "Setrika · Purwokerto" },
-  { di: "bangunan", teks: "Sopir pikap · Sokaraja" },
-];
 
 const JANJI = [
   { Icon: IconKey, teks: "Tanpa kata sandi baru" },
@@ -30,15 +22,7 @@ export default function Masuk() {
           <p className="pil-piksel"><span className="titik-hidup" />Banyumas, hari ini</p>
           <p className="mt-4 max-w-md text-[clamp(1.5rem,1.1rem+1.6vw,2.25rem)] font-extrabold leading-tight tracking-tight">Empat tempat di dekatmu <span className="text-jingga">sedang cari orang.</span></p>
         </div>
-        <div className="masuk-kota-peta">
-          <div className="relative w-full" style={{ aspectRatio: `${KOTAK_PANDANG.w} / ${KOTAK_PANDANG.h}` }}>
-            <KotaIsometrik className="absolute inset-0 h-full w-full" judul="" />
-            {PIN.map(({ di, teks, mendesak }, i) => {
-              const { kiri, atas } = LOKASI_KERJA[di];
-              return <span key={di} className="pin-siang" data-mendesak={mendesak || undefined} style={{ left: `${kiri}%`, top: `${atas}%`, "--i": i } as CSSProperties}>{teks}</span>;
-            })}
-          </div>
-        </div>
+        <div className="masuk-tiang"><TiangLowongan className="h-full w-full" /></div>
       </section>
 
       <main id="utama" className="masuk-kartu">

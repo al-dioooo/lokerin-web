@@ -7,6 +7,7 @@ import { getKategori } from "../icons/categories";
 import { IconChevronRight, IconKeyboard, IconMicrophone, IconPlayerStop, IconSend, IconX } from "../icons/tabler";
 import { KOTAK_PANDANG, KotaIsometrik, LOKASI_KERJA } from "../kota/KotaIsometrik";
 import { RakBenda } from "../ngobrol/RakBenda";
+import { BATAS_DETIK } from "../ngobrol/useSuara";
 import { aturArah } from "./Halaman";
 import { keluarNgobrol, ngobrolSiap } from "./transisiNgobrol";
 import { cariLowongan, upahTeks } from "@/lib/data";
@@ -15,6 +16,8 @@ type Tempat = keyof typeof LOKASI_KERJA;
 type Isian = Partial<Record<"ada" | "pengalaman" | "waktu", string>>;
 type Efek = { las?: Isian; ojek?: Isian; nyala?: Tempat[]; temuan?: { id: string; di: Tempat }[] };
 type Langkah = { siapa: "ai" | "kamu"; teks: string; efek?: Efek };
+
+const menitDetik = (detik: number) => `${String(Math.floor(detik / 60)).padStart(2, "0")}:${String(detik % 60).padStart(2, "0")}`;
 
 const NASKAH: Langkah[] = [
   { siapa: "ai", teks: "Halo, Pak Darto. Ceritakan saja, biasanya kerja apa?" },
@@ -69,7 +72,7 @@ export function RuangNgobrol() {
   const tampil = NASKAH.slice(0, langkah);
   const cv = tampil.reduce((acc, l) => terapkan(acc, l.efek), KOSONG);
   const terisi = [cv.las.ada, cv.las.pengalaman, cv.las.waktu, cv.ojek.ada, cv.ojek.pengalaman, cv.ojek.waktu].filter(Boolean).length;
-  const jam = `${String(Math.floor(detik / 60)).padStart(2, "0")}:${String(detik % 60).padStart(2, "0")}`;
+  const jam = menitDetik(detik);
 
   const pesan: { siapa: "ai" | "kamu"; teks: string; kunci: string }[] = [];
   tampil.forEach((l, i) => {
@@ -112,7 +115,7 @@ export function RuangNgobrol() {
       <header className="ngobrol-atas">
         <button type="button" onClick={tutup} className="ngobrol-tombol-bulat" aria-label="Tutup dan kembali ke beranda"><IconX size={20} /></button>
         <span className="piksel text-[11px] uppercase tracking-wide text-[#F9C08F]">Ngobrol malam · demo</span>
-        <span className="font-mono text-xs tabular-nums text-white/70" aria-label={`Durasi ${jam}, batas 3 menit`}>{jam} / 03:00</span>
+        <span className="font-mono text-xs tabular-nums text-white/70" aria-label={`Durasi ${jam}, batas ${BATAS_DETIK / 60} menit`}>{jam} / {menitDetik(BATAS_DETIK)}</span>
       </header>
 
       <main className="ngobrol-panggung">

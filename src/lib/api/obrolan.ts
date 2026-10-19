@@ -36,7 +36,6 @@ export const LABEL_ALAT: Record<string, string> = {
   siapkan_tahap: "Menyiapkan tahap berikutnya",
 };
 
-export const daftarObrolan = () => api<{ obrolan: RingkasObrolan[] }>("/chat/obrolan");
 export const hapusObrolan = (id: string) => api(`/chat/obrolan/${encodeURIComponent(id)}`, { method: "DELETE" });
 
 type BagianUi = { type: string; text?: string; toolCallId?: string; toolName?: string; state?: string; output?: unknown; errorText?: string };
@@ -69,10 +68,6 @@ export async function muatObrolan(id: string, signal?: AbortSignal): Promise<{ p
 }
 
 /** History from the server. Saved turns can repeat a message id, so ids here get their position added. */
-export async function muatRiwayat(id: string, signal?: AbortSignal): Promise<Pesan[]> {
-  return (await muatObrolan(id, signal)).pesan;
-}
-
 function susunPesan(messages: PesanUi[]): Pesan[] {
   const pesan: Pesan[] = [];
   messages.forEach((m, i) => {

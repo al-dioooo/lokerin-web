@@ -9,6 +9,7 @@
 
 import { LazyMotion, animate, domMax, m, useMotionValue, useTransform } from "motion/react";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { GalatApi } from "@/lib/api/klien";
 import { PEGAS_TENANG, useGerakDikurangi } from "./gerakLapis";
 import "./lapis.css";
 
@@ -19,6 +20,7 @@ type Props = {
   children?: ReactNode;
   labelYa: string;
   labelBatal?: string;
+  /** Throwing keeps the dialog open and shows the error message inside it. */
   onYa: () => void | Promise<void>;
   /** Red confirm button for actions that cannot be undone. */
   bahaya?: boolean;
@@ -33,6 +35,7 @@ export function Dialog({ buka, onTutup, judul, children, labelYa, labelBatal = "
   const tampak = useMotionValue(0);
   const skala = useTransform(tampak, [0, 1], [0.94, 1]);
   const [sibuk, setSibuk] = useState(false);
+  const [galat, setGalat] = useState("");
   const menutup = useRef(false);
 
   const tutup = useCallback(() => {
@@ -41,6 +44,7 @@ export function Dialog({ buka, onTutup, judul, children, labelYa, labelBatal = "
     const selesai = () => {
       dialog.current?.close();
       menutup.current = false;
+      setGalat("");
       onTutup();
     };
     if (dikurangi) return selesai();
@@ -81,9 +85,13 @@ export function Dialog({ buka, onTutup, judul, children, labelYa, labelBatal = "
 
   async function ya() {
     setSibuk(true);
+    setGalat("");
     try {
       await onYa();
       tutup();
+    } catch (e) {
+      // Stay open and say what went wrong, so the person can try again or cancel.
+      setGalat(e instanceof GalatApi ? e.message : "Belum berhasil. Coba lagi.");
     } finally {
       setSibuk(false);
     }
@@ -97,6 +105,7 @@ export function Dialog({ buka, onTutup, judul, children, labelYa, labelBatal = "
           {ikon && <div className="mb-3">{ikon}</div>}
           <h2 id={idJudul} className="text-xl leading-snug">{judul}</h2>
           {children && <div id={idIsi} className="mt-2 text-[15px] text-abu">{children}</div>}
+          {galat && <p role="alert" className="mt-4 rounded-2xl bg-merah-muda p-3 text-sm text-merah">{galat}</p>}
           <div className="mt-6 grid gap-2 sm:grid-cols-2">
             <button type="button" className="tombol tombol-garis order-2 sm:order-1" onClick={tutup} disabled={sibuk}>{labelBatal}</button>
             <button type="button" className={`tombol order-1 sm:order-2 ${bahaya ? "tombol-bahaya" : "tombol-utama"}`} onClick={ya} disabled={sibuk} aria-busy={sibuk}>

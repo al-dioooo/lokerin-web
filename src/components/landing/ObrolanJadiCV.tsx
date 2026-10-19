@@ -50,7 +50,7 @@ export function ObrolanJadiCV() {
           {aktif.baris.map(([label, isi]) => <div key={label} className="baris-cv"><dt className="text-abu">{label}</dt><dd className="font-bold">{isi}</dd></div>)}
         </dl>
         <p className="mt-3 text-xs text-abu">Satu profil, dua CV. Lowongan las dicocokkan ke CV Tukang Las, lowongan antar ke CV Driver Ojol.</p>
-        <div className="mt-4 flex flex-wrap gap-2"><AksiContoh aksi="ngobrol" variant="garis" size="kecil">Cetak PDF</AksiContoh><AksiContoh aksi="ngobrol" variant="garis" size="kecil">Bagikan Kartu Kerja</AksiContoh></div>
+        <div className="mt-4 flex flex-wrap gap-2"><AksiContoh aksi="cv" variant="garis" size="kecil">Cetak PDF</AksiContoh><AksiContoh aksi="cv" variant="garis" size="kecil">Bagikan Kartu Kerja</AksiContoh></div>
       </div>
     </div>
   );

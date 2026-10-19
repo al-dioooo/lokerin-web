@@ -13,6 +13,7 @@ import { KartuDraf } from "../pemberi/KartuDraf";
 import { keLowongan } from "@/lib/api/adaptor";
 import { api, GalatApi } from "@/lib/api/klien";
 import type { DaftarKabarApi, FaktaApi, KartuKerjaApi, LamaranApi, LowonganApi, PersonaApi, ProfilApi } from "@/lib/api/tipe";
+import { IntipCv } from "../cv/PratinjauCv";
 import { DaftarKabarWidget, KartuKerjaWidget, LaporanSiap, PelamarWidget, TahapSiap } from "./WidgetBaru";
 
 type Hasil = { widget?: string } & Record<string, unknown>;
@@ -150,7 +151,10 @@ export function WidgetAgen({ hasil }: { hasil: Hasil }) {
       return (
         <div className="grid gap-2">
           <p className="text-[15px]">CV Khusus <strong>{(hasil.isi as { judul: string }).judul}</strong> sudah jadi dari {String(hasil.fakta_dipakai)} Fakta-mu.</p>
-          <Link href={`/app/cv/${String(hasil.id)}`} className="tombol tombol-utama min-h-12"><IconFileCv size={18} />Lihat dan edit CV</Link>
+          <Link href={`/app/cv/${String(hasil.id)}`} className="grid gap-2" aria-label="Lihat dan ubah CV Khusus">
+            <IntipCv id={String(hasil.id)} />
+            <span className="tombol tombol-utama min-h-12"><IconFileCv size={18} />Lihat dan ubah CV</span>
+          </Link>
         </div>
       );
     case "lamaran_siap":
